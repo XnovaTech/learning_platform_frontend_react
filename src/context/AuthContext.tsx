@@ -1,6 +1,6 @@
-'use client';
 
 import { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { loginUser, registerUser, getUserProfile } from '@/services/authService';
 import { toast } from 'sonner';
 import type { payloadUser, UserType } from '@/types/user';
@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  //const router = useRouter();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
@@ -78,8 +78,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    toast.success('Logged Out  successfully');
-    //router.push('/auth/login');
+    toast.success('Logged Out successfully');
+    navigate('/login');
   };
 
   const value = useMemo(

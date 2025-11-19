@@ -1,8 +1,6 @@
-'use client';
-
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, Users, GraduationCap, Menu, Tag, User, LogOut, ChevronDown, Settings, UserCircle, ClipboardList, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -16,11 +14,11 @@ const navigationItems = [
   { title: 'Enrollments', href: '/teacher/enrollments', icon: ClipboardList },
   {
     title: 'Users',
-    href: '/teacher/users/role/teachers',
+    href: '/teacher/users/teachers',
     icon: Users,
     children: [
-      { title: 'Teachers', href: '/teacher/users/role/teachers' },
-      { title: 'Students', href: '/teacher/users/role/students' },
+      { title: 'Teachers', href: '/teacher/users/teachers' },
+      { title: 'Students', href: '/teacher/users/students' },
     ],
   },
   { title: 'Contacts', href: '/teacher/contacts', icon: MessageCircle },
@@ -51,7 +49,7 @@ function SidebarHeader({ collapsed }: { collapsed: boolean }) {
 }
 function NavList({ collapsed }: { collapsed: boolean }) {
   const { logout } = useAuth();
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const handleDropdownToggle = (title: string, open: boolean) => {
@@ -79,7 +77,7 @@ function NavList({ collapsed }: { collapsed: boolean }) {
             if (!hasChildren) {
               return (
                 <Button key={item.href} variant="navigation" asChild className={getNavButtonClasses(active, collapsed)}>
-                  <Link href={item.href}>
+                  <Link to={item.href}>
                     <Icon className={getIconClasses(active)} />
                     {!collapsed && <span className="ml-3 flex-1 text-left font-medium">{item.title}</span>}
                   </Link>
@@ -111,7 +109,7 @@ function NavList({ collapsed }: { collapsed: boolean }) {
                     return (
                       <DropdownMenuItem key={child.href} asChild>
                         <Link
-                          href={child.href}
+                          to={child.href}
                           className={`cursor-pointer rounded-lg hover:bg-blue-50 focus:bg-blue-50 transition-colors duration-200 ${childActive ? 'bg-blue-50 text-blue-700 font-semibold' : ''}`}
                         >
                           <User className={getIconClasses(childActive)} />
@@ -127,9 +125,9 @@ function NavList({ collapsed }: { collapsed: boolean }) {
         </div>
       </div>
 
-      {/* Logout  */}
+     {/* Logout  */}
       <div className="border-t border-gray-100 p-4 bg-gradient-to-br from-white to-gray-50">
-        <Button onClick={logout} className="w-full rounded-xl shadow-md hover:shadow-lg transition-all">
+        <Button onClick={logout} variant="red" className="flex rounded-xl shadow-md transition-all items-center justify-center  w-full text-white  ">
           <LogOut className="h-4 w-4" />
           {!collapsed && <span className="ml-2 font-semibold">Logout</span>}
         </Button>
@@ -148,11 +146,11 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
 }
 
 function HeaderBar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed: (v: boolean) => void }) {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   const current = navigationItems.find((item) => pathname === item.href || pathname.startsWith(item.href + '/'))?.title ||
     navigationItems.find((item) => item.children?.some((child) => pathname === child.href || pathname.startsWith(child.href + '/')))?.title ||
     'Dashboard';
-  const { user } = useAuth();
+  const { user,logout } = useAuth();
   return (
     <header className="sticky top-0  z-10  ">
       <div className="mx-4 my-3 md:mx-6 md:my-4">
@@ -205,12 +203,15 @@ function HeaderBar({ collapsed, setCollapsed }: { collapsed: boolean; setCollaps
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44 bg-white/95 backdrop-blur-xl border border-gray-200 shadow-lg rounded-xl p-2">
                 <DropdownMenuItem className="cursor-pointer rounded-lg hover:bg-primary focus:bg-primary/20 transition-colors duration-200">
-                  <UserCircle className="mr-2 h-4 w-4 text-gray-600" />
-                  <span className="text-sm font-medium">Profile</span>
+                  <Link to='/teacher/profile'  className='flex items-center'>
+                    <UserCircle className="mr-2 h-4 w-4 text-gray-600" />
+                    <span className="text-sm font-medium">Profile</span>
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer rounded-lg hover:bg-primary focus:bg-primary/20 transition-colors duration-200">
-                  <Settings className="mr-2 h-4 w-4 text-gray-600" />
-                  <span className="text-sm font-medium">Settings</span>
+
+                <DropdownMenuItem onClick={logout} className="cursor-pointer rounded-lg hover:bg-primary focus:bg-primary/20 transition-colors duration-200">
+                  <LogOut className="mr-2 h-4 w-4 text-gray-600" />
+                  <span className="text-sm font-medium">Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -221,7 +222,7 @@ function HeaderBar({ collapsed, setCollapsed }: { collapsed: boolean; setCollaps
   );
 }
 
-export default function TeacherLayout({ children }: { children: React.ReactNode }) {
+export default function TeacherLayout() {
   const [collapsed, setCollapsed] = useState(false);
   return (
     <div className="min-h-screen bg-primary/10 flex">
@@ -231,7 +232,9 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
 
       <div className="flex-1 flex flex-col min-w-0">
         <HeaderBar collapsed={collapsed} setCollapsed={setCollapsed} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CategoryType } from '@/types/category';
+import type { CategoryType } from '@/types/category';
 import { toast } from 'sonner';
 import { createCategory, updateCategory } from '@/services/categoryService';
 import { Spinner } from '@/components/ui/spinner';

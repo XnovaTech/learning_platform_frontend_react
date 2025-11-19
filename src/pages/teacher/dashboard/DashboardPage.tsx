@@ -1,4 +1,3 @@
-'use client';
 
 import { BookOpen, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,7 @@ import { overviews } from '@/mocks/dashboard';
 
 export default function DashboardPage() {
   return (
-    <div className="mx-auto max-w-8xl">
+    <div className="mx-auto max-w-8xl p-6">
       <div className="space-y-6">
         <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {overviews.map((item) => {

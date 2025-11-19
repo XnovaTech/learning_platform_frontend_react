@@ -1,4 +1,4 @@
-import { payloadUser, UserPayloadType, UserType } from '@/types/user';
+import type { payloadUser, UserPayloadType, UserType } from '@/types/user';
 import api from './api';
 
 export const listTeachers = async (): Promise<any[]> => {

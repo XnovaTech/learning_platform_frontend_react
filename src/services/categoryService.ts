@@ -1,4 +1,4 @@
-import { CategoryType, CategoryPayloadType } from '@/types/category';
+import type { CategoryType, CategoryPayloadType } from '@/types/category';
 import api from './api';
 
 export const listCategories = async (): Promise<CategoryType[]> => {

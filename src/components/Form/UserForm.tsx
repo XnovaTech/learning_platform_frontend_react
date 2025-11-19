@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { payloadUser, TeacherType } from '@/types/user';
+import type { payloadUser, TeacherType } from '@/types/user';
 import { registerUser } from '@/services/authService';
 import { updateUser } from '@/services/userService';
 

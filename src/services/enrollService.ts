@@ -1,4 +1,4 @@
-import { EnrollType, EnrollPayloadType } from '@/types/enroll';
+import type { EnrollType, EnrollPayloadType } from '@/types/enroll';
 import api from './api';
 
 export const listsEnrolls = async (form?: Partial<EnrollPayloadType>): Promise<any> => {

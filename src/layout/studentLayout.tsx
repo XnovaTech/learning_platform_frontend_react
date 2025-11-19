@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import type { ReactNode } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { BookOpen, School, LogOut, GraduationCap, Menu, Tag, Home, MessageCircle, UserRound, Search, BookOpenCheck, BookText } from 'lucide-react';
@@ -236,13 +235,8 @@ function HeaderBar() {
   )
 }
 
-type StudentLayoutProps = {
-  children?: ReactNode;
-};
-
-export default function StudentLayout({ children }: StudentLayoutProps) {
+export default function StudentLayout() {
   const [sidebarHovered, setSidebarHovered] = useState(false);
-  const content = children ?? <Outlet />;
 
   return (
     <StudentDataProvider>
@@ -257,7 +251,7 @@ export default function StudentLayout({ children }: StudentLayoutProps) {
               onMouseLeave={() => setSidebarHovered(false)}
               className={`hidden md:flex flex-col items-center justify-center fixed top-1/2 left-3 -translate-y-1/2 
               bg-white/50 backdrop-blur-lg drop-shadow-2xl ml-3 rounded-3xl 
-              transition-all duration-500 ease-in-out z-[9999]
+              transition-all duration-500 ease-in-out z-50
               ${sidebarHovered ? ' w-36' : ' w-20'}`}
             >
               <SidebarContent hovered={sidebarHovered} />
@@ -265,7 +259,7 @@ export default function StudentLayout({ children }: StudentLayoutProps) {
 
             <main
               className={`flex-1 overflow-y-auto p-6 md:p-8 transition-all duration-300 ml-0 ${sidebarHovered ? 'md:ml-[180px]' : 'md:ml-[100px]'} ml-0`}>
-              {content}
+                <Outlet/>
             </main>
           </div>
 

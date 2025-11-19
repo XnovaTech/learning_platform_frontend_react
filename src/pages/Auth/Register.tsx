@@ -1,11 +1,11 @@
-'use client';
+'';
 
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import welcome from './../../../public/lottie/Welcome.json';
+import welcome from '../../../public/lottie/Welcome.json';
 import Lottie from 'lottie-react';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';

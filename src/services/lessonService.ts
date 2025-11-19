@@ -1,4 +1,4 @@
-import { LessonType, LessonPayloadType } from '@/types/lesson';
+import type { LessonType, LessonPayloadType } from '@/types/lesson';
 import api from './api';
 
 export const listLessons = async (): Promise<LessonType[]> => {

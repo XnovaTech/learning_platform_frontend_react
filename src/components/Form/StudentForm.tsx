@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { payloadUser, TeacherType } from '@/types/user';
+import type { payloadUser, TeacherType } from '@/types/user';
 import { updateStudent } from '@/services/userService';
 import { Eye, EyeOff, Upload, X } from 'lucide-react';
 import Image from 'next/image';

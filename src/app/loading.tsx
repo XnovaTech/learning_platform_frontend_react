@@ -1,4 +1,4 @@
-"use client";
+;
 import Lottie from 'lottie-react';
 import LoadingHub from '../public/lottie/Loading1.json';
 

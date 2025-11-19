@@ -1,6 +1,6 @@
-'use client';
+'';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit, Trash2, SearchIcon, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,7 @@ import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from '@/components/ui/pagination';
 import { deleteUser, listUsers } from '@/services/userService';
 import { UserForm } from '@/components/Form/UserForm';
-import { payloadUser, TeacherType } from '@/types/user';
+import type { payloadUser, TeacherType } from '@/types/user';
 
 export default function TeachersPage() {
   const queryClient = useQueryClient();
@@ -74,7 +74,7 @@ export default function TeachersPage() {
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteUser(id),
     onSuccess: async () => {
-      toast.success('teacher deleted successfully');
+      toast.success('Teacher deleted successfully');
       await queryClient.invalidateQueries({ queryKey: ['users'] });
       setConfirmOpen(false);
       setDeletingId(null);
@@ -107,7 +107,7 @@ export default function TeachersPage() {
           <p className="text-muted-foreground text-sm">Manage and organize your teacher list.</p>
         </div>
         <Button type="button" className="gap-2" onClick={openCreate}>
-          <Plus className="size-4" /> Create teacher
+          <Plus className="size-4" /> Create Teacher
         </Button>
       </div>
 
@@ -174,12 +174,12 @@ export default function TeachersPage() {
                       <td className="px-4 py-3 hidden md:flex text-muted-foreground max-w-[30ch] truncate ">{user.address || '-'}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
-                          <Button size="sm" variant="primary" className="gap-2 py-4" onClick={() => openEdit(user)}>
+                          <Button size="sm" variant="primary" className="gap-2 py-4 " onClick={() => openEdit(user)}>
                             <Edit className=" size-4 transition-all duration-300 ease-in-out " />
-                            <span className="hidden  text-xs lg:flex">Edit</span>
+                            <span className="hidden text-xs lg:flex">Edit</span>
                           </Button>
 
-                          <Button size="sm" variant="destructive" className="gap-2 py-4" onClick={() => askDelete(user?.id)}>
+                          <Button size="sm"  variant="destructive" className="gap-2 py-4 " onClick={() => askDelete(user?.id)}>
                             <Trash2 className=" size-4 transition-all duration-300 ease-in-out " />
                             <span className="hidden text-xs lg:flex">Delete</span>
                           </Button>

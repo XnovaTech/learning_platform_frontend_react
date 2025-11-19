@@ -57,7 +57,11 @@
       ],
       "@public/*": [
         "./public/*"
+      ],
+      "@mocks/*": [
+        "./src/mocks/*"
       ]
+      
     }
   },
   "include": [

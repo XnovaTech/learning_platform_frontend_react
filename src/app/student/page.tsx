@@ -1,4 +1,4 @@
-'use client';
+'';
 
 import HomePage from "./home/page";
 

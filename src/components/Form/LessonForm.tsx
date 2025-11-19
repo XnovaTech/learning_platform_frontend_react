@@ -9,7 +9,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { createLesson, updateLesson } from '@/services/lessonService';
-import { LessonPayloadType, LessonType } from '@/types/lesson';
+import type { LessonPayloadType, LessonType } from '@/types/lesson';
 
 interface LessonFormProps {
   open: boolean;

@@ -1,4 +1,4 @@
-import { DiscussionPayloadType, DiscussionType } from "@/types/discussion";
+import type { DiscussionPayloadType, DiscussionType } from "@/types/discussion";
 import api from "./api";
 
 export const getDiscussionsByClass = async (classId: number): Promise<DiscussionType[]> => {

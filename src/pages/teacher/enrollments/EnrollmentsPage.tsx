@@ -1,6 +1,6 @@
-'use client';
+'';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, Trash2, SearchIcon, ClipboardList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, Pagi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { deleteEnroll, listsEnrolls, updateEnroll } from '@/services/enrollService';
 
-export default function StudentsPage() {
+export default function EnrollmentsPage() {
   const queryClient = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [approveConfirmOpen, setApproveConfirmOpen] = useState(false);
@@ -265,8 +265,6 @@ export default function StudentsPage() {
           }}
           onConfirm={confirmApprove}
         />
-
-        {/* user-form */}
 
         {data && data.last_page > 1 && (
           <Pagination>

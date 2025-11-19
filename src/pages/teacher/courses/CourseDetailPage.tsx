@@ -1,31 +1,28 @@
-'use client';
+'';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
-import Link from 'next/link';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { toast } from 'sonner';
 import { getCourse } from '@/services/courseService';
 import { deleteClassRoom } from '@/services/classService';
-import { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
-import { CourseType } from '@/types/course';
+import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
+import type { CourseType } from '@/types/course';
 import { Edit, Plus, Trash2, Youtube, Calendar, Clock, User } from 'lucide-react';
 import { ClassroomForm } from '@/components/Form/ClassroomForm';
 import { LessonForm } from '@/components/Form/LessonForm';
 import { deleteLesson } from '@/services/lessonService';
-import { LessonPayloadType, LessonType } from '@/types/lesson';
+import type { LessonPayloadType, LessonType } from '@/types/lesson';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Users } from 'lucide-react';
 import moment from 'moment';
-import Image from 'next/image';
-import { useParams } from 'next/navigation';
 
 export default function CourseDetailPage() {
-
   const params = useParams();
   const courseId = Number(params.id);
   const queryClient = useQueryClient();
@@ -173,7 +170,7 @@ export default function CourseDetailPage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" href="/teacher/dashboard">
+              <Link className="text-base md:text-md" to="/teacher/dashboard">
                 Dashboard
               </Link>
             </BreadcrumbLink>
@@ -181,7 +178,7 @@ export default function CourseDetailPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" href="/teacher/courses">
+              <Link className="text-base md:text-md" to="/teacher/courses">
                 Courses
               </Link>
             </BreadcrumbLink>
@@ -206,9 +203,11 @@ export default function CourseDetailPage() {
             <div className="flex flex-col lg:flex-row items-start gap-4">
               <div className="w-full h-56 px-2 lg:w-120 lg:h-56">
                 {course?.image ? (
-                  <Image
-                    fill
-                    src={course?.image as any} alt={course?.title || 'Course image'} className="w-full h-full object-cover  mx-auto  rounded-xl px-1 py-1 " />
+                  <img
+                    src={course?.image as any} 
+                    alt={course?.title || 'Course image'} 
+                    className="w-full h-full object-cover  mx-auto  rounded-xl px-1 py-1 " 
+                  />
                 ) : (
                   <div className="w-full h-full lg:w-66 lg:h-52 flex items-center justify-center shadow-md mx-auto border rounded-xl border-primary bg-primary/10 text-primary">
                     <span className="text-5xl font-bold">{(course?.title?.[0] ?? 'C').toUpperCase()}</span>
@@ -222,7 +221,7 @@ export default function CourseDetailPage() {
                     <h2 className="text-xl md:text-2xl font-bold tracking-tight">{course?.title}</h2>
                     <div className="flex items-center gap-2">
                       <Button asChild variant="primary" size="sm" className=" gap-2">
-                        <Link href={`/teacher/courses/edit?id=${courseId}`} prefetch>
+                        <Link to={`/teacher/courses/edit?id=${courseId}`}>
                           <Edit className="size-4" />
                           <span className="hidden sm:inline">Edit</span>
                         </Link>
@@ -377,7 +376,7 @@ export default function CourseDetailPage() {
 
                             <div className="flex flex-col lg:flex-row items-center border-t pt-3 w-full gap-2">
                               <Button asChild className="gap-2 w-full lg:w-[50%] bg-primary/75 hover:scale-100 ">
-                                <Link href={`/teacher/courses/classes/${c?.id}`} prefetch>
+                                <Link to={`/teacher/courses/classes/${c?.id}`}>
                                   View
                                 </Link>
                               </Button>

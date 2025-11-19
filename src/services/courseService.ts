@@ -1,4 +1,4 @@
-import { CourseListResponse, CoursePayloadType, CourseType } from '@/types/course';
+import type { CourseListResponse, CoursePayloadType, CourseType } from '@/types/course';
 import api from './api';
 
 export const listCourses = async (form?: Partial<CoursePayloadType>): Promise<CourseListResponse> => {

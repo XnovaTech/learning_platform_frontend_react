@@ -1,25 +1,22 @@
-'use client';
+'';
 
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
-import Link from 'next/link';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageCircle, Users, Calendar, Clock, User, BookOpen } from 'lucide-react';
 import moment from 'moment';
-import { ClassRoomType } from '@/types/class';
+import type { ClassRoomType } from '@/types/class';
 import { getClass } from '@/services/classService';
 import { DiscussionComponent } from '@/components/Student/Enroll/DiscussionComponent';
 import { useAuth } from '@/context/AuthContext';
 import { ClassMateComponent } from '@/components/Student/Enroll/ClassMateComponent';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
-import { useParams } from 'next/navigation';
 
-export default function CourseDetailPage() {
-  //const { id } = use(params);
+export default function ClassDetailPage() {
   const { id } = useParams();
   const classId = Number(id);
   const { user } = useAuth();
@@ -38,7 +35,6 @@ export default function CourseDetailPage() {
     return `${parseInt(hours, 10)}:${minutes.padStart(2, '0')}`;
   };
 
-
   return (
     <div className="max-w-9xl p-4 mx-auto space-y-6">
       {/* Breadcrumbs */}
@@ -46,7 +42,7 @@ export default function CourseDetailPage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" href="/teacher/dashboard">
+              <Link className="text-base md:text-md" to="/teacher/dashboard">
                 Dashboard
               </Link>
             </BreadcrumbLink>
@@ -54,7 +50,7 @@ export default function CourseDetailPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" href="/teacher/courses">
+              <Link className="text-base md:text-md" to="/teacher/courses">
                 Courses
               </Link>
             </BreadcrumbLink>
@@ -63,7 +59,7 @@ export default function CourseDetailPage() {
 
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" href={`/teacher/courses/${classroom?.course?.id}`}>
+              <Link className="text-base md:text-md" to={`/teacher/courses/${classroom?.course?.id}`}>
                 {classroom?.course?.title || 'Course'}
               </Link>
             </BreadcrumbLink>

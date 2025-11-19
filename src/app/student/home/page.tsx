@@ -1,4 +1,4 @@
-'use client';
+'';
 
 import { useStudentData } from "@/context/StudentDataContext";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";

@@ -1,51 +1,68 @@
-'use client';
+'';
 
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { useRouter } from 'next/navigation';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { createCourse } from '@/services/courseService';
+import { getCourse, updateCourse } from '@/services/courseService';
 import { Spinner } from '@/components/ui/spinner';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { listCategories } from '@/services/categoryService';
-import { Upload, X, ImageIcon } from 'lucide-react';
-import Link from 'next/link';
+import { Upload, X } from 'lucide-react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import Image from 'next/image';
 
-export default function CreateCoursePage() {
-  const router = useRouter();
+type CourseFormState = {
+  title: string;
+  description?: string;
+  status: number | string;
+  image?: File | string | null;
+  price?: number | string;
+};
+
+export default function EditCoursePage() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const courseId = Number(searchParams.get('id'));
   const queryClient = useQueryClient();
-  const { data: categories = [] } = useQuery({
-    queryKey: ['categories'],
-    queryFn: listCategories,
-    refetchOnWindowFocus: false,
+
+  const { data: course } = useQuery({
+    queryKey: ['course', courseId],
+    queryFn: () => getCourse(courseId),
+    enabled: !Number.isNaN(courseId),
   });
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<CourseFormState>({
     title: '',
     description: '',
     image: null,
-    category_id: '',
     status: '1',
     price: '',
   });
 
-  const createMutation = useMutation({
-    mutationFn: createCourse,
+  useEffect(() => {
+    if (!course) return;
+    setForm({
+      title: course.title ?? '',
+      description: course.description ?? '',
+      image: course?.image ?? null,
+      status: course?.status ?? '1',
+      price: course?.price ?? '',
+    });
+  }, [course]);
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: FormData }) => updateCourse(id, payload),
     onSuccess: async () => {
-      toast.success('Course created successfully');
+      toast.success('Course updated successfully');
       await queryClient.invalidateQueries({ queryKey: ['courses'] });
-      router.push('/teacher/courses');
+      navigate('/teacher/courses');
     },
-    onError: (e) => {
-      toast.error(e?.message || 'Failed to create course!');
+    onError: (e: any) => {
+      toast.error(e?.message || 'Failed to update course!');
     },
   });
 
@@ -56,7 +73,7 @@ export default function CreateCoursePage() {
     }
   };
 
-  const handleChange = (field: string | number, value: string | number) => {
+  const handleChange = (field: string, value: string | number) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -64,53 +81,47 @@ export default function CreateCoursePage() {
     setForm((prev) => ({ ...prev, image: null }));
   };
 
-  const resetForm = () =>
-    setForm({
-      title: '',
-      description: '',
-      image: null,
-      category_id: '',
-      status: '1',
-      price: '',
-    });
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const payload = new FormData();
-    Object.entries(form).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        payload.append(key, value as any);
-      }
-    });
 
-    await createMutation.mutateAsync(payload);
-    resetForm();
+    Object.entries(form).forEach(([key, value]) => {
+      if (value === null || value === undefined) return;
+      if (key === 'image') {
+        if (value instanceof File) {
+          payload.append('image', value);
+        }
+        return;
+      }
+      payload.append(key, value as any);
+    });
+    await updateMutation.mutateAsync({ id: courseId, payload });
   };
 
   return (
     <div className="max-w-8xl p-4  mx-auto space-y-6">
-      {/* Link */}
+      {/* Breadcrumbs */}
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" href="/teacher/dashboard">
-                Dashboard
+              <Link className="text-base md:text-md" to="/teacher/dashboard">
+                Teacher
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" href="/teacher/courses">
+              <Link className="text-base md:text-md" to="/teacher/courses">
                 Courses
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">Create</BreadcrumbPage>
+            <BreadcrumbPage className="text-base md:text-md">Edit</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -121,30 +132,12 @@ export default function CreateCoursePage() {
             <div className="h-8 w-1 bg-primary rounded-full" />
             Basic Information
           </h3>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-2">
               <Label htmlFor="title" className="text-sm font-medium">
                 Course Title <span className="text-destructive">*</span>
               </Label>
               <Input id="title" placeholder="e.g. IELTS" value={form.title} onChange={(e) => handleChange('title', e.target.value)} required className="h-11" />
-            </div>
-
-            <div className="space-y-2 ">
-              <Label htmlFor="category_id" className="text-sm font-medium">
-                Category <span className="text-destructive">*</span>
-              </Label>
-              <Select value={form.category_id} onValueChange={(value) => handleChange('category_id', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories?.map((category) => (
-                    <SelectItem key={category.id} value={String(category.id)}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
             <div className="space-y-2">
@@ -192,9 +185,11 @@ export default function CreateCoursePage() {
                   {form.image ? (
                     <div className="relative group">
                       <div className="w-full overflow-hidden rounded-lg border-2 border-primary/20 bg-muted/20">
-                        <Image
-                          fill
-                          src={URL.createObjectURL(form.image as any)} alt="Course cover preview" className="w-full h-56 object-cover" />
+                        <img
+                          src={form.image instanceof File ? URL.createObjectURL(form.image) : form.image} 
+                          alt="Course cover preview" 
+                          className="w-full h-56 object-cover" 
+                        />
                       </div>
                       <Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg" onClick={removeImage}>
                         <X className="h-4 w-4" />
@@ -203,13 +198,12 @@ export default function CreateCoursePage() {
                   ) : (
                     <label
                       htmlFor="image"
-                      className="w-full h-56 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer bg-muted/10 hover:bg-muted/20 group"
+                      className="w-full h-56 flex items-center justify-center rounded-lg border-2 border-primary/30 bg-primary/10 text-primary cursor-pointer hover:border-primary/60 transition-colors"
                     >
-                      <ImageIcon className="h-12 w-12 text-muted-foreground/50 group-hover:text-primary/70 transition-colors mb-3" />
-                      <p className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">Click to upload image</p>
-                      <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 5MB</p>
+                      <span className="text-6xl font-bold">{(form.title?.[0] ?? 'C').toUpperCase()}</span>
                     </label>
                   )}
+
                   <Input id="image" type="file" accept="image/*" onChange={handleImgChange} className="hidden" />
 
                   {!form.image && (
@@ -224,11 +218,11 @@ export default function CreateCoursePage() {
           </div>
 
           <div className="flex items-center gap-3 justify-end mt-8 pt-6 border-t">
-            <Button variant="outline" type="button" onClick={() => router.push('/teacher/courses')} disabled={createMutation.isPending} className="min-w-24">
+            <Button variant="outline" type="button" onClick={() => navigate('/teacher/courses')} disabled={updateMutation.isPending} className="min-w-24">
               Cancel
             </Button>
-            <Button type="submit" disabled={createMutation.isPending} className="min-w-32 rounded-md">
-              {createMutation.isPending ? <Spinner className="mr-2" /> : 'Create Course'}
+            <Button type="submit" disabled={updateMutation.isPending} className="min-w-32 rounded-md">
+              {updateMutation.isPending ? <Spinner className="mr-2" /> : 'Update Course'}
             </Button>
           </div>
         </form>

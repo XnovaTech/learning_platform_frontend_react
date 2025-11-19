@@ -1,5 +1,5 @@
 import api from './api';
-import { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
+import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 
 export const listClasses = async (): Promise<ClassRoomType[]> => {
   try {

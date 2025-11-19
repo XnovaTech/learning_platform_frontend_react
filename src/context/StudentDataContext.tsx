@@ -1,4 +1,4 @@
-"use client";
+;
 import { createContext, useContext } from "react";
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";

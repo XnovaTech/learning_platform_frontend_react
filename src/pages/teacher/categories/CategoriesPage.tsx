@@ -1,9 +1,7 @@
-'use client';
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { listCategories, deleteCategory } from '@/services/categoryService';
-import { CategoryType } from '@/types/category';
+import type { CategoryType } from '@/types/category';
 import {  Edit, Plus, Tag, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';

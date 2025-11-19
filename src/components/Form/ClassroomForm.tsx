@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { createClassRoom, updateClassRoom } from '@/services/classService';
 import { listTeachers } from '@/services/userService';
 import { getCourse } from '@/services/courseService';
-import { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
+import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import { X } from 'lucide-react';
 
 interface ClassroomFormProps {

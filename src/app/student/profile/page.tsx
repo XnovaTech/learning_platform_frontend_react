@@ -1,4 +1,4 @@
-"use client";
+;
 
 import { Loader2, Mail, Phone, MapPin, Edit, User2 } from "lucide-react";
 import { useStudentData } from '@/context/StudentDataContext';

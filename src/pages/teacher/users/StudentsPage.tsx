@@ -1,6 +1,6 @@
-'use client';
+'';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit, Trash2, SearchIcon, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,7 @@ import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from '@/components/ui/pagination';
 import { deleteUser, listUsers } from '@/services/userService';
 import { UserForm } from '@/components/Form/UserForm';
-import { payloadUser, TeacherType } from '@/types/user';
+import type { payloadUser, TeacherType } from '@/types/user';
 
 export default function StudentsPage() {
   const queryClient = useQueryClient();

@@ -1,4 +1,4 @@
-'use client';
+'';
 
 export default function EnrollLayout({ children }: { children: React.ReactNode }) {
 
