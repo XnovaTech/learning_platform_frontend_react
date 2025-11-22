@@ -14,9 +14,9 @@ const Home = lazy(() => import('@/pages/Home'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 //auth
-const Login = lazy(() => import('@/pages/auth/Login'));
-const Register = lazy(() => import('@/pages/auth/Register'));
-const RegEnroll = lazy(() => import('@/pages/auth/Enroll'));
+const Login = lazy(() => import('@/pages/Auth/Login'));
+const Register = lazy(() => import('@/pages/Auth/Register'));
+const RegEnroll = lazy(() => import('@/pages/Auth/Enroll'));
 
 //student
 const StudentHomePage = lazy(() => import('@/pages/student/home/HomePage'));
@@ -43,9 +43,9 @@ const StudentsPage = lazy(() => import('@/pages/teacher/users/StudentsPage'));
 const TeachersPage = lazy(() => import('@/pages/teacher/users/TeachersPage'));
 
 // layouts
-const StudentLayout = lazy(() => import('@/layout/StudentLayout'));
-const AuthLayout = lazy(() => import('@/layout/AuthLayout'));
-const TeacherLayout = lazy(() => import('@/layout/TeacherLayout'));
+const StudentLayout = lazy(() => import('@/layout/studentLayout'));
+const AuthLayout = lazy(() => import('@/layout/authLayout'));
+const TeacherLayout = lazy(() => import('@/layout/teacherLayout'));
 
 const RootLayout = () => (
     <Suspense>
