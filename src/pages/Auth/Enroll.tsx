@@ -59,7 +59,7 @@ const EnrollPage = () => {
         );
     }
 
-    const selectCourseData = getSelectedCourse();
+    const selectCourseData = getSelectedCourse() || {class_rooms: []};
 
 
     const handleSelect = (courseId: number) => {

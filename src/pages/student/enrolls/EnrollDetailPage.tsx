@@ -63,7 +63,7 @@ export default function EnrollDetailPage() {
                                         {enroll?.class_room?.course?.category?.name && <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">{enroll?.class_room?.course?.category.name}</span>}
                                     </div>
 
-                                    <p className="text-muted-foreground  text-sm">{enroll?.class_room?.course?.description || 'No description available'}</p>
+                                    <p className="text-muted-foreground  text-sm" dangerouslySetInnerHTML={{ __html: enroll?.class_room?.course?.description || 'No description available' }}></p>
                                 </div>
 
                                 <div className="flex flex-wrap items-center justify-end gap-3 ">

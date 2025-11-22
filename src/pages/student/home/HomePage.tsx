@@ -13,8 +13,8 @@ export default function HomePage() {
 
 
     const enrollments = studentData?.enrollments || [];
-    const activeEnroll = enrollments.filter(e => e.status === 1);
-    const pendingEnroll = enrollments.filter(e => e.status === 0);
+    const activeEnroll = enrollments.filter(e => Number(e.status) === 1);
+    const pendingEnroll = enrollments.filter(e => Number(e.status) === 0);
 
 
     if (isLoading)

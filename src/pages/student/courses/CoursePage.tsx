@@ -134,7 +134,7 @@ export default function CoursePage() {
                                             {/* Course Info */}
                                             <div className="p-5">
                                                 <h4 className="font-semibold text-lg mb-2 text-gray-800 group-hover:text-primary transition-colors">{course.title}</h4>
-                                                <p className="text-sm text-gray-500 line-clamp-3">{course.description?.split(' ').slice(0, 25).join(' ') + '...'}</p>
+                                                <p className="text-sm text-gray-500 line-clamp-3" dangerouslySetInnerHTML={{ __html: course?.description?.split(' ').slice(0, 25).join(' ') + '...' || '' }}></p>
                                             </div>
 
                                             {/* Footer */}

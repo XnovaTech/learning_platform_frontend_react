@@ -14,9 +14,9 @@ const Home = lazy(() => import('@/pages/Home'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 //auth
-const Login = lazy(() => import('@/pages/Auth/Login'));
-const Register = lazy(() => import('@/pages/Auth/Register'));
-const RegEnroll = lazy(() => import('@/pages/Auth/Enroll'));
+const Login = lazy(() => import('@/pages/auth/Login'));
+const Register = lazy(() => import('@/pages/auth/Register'));
+const RegEnroll = lazy(() => import('@/pages/auth/Enroll'));
 
 //student
 const StudentHomePage = lazy(() => import('@/pages/student/home/HomePage'));
