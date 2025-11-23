@@ -1,4 +1,4 @@
-import type { LessonType, LessonPayloadType } from '@/types/lesson';
+import type { LessonType, LessonPayloadType, LessonLockType } from '@/types/lesson';
 import api from './api';
 
 export const listLessons = async (): Promise<LessonType[]> => {
@@ -28,9 +28,9 @@ export const updateLesson = async (id: number, payload: LessonPayloadType): Prom
   }
 };
 
-export const unlockLesson = async (lessonId: number, classroomId: number): Promise<LessonType> => {
+export const updateLockState = async ({ lessonId, classroomId, is_locked }: LessonLockType): Promise<LessonType> => {
   try {
-    const { data } = await api.post(`/v1/lessons/${lessonId}/unlock/${classroomId}`);
+    const { data } = await api.post(`/v1/lessons/${lessonId}/lock-state/${classroomId}`, { locked: is_locked });
     return data?.data;
   } catch (error: any) {
     throw new Error(error.message);

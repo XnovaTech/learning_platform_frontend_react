@@ -3,7 +3,7 @@
 import { Loader2, Mail, Phone, MapPin, Edit, User2 } from "lucide-react";
 import { useStudentData } from '@/context/StudentDataContext';
 import { useState } from "react";
-import { StudentForm } from "@/components/Form/StudentForm";
+import { ProfileForm } from "@/components/Form/ProfileForm";
 import type { payloadUser, StudentType } from "@/types/user";
 import { Button } from "@/components/ui/button";
 
@@ -121,7 +121,7 @@ export default function ProfilePage() {
                     )}
                 </div>
 
-                <StudentForm open={formOpen} onOpenChange={setFormOpen} editingItem={editingItem} form={form} setForm={setForm} onSuccess={handleFormSuccess} refetch={refetch} />
+                <ProfileForm open={formOpen} onOpenChange={setFormOpen} editingItem={editingItem} form={form} setForm={setForm} onSuccess={handleFormSuccess} refetch={refetch} />
 
 
 

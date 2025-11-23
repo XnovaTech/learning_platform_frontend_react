@@ -38,7 +38,7 @@ export const updateUser = async (id: number, payload: payloadUser): Promise<any>
   }
 };
 
-export const updateStudent = async (id: number, payload: UserPayloadType): Promise<UserType> => {
+export const updateProfile = async (id: number, payload: UserPayloadType): Promise<UserType> => {
   try {
     if (typeof FormData !== 'undefined' && payload instanceof FormData) {
       payload.append('_method', 'PUT');

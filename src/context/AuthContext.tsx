@@ -1,10 +1,8 @@
-
 import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser, registerUser, getUserProfile } from '@/services/authService';
 import { toast } from 'sonner';
 import type { payloadUser, UserType } from '@/types/user';
-
 
 interface AuthContextType {
   user: UserType | null;
@@ -12,6 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (payload: payloadUser) => Promise<void>;
   logout: () => void;
+  fetchProfile: (t: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -82,10 +81,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     navigate('/login');
   };
 
-  const value = useMemo(
-    () => ({ user, token, login, register, logout }),
-    [user, token]
-  )
+  const value = useMemo(() => ({ user, token, login, register, logout,fetchProfile }), [user, token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

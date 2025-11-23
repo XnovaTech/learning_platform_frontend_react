@@ -1,5 +1,4 @@
 import { useState } from 'react';
-// import type { ReactNode } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, Users, GraduationCap, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -202,7 +201,7 @@ function HeaderBar({ collapsed, setCollapsed }: { collapsed: boolean; setCollaps
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44 bg-white/95 backdrop-blur-xl border border-gray-200 shadow-lg rounded-xl p-2">
-                <DropdownMenuItem className="cursor-pointer rounded-lg hover:bg-primary focus:bg-primary/20 transition-colors duration-200">
+                <DropdownMenuItem asChild className="cursor-pointer rounded-lg hover:bg-primary focus:bg-primary/20 transition-colors duration-200">
                   <Link to='/teacher/profile' className='flex items-center'>
                     <UserCircle className="mr-2 h-4 w-4 text-gray-600" />
                     <span className="text-sm font-medium">Profile</span>
