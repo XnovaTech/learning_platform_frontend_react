@@ -17,3 +17,10 @@ export interface LessonPayloadType {
   title: string | null;
   youtube_link: string | null;
 }
+
+
+export interface LessonLockType {
+  lessonId: number;
+  classroomId: number;
+  is_locked: boolean;
+}

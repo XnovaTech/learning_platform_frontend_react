@@ -2,8 +2,12 @@ import type { payloadUser } from '@/types/user';
 import api from './api';
 
 export const loginUser = async (email: string, password: string) => {
-  const response = await api.post('/auth/login', { email, password });
-  return response.data;
+  try {
+    const response = await api.post('/auth/login', { email, password });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const registerUser = async (payload: payloadUser) => {

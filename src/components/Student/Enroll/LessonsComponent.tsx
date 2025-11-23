@@ -1,32 +1,71 @@
 import { Button } from '@/components/ui/button';
-import { unlockLesson } from '@/services/lessonService';
-import type { LessonType } from '@/types/lesson';
+import { updateLockState } from '@/services/lessonService';
+import type { LessonLockType, LessonType } from '@/types/lesson';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowRight, BookOpen, Lock } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
+import { ArrowRight, BookOpen, Lock, Unlock } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface LessonComponentProps {
-  lessons: LessonType[] | undefined;
-  enrollId?: number | undefined;
-  isTeacher?: number | undefined;
-  classroomId?: number | undefined;
+  lessons?: LessonType[];
+  enrollId?: number;
+  isTeacher?: number;
+  classroomId?: number;
 }
 
 export function LessonsComponent({ lessons, enrollId, isTeacher = 0, classroomId }: LessonComponentProps) {
   const queryClient = useQueryClient();
 
-  const unlockMutation = useMutation({
-    mutationFn: ({ lessonId, classroomId }: { lessonId: number; classroomId: number }) => unlockLesson(lessonId, classroomId),
-    onSuccess: () => {
-      toast.success('Lesson unlocked successfully!');
-      queryClient.invalidateQueries({ queryKey: ['classes', classroomId] });
+  const updateLockMutation = useMutation({
+    mutationFn: (payload: LessonLockType) => updateLockState(payload),
+    onSuccess: async (_, variables) => {
+      toast.success('Lesson lock state updated!');
+      await queryClient.invalidateQueries({
+        queryKey: ['classes', variables.classroomId],
+      });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Failed to unlock lesson');
+      toast.error(error.message || 'Failed to update lock state');
     },
   });
+
+  const handleLockToggle = (lessonId: number, isLocked: boolean) => {
+    if (!classroomId) return;
+    updateLockMutation.mutate({
+      lessonId,
+      classroomId,
+      is_locked: !isLocked,
+    });
+  };
+
+  const teacherPov = (lesson: LessonType) => {
+    const isLocked = lesson.is_locked === 1;
+    const label = isLocked ? 'Unlock' : 'Lock';
+    const Icon = isLocked ? Unlock : Lock;
+
+    return (
+      <Button size="sm" onClick={() => handleLockToggle(lesson.id, isLocked)} className="cursor-pointer hover:bg-ocean/10 text-orange-800 bg-ocean/5 font-semibold gap-2 text-sm rounded-2xl">
+        {label} <Icon size={16} />
+      </Button>
+    );
+  };
+
+  const studentPov = (lesson: LessonType) => {
+    if (lesson.is_locked === 1) {
+      return (
+        <Button size="sm" disabled className="text-gray-500 bg-gray-100 font-semibold gap-2 text-sm rounded-2xl cursor-not-allowed">
+          Locked <Lock size={16} />
+        </Button>
+      );
+    }
+
+    return (
+      <a href={`/student/enrolls/${enrollId}/lessons/${lesson.id}`}>
+        <Button variant="default" className="gap-2">
+          Enter <ArrowRight size={16} />
+        </Button>
+      </a>
+    );
+  };
 
   if (!lessons || lessons.length === 0) {
     return (
@@ -40,52 +79,26 @@ export function LessonsComponent({ lessons, enrollId, isTeacher = 0, classroomId
   }
 
   return (
-    <div className=" bg-white/50 backdrop-blur-lg p-6  rounded-2xl shadow-xl space-y-4">
+    <div className="bg-white/50 backdrop-blur-lg p-6 rounded-2xl shadow-xl space-y-4">
       <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <BookOpen className="text-primary" size={22} />
         Lessons
       </h2>
-      <ul className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-5">
+
+      <ul className="grid grid-cols-1 gap-5">
         {lessons.map((lesson, index) => (
           <li key={lesson.id} className="group relative bg-ocean/10 border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-5 hover:-translate-y-1">
             <div className="flex flex-col h-full">
-              <h3
-                className="text-lg font-semibold text-gray-800 mb-2
-                             group-hover:text-primary transition-colors"
-              >
-                Lesson - {index + 1}
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2 group-hover:text-primary transition-colors">Lesson - {index + 1}</h3>
 
-              <div className=" flex gap-4">
+              <div className="flex gap-4">
                 <p className="text-gray-600 flex-1 group-hover:text-primary transition-colors">{lesson.title}</p>
 
-                <div className="flex justify-end">
-                  {isTeacher === 1 ? (
-                    lesson.is_locked === 1 && (
-                      <Button
-                        size="sm"
-                        onClick={() => classroomId && unlockMutation.mutate({ lessonId: lesson.id, classroomId })}
-                        className="cursor-pointer hover:bg-ocean/10 text-orange-800 bg-ocean/5 font-semibold gap-2 text-sm rounded-2xl"
-                      >
-                        Unlock <Lock size={16} />
-                      </Button>
-                    )
-                  ) : lesson.is_locked === 0 ? (
-                    <Link to={`/student/enrolls/${enrollId}/lessons/${lesson.id}`}>
-                      <Button variant="default" className="gap-2">
-                        Enter <ArrowRight size={16} />
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button size="sm" disabled className="text-gray-500 bg-gray-100 font-semibold gap-2 text-sm rounded-2xl cursor-not-allowed">
-                      Locked <Lock size={16} />
-                    </Button>
-                  )}
-                </div>
+                <div className="flex justify-end">{isTeacher === 1 ? teacherPov(lesson) : studentPov(lesson)}</div>
               </div>
             </div>
-            {/* Hover Glow Effect */}
-            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-primary/10 to-primary/5 pointer-events-none" />
+
+            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-primary/10 to-primary/5 pointer-events-none" />
           </li>
         ))}
       </ul>
