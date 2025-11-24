@@ -164,7 +164,7 @@ export default function EditCoursePage() {
               <div className="rounded-xl border  bg-transparent border-gray-50 focus-within:ring-1 focus-within:ring-primary transition-all duration-300">
                 <ReactQuill
                   theme="snow"
-                  className="rounded-xl min-h-[180px] [&_.ql-toolbar]:rounded-t-xl [&_.ql-container]:rounded-b-xl [&_.ql-container]:min-h-[175px]"
+                  className="rounded-xl min-h-[150px] [&_.ql-toolbar]:rounded-t-xl [&_.ql-container]:rounded-b-xl [&_.ql-container]:min-h-[140px]"
                   value={form.description || ''}
                   onChange={(value: string) => handleChange('description', value)}
                   placeholder="Write your lesson content here..."

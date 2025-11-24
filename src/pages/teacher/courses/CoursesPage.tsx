@@ -104,7 +104,7 @@ export default function CoursesPage() {
                       <td className="px-4 py-3  line-clamp-2 text-muted-foreground max-w-[35ch] lg:max-w-[42ch] truncate  " dangerouslySetInnerHTML={{ __html: course?.description || '' }}></td>
                       <td className="px-4 py-3  ">{course?.category?.name ?? '-'}</td>
 
-                      <td className="px-4 py-3  ">{course?.price ?? '-'}</td>
+                      <td className="px-4 py-3  ">{course?.price?.toLocaleString() ?? '-'}</td>
                       <td className="px-4 py-3  ">
                         <span
                           className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${course?.status == 1 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}

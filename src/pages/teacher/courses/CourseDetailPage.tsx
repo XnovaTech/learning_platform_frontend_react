@@ -1,5 +1,3 @@
-'';
-
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
@@ -13,14 +11,15 @@ import { getCourse } from '@/services/courseService';
 import { deleteClassRoom } from '@/services/classService';
 import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import type { CourseType } from '@/types/course';
-import { Edit, Plus, Trash2, Youtube, Calendar, Clock, User } from 'lucide-react';
+import { Edit, Plus } from 'lucide-react';
 import { ClassroomForm } from '@/components/Form/ClassroomForm';
 import { LessonForm } from '@/components/Form/LessonForm';
 import { deleteLesson } from '@/services/lessonService';
 import type { LessonPayloadType, LessonType } from '@/types/lesson';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Users } from 'lucide-react';
-import moment from 'moment';
+import ClassRoomTable from '@/components/Table/ClassRoomTable';
+import LessonTable from '@/components/Table/LessonTable';
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -95,13 +94,6 @@ export default function CourseDetailPage() {
     const [hours, minutes] = time.split(':');
     if (!hours || !minutes) return '';
     return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
-  };
-
-  const displayTime = (time: string): string => {
-    if (!time) return '';
-    const [hours, minutes] = time.split(':');
-    if (!hours || !minutes) return '';
-    return `${parseInt(hours, 10)}:${minutes.padStart(2, '0')}`;
   };
 
   const openCreate = () => {
@@ -203,11 +195,7 @@ export default function CourseDetailPage() {
             <div className="flex flex-col lg:flex-row items-start gap-4">
               <div className="w-full h-56 px-2 lg:w-120 lg:h-56">
                 {course?.image ? (
-                  <img
-                    src={course?.image as any} 
-                    alt={course?.title || 'Course image'} 
-                    className="w-full h-full object-cover  mx-auto  rounded-xl px-1 py-1 " 
-                  />
+                  <img src={course?.image as any} alt={course?.title || 'Course image'} className="w-full h-full object-cover  mx-auto  rounded-xl px-1 py-1 " />
                 ) : (
                   <div className="w-full h-full lg:w-66 lg:h-52 flex items-center justify-center shadow-md mx-auto border rounded-xl border-primary bg-primary/10 text-primary">
                     <span className="text-5xl font-bold">{(course?.title?.[0] ?? 'C').toUpperCase()}</span>
@@ -243,7 +231,7 @@ export default function CourseDetailPage() {
                   {course?.price != null && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">Fee:</span>
-                      <span className="px-2 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">{course.price} MMK</span>
+                      <span className="px-2 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">{course.price?.toLocaleString()} MMK</span>
                     </div>
                   )}
                   {typeof course?.status !== 'undefined' && (
@@ -295,7 +283,7 @@ export default function CourseDetailPage() {
                   </Button>
                 </div>
 
-                <div className="min-h-[200px]">
+                <div>
                   {!course?.class_rooms || course?.class_rooms?.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 px-4">
                       <div className="rounded-full bg-primary/90 p-4 mb-4">
@@ -305,94 +293,7 @@ export default function CourseDetailPage() {
                       <p className="text-sm text-muted-foreground mb-4">Create your first class room to get started</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {course?.class_rooms?.map((c) => (
-                        <Card key={c.id} className="group relative overflow-hidden transition-all duration-200 hover:shadow ">
-                          <div className="p-5 flex flex-col gap-5">
-                            <div className="space-y-3">
-                              <div className="flex items-center flex-wrap justify-between">
-                                <h4 className="font-semibold  flex-1 text-base lg:text-lg text-foreground leading-tight">{c?.class_name}</h4>
-                                <div className="flex items-center gap-2">
-                                  <Button variant="primary" onClick={() => openEdit(c)}>
-                                    <Edit className="size-4" />
-                                  </Button>
-                                  <Button variant="destructive" onClick={() => askDelete(c.id)}>
-                                    <Trash2 className="size-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-
-                            <span
-                              className={`inline-flex absolute right-3 top-3 items-center rounded-full px-2 py-0.5 text-xs font-medium ${c.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                                } `}
-                            >
-                              {c.is_active ? 'Active' : 'Inactive'}
-                            </span>
-
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-1 gap-3">
-                                {/* Duration */}
-                                <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50  border border-blue-100 ">
-                                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-100  flex items-center justify-center">
-                                    <Calendar className="size-4 text-blue-600 " />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-xs font-medium text-blue-700  uppercase tracking-wide mb-0.5">Duration</div>
-                                    <div className="text-sm font-semibold text-blue-900 truncate">
-                                      {moment(c.start).format('MMM DD')} - {moment(c.end).format('MMM DD, YYYY')}
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Time */}
-                                <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 0  border border-purple-100 ">
-                                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                                    <Clock className="size-4 text-purple-600 " />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-xs font-medium text-purple-700  uppercase tracking-wide mb-0.5">Time</div>
-                                    <div className="text-sm font-semibold text-purple-900  truncate">
-                                      {displayTime(c.start_time)} - {displayTime(c.end_time)}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {c.teacher && (
-                                <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50  border border-green-100 ">
-                                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-green-100  flex items-center justify-center">
-                                    <User className="size-4 text-green-600 " />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-xs font-medium text-green-700 uppercase tracking-wide mb-0.5">Teacher</div>
-                                    <div className="text-sm font-semibold text-green-900 truncate">
-                                      {c.teacher.first_name} {c.teacher.last_name}
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="flex flex-col lg:flex-row items-center border-t pt-3 w-full gap-2">
-                              <Button asChild className="gap-2 w-full lg:w-[50%] bg-primary/75 hover:scale-100 ">
-                                <Link to={`/teacher/courses/classes/${c?.id}`}>
-                                  View
-                                </Link>
-                              </Button>
-
-                              {c?.zoom_link && (
-                                <Button asChild variant="primary" className="group/link rounded-xl  text-center w-full lg:w-[50%] flex items-center gap-2">
-                                  <a href={c.zoom_link} target="_blank" rel="noopener noreferrer">
-                                    Join Zoom
-                                  </a>
-                                </Button>
-                              )}
-                            </div>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
+                    <ClassRoomTable classrooms={course?.class_rooms || []} onEdit={openEdit} onDelete={askDelete} />
                   )}
                 </div>
               </TabsContent>
@@ -409,7 +310,7 @@ export default function CourseDetailPage() {
                   </Button>
                 </div>
 
-                <div className="min-h-[200px]">
+                <div>
                   {!course?.lessons || course?.lessons?.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 px-4">
                       <div className="rounded-full  bg-primary/90 p-4 mb-4">
@@ -419,43 +320,7 @@ export default function CourseDetailPage() {
                       <p className="text-sm text-muted-foreground mb-4">Create your first lesson to start teaching</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                      {course?.lessons?.map((lesson) => (
-                        <Card key={lesson.id} className="group relative overflow-hidden transition-all duration-200 hover:shadow">
-                          <div className=" p-5 flex flex-col gap-5">
-                            <div className="flex items-center justify-between gap-3">
-                              <h4 className="font-semibold  flex-1 text-base lg:text-lg text-foreground leading-tight">{lesson?.title}</h4>
-
-                              <div className="flex items-center gap-2">
-                                <Button variant="primary" onClick={() => openEditLesson(lesson)}>
-                                  <Edit className="size-4" />
-                                </Button>
-                                <Button variant="destructive" onClick={() => askDeleteLesson(lesson.id)}>
-                                  <Trash2 className="size-4" />
-                                </Button>
-                              </div>
-                            </div>
-
-                            {lesson?.description && (
-                              <p className="text-sm text-muted-foreground  overflow-auto max-h-[300px]   leading-relaxed" dangerouslySetInnerHTML={{ __html: lesson.description }}></p>
-                            )}
-
-                            {lesson?.youtube_link && (
-                              <div className="flex  w-full gap-2 pt-4 border-t  ">
-                                {lesson?.youtube_link && (
-                                  <Button asChild variant="destructive" className="group/link w-full flex items-center rounded-xl gap-2">
-                                    <a href={lesson.youtube_link} target="_blank" rel="noopener noreferrer">
-                                      <Youtube className="size-4" />
-                                      YouTube
-                                    </a>
-                                  </Button>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
+                    <LessonTable lessons={course?.lessons || []} onEdit={openEditLesson} onDelete={askDeleteLesson} />
                   )}
                 </div>
               </TabsContent>
