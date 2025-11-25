@@ -44,3 +44,12 @@ export const deleteClassRoom = async (id: number): Promise<void> => {
     throw new Error(error.message);
   }
 };
+
+export const getClassesByCategory = async (categoryId: number): Promise<ClassRoomType[]> => {
+  try {
+    const { data } = await api.get(`/v1/classes/categories/${categoryId}`);
+    return data?.data;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};

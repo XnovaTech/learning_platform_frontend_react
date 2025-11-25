@@ -1,3 +1,4 @@
+// Enhanced CourseDetailPage with collapsible description
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
@@ -27,11 +28,11 @@ export default function CourseDetailPage() {
   const queryClient = useQueryClient();
 
   const [formOpen, setFormOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [editingItem, setEditingItem] = useState<ClassRoomType | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  // Lesson states
   const [lessonFormOpen, setLessonFormOpen] = useState(false);
   const [editingLesson, setEditingLesson] = useState<LessonType | null>(null);
   const [lessonConfirmOpen, setLessonConfirmOpen] = useState(false);
@@ -44,14 +45,15 @@ export default function CourseDetailPage() {
     refetchOnWindowFocus: false,
   });
 
+
   const defaultForm: ClassRoomPayloadType = {
     course_id: courseId,
     teacher_id: null,
     class_name: null,
-    start: '',
-    end: '',
-    start_time: '',
-    end_time: '',
+    start: null,
+    end: null,
+    start_time: null,
+    end_time: null,
     is_active: true,
     zoom_link: '',
   };
@@ -157,7 +159,6 @@ export default function CourseDetailPage() {
 
   return (
     <div className="max-w-9xl p-4 mx-auto space-y-6">
-      {/* Breadcrumbs */}
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -183,19 +184,18 @@ export default function CourseDetailPage() {
       </Breadcrumb>
 
       {isLoading ? (
-        <Card className="border-0 shadow-xl bg-white/80  backdrop-blur p-6">
+        <Card className="border-0 shadow-xl bg-white/80 backdrop-blur p-6">
           <div className="flex items-center justify-center py-14">
             <Spinner className="text-primary size-7 md:size-8" />
           </div>
         </Card>
       ) : (
         <div className="flex flex-col gap-5">
-          {/* Course  */}
-          <Card className="border-0 shadow-xl  bg-white/80 p-4 backdrop-blur overflow-hidden">
-            <div className="flex flex-col lg:flex-row items-start gap-4">
-              <div className="w-full h-56 px-2 lg:w-120 lg:h-56">
+          <Card className="border-0 shadow-xl bg-white/80 p-4 backdrop-blur overflow-hidden">
+            <div className={`flex flex-col ${isExpanded ? "lg:flex-col" : "lg:flex-row"}  items-start gap-4`}>
+              <div className={`w-full h-56 px-2 ${isExpanded ? "lg:w-full" : "lg:w-120"}  lg:h-60`}>
                 {course?.image ? (
-                  <img src={course?.image as any} alt={course?.title || 'Course image'} className="w-full h-full object-cover  mx-auto  rounded-xl px-1 py-1 " />
+                  <img src={course?.image as any} alt={course?.title || 'Course image'} className="w-full h-full object-cover mx-auto rounded-xl px-1 py-1" />
                 ) : (
                   <div className="w-full h-full lg:w-66 lg:h-52 flex items-center justify-center shadow-md mx-auto border rounded-xl border-primary bg-primary/10 text-primary">
                     <span className="text-5xl font-bold">{(course?.title?.[0] ?? 'C').toUpperCase()}</span>
@@ -203,12 +203,12 @@ export default function CourseDetailPage() {
                 )}
               </div>
 
-              <div className="w-full  space-y-4">
+              <div className="w-full space-y-4">
                 <div className="space-y-2">
                   <div className="flex flex-wrap space-y-2 items-center justify-between ">
                     <h2 className="text-xl md:text-2xl font-bold tracking-tight">{course?.title}</h2>
                     <div className="flex items-center gap-2">
-                      <Button asChild variant="primary" size="sm" className=" gap-2">
+                      <Button asChild variant="primary" size="sm" className="gap-2">
                         <Link to={`/teacher/courses/edit?id=${courseId}`}>
                           <Edit className="size-4" />
                           <span className="hidden sm:inline">Edit</span>
@@ -217,7 +217,18 @@ export default function CourseDetailPage() {
                     </div>
                   </div>
 
-                  <p className="text-muted-foreground line-clamp-6 text-base leading-relaxed " dangerouslySetInnerHTML={{ __html: course?.description || 'No description available' }}></p>
+                  <div className="relative space-y-2">
+                    <div
+                      className={`text-muted-foreground text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}
+                      dangerouslySetInnerHTML={{ __html: course?.description || '' }}
+                    />
+
+                    {course?.description && (
+                      <Button variant='link' onClick={() => setIsExpanded((prev) => !prev)} className="text-primary text-sm transition-all  p-0 font-medium hover:underline underline-offset-1 mt-1">
+                        {isExpanded ? 'Show Less' : 'Read More'}
+                      </Button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-5">
@@ -234,6 +245,7 @@ export default function CourseDetailPage() {
                       <span className="px-2 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">{course.price?.toLocaleString()} MMK</span>
                     </div>
                   )}
+
                   {typeof course?.status !== 'undefined' && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">Status:</span>
@@ -249,29 +261,24 @@ export default function CourseDetailPage() {
             </div>
           </Card>
 
-          {/* Tabs  */}
           <Card className="border-0 shadow-xl mt-0 pt-0 bg-white/80 backdrop-blur overflow-hidden">
             <Tabs defaultValue="classrooms" className="w-full">
               <div className="border-b bg-gradient-to-r from-slate-50 to-slate-100/50 px-6 py-5">
-                <TabsList className=" rounded-2xl bg-white  shadow  h-11">
+                <TabsList className="rounded-2xl bg-white shadow h-11">
                   <TabsTrigger
                     value="classrooms"
-                    className="gap-2 rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
+                    className="gap-2 rounded-xl transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
                   >
                     <Users className="size-4" />
                     <span className="font-medium">Class Rooms</span>
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="lessons"
-                    className="gap-2   rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
-                  >
+                  <TabsTrigger value="lessons" className="gap-2 rounded-xl transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
                     <BookOpen className="size-4" />
                     <span className="font-medium">Lessons</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
 
-              {/* Class  */}
               <TabsContent value="classrooms" className="p-6 space-y-6 mt-0">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
@@ -287,18 +294,17 @@ export default function CourseDetailPage() {
                   {!course?.class_rooms || course?.class_rooms?.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 px-4">
                       <div className="rounded-full bg-primary/90 p-4 mb-4">
-                        <Users className="size-8 text-white " />
+                        <Users className="size-8 text-white" />
                       </div>
                       <h4 className="text-lg font-semibold text-foreground mb-1">No class rooms yet</h4>
                       <p className="text-sm text-muted-foreground mb-4">Create your first class room to get started</p>
                     </div>
                   ) : (
-                    <ClassRoomTable classrooms={course?.class_rooms || []} onEdit={openEdit} onDelete={askDelete} />
+                    <ClassRoomTable classrooms={course?.class_rooms || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} />
                   )}
                 </div>
               </TabsContent>
 
-              {/* Lessons  */}
               <TabsContent value="lessons" className="p-6 space-y-6 mt-0">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
@@ -313,7 +319,7 @@ export default function CourseDetailPage() {
                 <div>
                   {!course?.lessons || course?.lessons?.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 px-4">
-                      <div className="rounded-full  bg-primary/90 p-4 mb-4">
+                      <div className="rounded-full bg-primary/90 p-4 mb-4">
                         <BookOpen className="size-8 text-white" />
                       </div>
                       <h4 className="text-lg font-semibold text-foreground mb-1">No lessons yet</h4>
@@ -329,7 +335,6 @@ export default function CourseDetailPage() {
         </div>
       )}
 
-      {/* delete class */}
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
@@ -348,7 +353,6 @@ export default function CourseDetailPage() {
         }}
       />
 
-      {/* class form */}
       <ClassroomForm
         open={formOpen}
         onOpenChange={setFormOpen}
@@ -360,7 +364,6 @@ export default function CourseDetailPage() {
         formatTimeToHi={formatTimeToHi}
       />
 
-      {/* lesson form */}
       <LessonForm
         open={lessonFormOpen}
         onOpenChange={setLessonFormOpen}
@@ -371,7 +374,6 @@ export default function CourseDetailPage() {
         onSuccess={handleLessonFormSuccess}
       />
 
-      {/* lesson delete */}
       <ConfirmDialog
         open={lessonConfirmOpen}
         onOpenChange={setLessonConfirmOpen}

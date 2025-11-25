@@ -101,7 +101,7 @@ export default function CoursesPage() {
                   data.courses?.map((course) => (
                     <tr key={course.id} className="border-t group hover:bg-muted transition-colors">
                       <td className="px-4 py-3 font-medium ">{course?.title}</td>
-                      <td className="px-4 py-3  line-clamp-2 text-muted-foreground max-w-[35ch] lg:max-w-[42ch] truncate  " dangerouslySetInnerHTML={{ __html: course?.description || '' }}></td>
+                      <td className="px-4 py-3  line-clamp-1 text-muted-foreground max-w-[35ch] lg:max-w-[42ch] truncate  " dangerouslySetInnerHTML={{ __html: course?.description || '' }}></td>
                       <td className="px-4 py-3  ">{course?.category?.name ?? '-'}</td>
 
                       <td className="px-4 py-3  ">{course?.price?.toLocaleString() ?? '-'}</td>

@@ -6,11 +6,12 @@ import { Link } from 'react-router-dom';
 
 interface ClassRoomTableProps {
   classrooms: ClassRoomType[];
-  onEdit: (classroom: ClassRoomType) => void;
-  onDelete: (id: number) => void;
+  onEdit?: (classroom: ClassRoomType) => void;
+  onDelete?: (id: number) => void;
+  isCoureDetail?: boolean;
 }
 
-export default function ClassRoomTable({ classrooms, onEdit, onDelete }: ClassRoomTableProps) {
+export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDetail = false }: ClassRoomTableProps) {
   const displayTime = (time: string): string => {
     if (!time) return '';
     const [hours, minutes] = time.split(':');
@@ -28,7 +29,7 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete }: ClassRo
             <th className="px-4 py-3 font-medium">Time</th>
             <th className="px-4 py-3 font-medium">Teacher</th>
             <th className="px-4 py-3 font-medium">Status</th>
-            <th className="px-4 py-3 font-medium text-right">Actions</th>
+            {isCoureDetail && <th className="px-4 py-3 font-medium text-right">Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -49,16 +50,18 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete }: ClassRo
                   {classroom.is_active ? 'Active' : 'Inactive'}
                 </span>
               </td>
-              <td className="px-4 py-3">
-                <div className="flex items-center justify-end gap-2">
-                  <Button variant="primary" size="sm" onClick={() => onEdit(classroom)}>
-                    <Edit className="size-4" />
-                  </Button>
-                  <Button variant="destructive" size="sm" onClick={() => onDelete(classroom.id)}>
-                    <Trash2 className="size-4" />
-                  </Button>
-                </div>
-              </td>
+              {isCoureDetail && (
+                <td className="px-4 py-3">
+                  <div className="flex items-center justify-end gap-2">
+                    <Button variant="primary" size="sm" onClick={() => onEdit?.(classroom)}>
+                      <Edit className="size-4" />
+                    </Button>
+                    <Button variant="destructive" size="sm" onClick={() => onDelete?.(classroom.id)}>
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
