@@ -10,7 +10,7 @@ const navigationItems = [
   { title: 'Dashboard', href: '/teacher/dashboard', icon: LayoutDashboard },
   { title: 'Categories', href: '/teacher/categories', icon: Tag },
   { title: 'Courses', href: '/teacher/courses', icon: BookOpen },
-  { title: 'Classes', href: '/teacher/classes', icon: School },
+  { title: 'Active Classes', href: '/teacher/classes', icon: School },
   { title: 'Enrollments', href: '/teacher/enrollments', icon: ClipboardList },
   {
     title: 'Users',

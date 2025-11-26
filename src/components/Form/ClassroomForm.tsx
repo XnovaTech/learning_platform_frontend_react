@@ -80,7 +80,7 @@ export function ClassroomForm({ open, onOpenChange, editingItem, courseId, form,
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="min-w-xl max-w-3xl">
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-4" autoComplete="off">
           <DialogTitle className="text-lg font-semibold mb-7">{editingItem ? 'Edit Class Room' : 'Create Class Room'}</DialogTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className={`space-y-2 `}>
@@ -125,20 +125,20 @@ export function ClassroomForm({ open, onOpenChange, editingItem, courseId, form,
               <Label htmlFor="start">
                 Start Date <span className="text-destructive">*</span>
               </Label>
-              <Input id="start" type="date" value={form.start} onChange={(e) => setForm({ ...form, start: e.target.value })} required />
+              <Input id="start" type="date" autoComplete="off" value={form.start} onChange={(e) => setForm({ ...form, start: e.target.value })} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="end">
                 End Date <span className="text-destructive">*</span>
               </Label>
-              <Input id="end" type="date" value={form.end} onChange={(e) => setForm({ ...form, end: e.target.value })} required />
+              <Input id="end" type="date" autoComplete="off" value={form.end} onChange={(e) => setForm({ ...form, end: e.target.value })} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="start_time">
                 Start Time <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
-                <Input id="start_time" type="time" value={form.start_time} onChange={(e) => setForm({ ...form, start_time: e.target.value })} className="pr-10" />
+                <Input id="start_time" type="time" autoComplete="off" value={form.start_time} onChange={(e) => setForm({ ...form, start_time: e.target.value })} className="pr-10" />
                 {form.start_time && (
                   <Button type="button" variant="ghost" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-muted" onClick={() => setForm({ ...form, start_time: '' })}>
                     <X className="h-4 w-4" />
@@ -151,7 +151,7 @@ export function ClassroomForm({ open, onOpenChange, editingItem, courseId, form,
                 End Time <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
-                <Input id="end_time" type="time" value={form.end_time} onChange={(e) => setForm({ ...form, end_time: e.target.value })} className="pr-10" />
+                <Input id="end_time" type="time" autoComplete="off" value={form.end_time} onChange={(e) => setForm({ ...form, end_time: e.target.value })} className="pr-10" />
                 {form.end_time && (
                   <Button type="button" variant="ghost" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-muted" onClick={() => setForm({ ...form, end_time: '' })}>
                     <X className="h-4 w-4" />

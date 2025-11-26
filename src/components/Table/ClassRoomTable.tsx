@@ -56,9 +56,9 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
                     <Button variant="primary" size="sm" onClick={() => onEdit?.(classroom)}>
                       <Edit className="size-4" />
                     </Button>
-                    <Button variant="destructive" size="sm" onClick={() => onDelete?.(classroom.id)}>
+                    {/* <Button variant="destructive" size="sm" onClick={() => onDelete?.(classroom.id)}>
                       <Trash2 className="size-4" />
-                    </Button>
+                    </Button> */}
                   </div>
                 </td>
               )}

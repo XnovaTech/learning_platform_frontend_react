@@ -8,6 +8,7 @@ import { listCategories } from '@/services/categoryService';
 import { getClassesByCategory } from '@/services/classService';
 import type { CategoryType } from '@/types/category';
 import ClassRoomTable from '@/components/Table/ClassRoomTable';
+import { Button } from '@/components/ui/button';
 
 export default function ClassesPage() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
@@ -32,6 +33,8 @@ export default function ClassesPage() {
     enabled: !!selectedCategoryId,
   });
 
+   
+
   useEffect(() => {
     if (categories && categories.length > 0 && !selectedCategoryId) {
       setSelectedCategoryId(String(categories[0].id));
@@ -42,9 +45,15 @@ export default function ClassesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h2 className="text-2xl font-semibold tracking-tight">Classes</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">Active Classes</h2>
           <p className="text-muted-foreground text-sm">Browse and manage classes by category.</p>
         </div>
+
+        {(classRooms?.length ?? 0) > 0 && (
+          <Button className="rounded-full hidden md:flex">
+            Classes :<span>{classRooms?.length}</span>
+          </Button>
+        )}
       </div>
       <Card className="border-0 shadow-xl bg-white/80 backdrop-blur overflow-hidden">
         {categoriesLoading ? (
@@ -90,7 +99,7 @@ export default function ClassesPage() {
                     <p className="text-sm text-muted-foreground mb-4">No active class in this category</p>
                   </div>
                 ) : (
-                  <ClassRoomTable classrooms={classRooms || []}   />
+                  <ClassRoomTable classrooms={classRooms || []} />
                 )}
               </div>
             </TabsContent>
