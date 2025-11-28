@@ -25,6 +25,7 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
         <thead className="bg-muted/50">
           <tr className="text-left">
             <th className="px-4 py-3 font-medium">Class Name</th>
+            <th className='px-4 py-3 font-medium'>Days</th>
             <th className="px-4 py-3 font-medium">Duration</th>
             <th className="px-4 py-3 font-medium">Time</th>
             <th className="px-4 py-3 font-medium">Teacher</th>
@@ -37,6 +38,18 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
             <tr key={classroom.id} className="border-t group hover:bg-muted transition-colors">
               <td className="px-4 py-3 font-medium hover:text-primary hover:underline hover:underline-offset-3 transition-colors duration-300">
                 <Link to={`/teacher/courses/classes/${classroom.id}`}>{classroom.class_name}</Link>{' '}
+              </td>
+              <td className="px-4 py-3 text-muted-foreground">
+                <div className='flex gap-2 flex-wrap'>
+                  {classroom.days.map((day, index) => (
+                    <span
+                      key={index}
+                      className='px-2 py-1 rounded bg-secondary text-secondary-foreground text-xs uppercase'>
+                        {day}
+                      </span>
+                  ))}
+                </div>
+               
               </td>
               <td className="px-4 py-3 text-muted-foreground">
                 {moment(classroom.start).format('MMM DD')} - {moment(classroom.end).format('MMM DD, YYYY')}

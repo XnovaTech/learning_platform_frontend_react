@@ -184,6 +184,7 @@ export default function CoursePage() {
                                 <h3 className="text-sm font-semibold">Choose Your Time</h3>
                                 <div className=" grid grid-cols-2 gap-3">
                                     {courseData?.class_rooms.map((data) => (
+                                        <div className=' bg-sky-50 p-2 rounded-xl'>
                                         <div
                                             key={data.id}
                                             onClick={() => handleSelectClass(data.id)}
@@ -196,6 +197,17 @@ export default function CoursePage() {
                                                     <CheckCircle2 size={14} />
                                                 </div>
                                             )}
+
+                                        </div>
+                                         <div className='flex gap-2 flex-wrap'>
+                                            {data.days.map((day, index) => (
+                                                <span
+                                                key={index}
+                                                className='px-2 py-1 rounded-lg bg-white text-secondary-foreground font-semibold text-xs uppercase'>
+                                                    {day}
+                                                </span>
+                                            ))}
+                                            </div>
                                         </div>
                                     ))}
                                 </div>

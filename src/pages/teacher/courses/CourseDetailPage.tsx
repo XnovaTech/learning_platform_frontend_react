@@ -56,6 +56,7 @@ export default function CourseDetailPage() {
     end_time: null,
     is_active: true,
     zoom_link: '',
+    days: []
   };
 
   const [form, setForm] = useState<ClassRoomPayloadType>(defaultForm);
@@ -102,6 +103,7 @@ export default function CourseDetailPage() {
     setEditingItem(null);
     setForm(defaultForm);
     setFormOpen(true);
+    console.log(form);
   };
 
   const openEdit = (c: ClassRoomType) => {
@@ -116,6 +118,7 @@ export default function CourseDetailPage() {
       end_time: c.end_time,
       is_active: c.is_active,
       zoom_link: c.zoom_link,
+      days: c.days
     });
     setFormOpen(true);
   };
@@ -195,8 +198,8 @@ export default function CourseDetailPage() {
 
           <Card className="border-0 shadow-xl mt-0 pt-0 bg-white/80 backdrop-blur overflow-hidden">
             <Tabs defaultValue="classrooms" className="w-full">
-              <div className="border-b bg-gradient-to-r from-slate-50 to-slate-100/50 px-6 py-5">
-                <TabsList className="rounded-2xl bg-white shadow h-11">
+              <div className="border-b bg-linear-to-r from-slate-50 to-slate-100/50 px-6 py-5">
+                <TabsList className=" rounded-2xl bg-white  shadow  h-11">
                   <TabsTrigger
                     value="classrooms"
                     className="gap-2 rounded-xl transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"

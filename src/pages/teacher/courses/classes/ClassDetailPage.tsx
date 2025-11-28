@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageCircle, Users, Calendar, Clock, User, BookOpen } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Clock, User, BookOpen, CalendarDays } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { getClass } from '@/services/classService';
@@ -104,8 +104,8 @@ export default function ClassDetailPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
                   {/* Duration */}
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-100">
+                    <div className="shrink-0 w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
                       <Calendar className="size-5 text-blue-600" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -117,8 +117,8 @@ export default function ClassDetailPage() {
                   </div>
 
                   {/* Time */}
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-purple-50 to-pink-50 border border-purple-100">
+                    <div className="shrink-0 w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
                       <Clock className="size-5 text-purple-600" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -131,8 +131,8 @@ export default function ClassDetailPage() {
 
                   {/* Teacher */}
                   {classroom?.teacher && (
-                    <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-green-50 to-emerald-50 border border-green-100">
+                      <div className="shrink-0 w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
                         <User className="size-5 text-green-600" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -145,13 +145,32 @@ export default function ClassDetailPage() {
                   )}
 
                   {/* Students */}
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-orange-50 to-red-50 border border-orange-100">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-orange-50 to-red-50 border border-orange-100">
+                    <div className="shrink-0 w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
                       <Users className="size-5 text-orange-600" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-medium text-orange-700 uppercase tracking-wide mb-1">Students</div>
                       <div className="text-sm font-semibold text-orange-900">{classroom?.class_mates?.length || 0} Enrolled</div>
+                    </div>
+                  </div>
+
+                   {/* Days */}
+                  <div className=" col-span-2 flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-indigo-50 to-blue-50 border border-orange-100">
+                    <div className="shrink-0 w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                      <CalendarDays className="size-5 text-indigo-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-medium text-indigo-700 uppercase tracking-wide mb-1">Days</div>
+                        <div className='flex gap-2 flex-wrap'>
+                          {classroom?.days.map((day, index) => (
+                            <span
+                              key={index}
+                              className='px-2 py-1 rounded bg-secondary  text-xs uppercase text-indigo-800'>
+                                {day}
+                              </span>
+                          ))}
+                        </div>
                     </div>
                   </div>
                 </div>
@@ -162,7 +181,7 @@ export default function ClassDetailPage() {
           {/* Tabs  */}
           <Card className="border-0 shadow-xl mt-0 pt-0 bg-white/80 backdrop-blur overflow-hidden">
             <Tabs defaultValue="classmates" className="w-full">
-              <div className="border-b bg-gradient-to-r from-slate-50 to-slate-100/50 px-6 py-5">
+              <div className="border-b bg-linear-to-r from-slate-50 to-slate-100/50 px-6 py-5">
                 <TabsList className=" rounded-2xl bg-white  shadow  h-11">
                   <TabsTrigger value="lessons" className="gap-2 rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
                     <BookOpen className="size-4" />

@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import type { EnrollType } from '@/types/enroll';
-import { User2 } from 'lucide-react';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
 import { ClassMateComponent } from '@/components/Student/Enroll/ClassMateComponent';
 import { DiscussionComponent } from '@/components/Student/Enroll/DiscussionComponent';
@@ -37,7 +36,7 @@ export default function EnrollDetailPage() {
         </Card>
       ) : (
         <>
-          <CourseCard course={enroll?.class_room?.course} teacherName={enroll?.class_room?.teacher?.first_name} />
+          <CourseCard course={enroll?.class_room?.course} teacherName={enroll?.class_room?.teacher?.first_name} days={enroll?.class_room?.days}/>
 
           <Tabs defaultValue="lessons" className="w-full max-w-8xl mx-auto my-6">
             {/* Tab List */}

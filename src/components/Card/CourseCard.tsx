@@ -9,9 +9,10 @@ interface CourseTypeProps {
   courseId?: number;
   isTeacher?: boolean;
   teacherName?:string;
+  days?: string[];
 }
 
-export default function CourseCard({ course, courseId, isTeacher = false ,teacherName}: CourseTypeProps) {
+export default function CourseCard({ course, courseId, isTeacher = false ,teacherName,days}: CourseTypeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -92,7 +93,24 @@ export default function CourseCard({ course, courseId, isTeacher = false ,teache
                   </span>
                 </div>
               )}
+
+              
             </div>
+
+          
+              <div className="flex-1 min-w-0 ">
+                      <div className="text-sm font-medium  tracking-wide mb-3">Class Days</div>
+                        <div className='flex gap-2 flex-wrap'>
+                          {days?.map((day, index) => (
+                            <span
+                              key={index}
+                              className='px-2 py-1 rounded bg-secondary  text-xs uppercase text-indigo-800'>
+                                {day}
+                              </span>
+                          ))}
+                        </div>
+                    
+              </div>
           </div>
         </div>
       </Card>

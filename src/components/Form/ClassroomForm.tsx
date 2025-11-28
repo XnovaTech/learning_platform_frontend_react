@@ -12,6 +12,7 @@ import { listTeachers } from '@/services/userService';
 import { getCourse } from '@/services/courseService';
 import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import { X } from 'lucide-react';
+import { DAY_OPTIONS } from '@/constants/days';
 
 interface ClassroomFormProps {
   open: boolean;
@@ -158,6 +159,36 @@ export function ClassroomForm({ open, onOpenChange, editingItem, courseId, form,
                   </Button>
                 )}
               </div>
+            </div>
+            <div className='space-y-2 col-span-2'>
+                <Label>Class Days</Label>
+                <div className='flex flex-wrap gap-2'>
+                  {
+                    DAY_OPTIONS.map((day) => {
+                      const selected = form.days.includes(day.value);
+
+                      return (
+                        <Button
+                          key={day.value}
+                          type='button'
+                          variant={selected ? "default" : "outline"}
+                          className={`px-4 py-1 rounded-3xl ${
+                            selected ? "bg-primary text-primary-foreground" : ""
+                          }`}
+                          onClick={() => 
+                            setForm({
+                              ...form,
+                              days: selected
+                              ? form.days.filter((d) => d !== day.value)
+                              : [...form.days, day.value],
+                            })
+                          }>
+                            {day.label}
+                          </Button>
+                      )
+                    })
+                  }
+                </div>
             </div>
           </div>
           <div className="flex items-center justify-end gap-3 pt-4">
