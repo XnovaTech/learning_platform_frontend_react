@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { Link } from 'react-router-dom';
@@ -14,7 +14,7 @@ interface ClassRoomTableProps {
   isCoureDetail?: boolean;
 }
 
-export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDetail = false }: ClassRoomTableProps) {
+export default function ClassRoomTable({ classrooms, onEdit, isCoureDetail = false }: ClassRoomTableProps) {
 
 
   const displayTime = (time: string): string => {
