@@ -4,9 +4,9 @@ import Loading from '@/components/Loading';
 import { RouteGuard } from '@/middleware/RouteGuard';
 
 const lazyLoad = (Component: any) => (
-    <Suspense fallback={<Loading />}>
-        <Component />
-    </Suspense>
+  <Suspense fallback={<Loading />}>
+    <Component />
+  </Suspense>
 );
 
 // pages
@@ -40,7 +40,8 @@ const ClassDetailPage = lazy(() => import('@/pages/teacher/courses/classes/Class
 const EnrollmentsPage = lazy(() => import('@/pages/teacher/enrollments/EnrollmentsPage'));
 const StudentsPage = lazy(() => import('@/pages/teacher/users/StudentsPage'));
 const TeachersPage = lazy(() => import('@/pages/teacher/users/TeachersPage'));
-const TeacherProfilePage =  lazy(() => import('@/pages/teacher/profile/ProfilePage'));
+const TeacherProfilePage = lazy(() => import('@/pages/teacher/profile/ProfilePage'));
+const ClassesPage = lazy(() => import('@/pages/teacher/classes/ClassesPage'));
 
 // layouts
 const StudentLayout = lazy(() => import('@/layout/studentLayout'));
@@ -48,79 +49,72 @@ const AuthLayout = lazy(() => import('@/layout/authLayout'));
 const TeacherLayout = lazy(() => import('@/layout/teacherLayout'));
 
 const RootLayout = () => (
-    <Suspense>
-        <Outlet />
-    </Suspense>
+  <Suspense>
+    <Outlet />
+  </Suspense>
 );
 
 export const routes = [
-    {
-        path: '/',
-        element: (
-            <RouteGuard>
-                <RootLayout />,
-            </RouteGuard>
-        ),
+  {
+    path: '/',
+    element: (
+      <RouteGuard>
+        <RootLayout />,
+      </RouteGuard>
+    ),
 
-        children: [
-            { index: true, element: lazyLoad(Home) },
-            { path: '*', element: lazyLoad(NotFound) },
-        ],
-    },
+    children: [
+      { index: true, element: lazyLoad(Home) },
+      { path: '*', element: lazyLoad(NotFound) },
+    ],
+  },
 
-    // auth
-    {
-        element: lazyLoad(AuthLayout),
-        children: [
-            { path: '/login', element: lazyLoad(Login) },
-            { path: '/register', element: lazyLoad(Register) },
-            { path: '/enroll', element: lazyLoad(RegEnroll) }
-        ],
-    },
+  // auth
+  {
+    element: lazyLoad(AuthLayout),
+    children: [
+      { path: '/login', element: lazyLoad(Login) },
+      { path: '/register', element: lazyLoad(Register) },
+      { path: '/enroll', element: lazyLoad(RegEnroll) },
+    ],
+  },
 
-    // student
-    {
-        path: '/student',
-        element: (
-            <RouteGuard>
-                {lazyLoad(StudentLayout)}
-            </RouteGuard>
-        ),
-        children: [
-            { index: true, element: <Navigate replace to="home" /> },
-            { path: 'home', element: lazyLoad(StudentHomePage) },
-            { path: 'courses', element: lazyLoad(ActiveCoursePage) },
-            { path: 'contacts', element: lazyLoad(ContactPage) },
-            { path: 'enrolls', element: lazyLoad(StudentEnrollPage) },
-            { path: 'enrolls/:enrollId', element: lazyLoad(StudentEnrollDetailPage) },
-            { path: 'enrolls/:enrollId/lessons/:lessonId', element: lazyLoad(StudentEnrollLessonPage) },
-            { path: 'exams', element: lazyLoad(StudentExamPage) },
-            { path: 'profile', element: lazyLoad(StudentProfilePage) }
-        ],
-    },
+  // student
+  {
+    path: '/student',
+    element: <RouteGuard>{lazyLoad(StudentLayout)}</RouteGuard>,
+    children: [
+      { index: true, element: <Navigate replace to="home" /> },
+      { path: 'home', element: lazyLoad(StudentHomePage) },
+      { path: 'courses', element: lazyLoad(ActiveCoursePage) },
+      { path: 'contacts', element: lazyLoad(ContactPage) },
+      { path: 'enrolls', element: lazyLoad(StudentEnrollPage) },
+      { path: 'enrolls/:enrollId', element: lazyLoad(StudentEnrollDetailPage) },
+      { path: 'enrolls/:enrollId/lessons/:lessonId', element: lazyLoad(StudentEnrollLessonPage) },
+      { path: 'exams', element: lazyLoad(StudentExamPage) },
+      { path: 'profile', element: lazyLoad(StudentProfilePage) },
+    ],
+  },
 
-    // teacher
-    {
-        path: '/teacher',
-        element: (
-            <RouteGuard>
-                {lazyLoad(TeacherLayout)}
-            </RouteGuard>
-        ),
-        children: [
-            { index: true, element: <Navigate replace to="dashboard" /> },
-            { path: 'dashboard', element: lazyLoad(DashboardPage) },
-            { path: 'categories', element: lazyLoad(CategoriesPage) },
-            { path: 'contacts', element: lazyLoad(ContactsPage) },
-            { path: 'courses', element: lazyLoad(CoursesPage) },
-            { path: 'courses/create', element: lazyLoad(CreateCoursePage) },
-            { path: 'courses/edit', element: lazyLoad(EditCoursePage) },
-            { path: 'courses/classes/:id', element: lazyLoad(ClassDetailPage) },
-            { path: 'courses/:id', element: lazyLoad(CourseDetailPage) },
-            { path: 'enrollments', element: lazyLoad(EnrollmentsPage) },
-            { path: 'users/students', element: lazyLoad(StudentsPage) },
-            { path: 'users/teachers', element: lazyLoad(TeachersPage) },
-            { path: 'profile', element: lazyLoad(TeacherProfilePage) },
-        ],
-    },
+  // teacher
+  {
+    path: '/teacher',
+    element: <RouteGuard>{lazyLoad(TeacherLayout)}</RouteGuard>,
+    children: [
+      { index: true, element: <Navigate replace to="dashboard" /> },
+      { path: 'dashboard', element: lazyLoad(DashboardPage) },
+      { path: 'categories', element: lazyLoad(CategoriesPage) },
+      { path: 'contacts', element: lazyLoad(ContactsPage) },
+      { path: 'courses', element: lazyLoad(CoursesPage) },
+      { path: 'courses/create', element: lazyLoad(CreateCoursePage) },
+      { path: 'courses/edit', element: lazyLoad(EditCoursePage) },
+      { path: 'courses/classes/:id', element: lazyLoad(ClassDetailPage) },
+      { path: 'courses/:id', element: lazyLoad(CourseDetailPage) },
+      { path: 'enrollments', element: lazyLoad(EnrollmentsPage) },
+      { path: 'users/students', element: lazyLoad(StudentsPage) },
+      { path: 'users/teachers', element: lazyLoad(TeachersPage) },
+      { path: 'profile', element: lazyLoad(TeacherProfilePage) },
+      { path: 'classes', element: lazyLoad(ClassesPage) },
+    ],
+  },
 ];

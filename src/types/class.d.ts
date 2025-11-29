@@ -13,20 +13,22 @@ export interface ClassRoomType {
   class_name: string | null;
   start: string;
   end: string;
-  start_time: time;
-  end_time: time;
+  start_time: time | null;
+  end_time: time | null;
   is_active: boolean;
-  zoom_link: string
+  zoom_link: string;
+  days: string[];
 }
 
 export interface ClassRoomPayloadType {
   course_id?: number | string;
   teacher_id?: number | string | null;
   class_name: string | null;
-  start: string;
-  end: string;
-  start_time: time;
-  end_time: time;
+  start: string | null | date;
+  end: string | null | date;
+  start_time: time | null;
+  end_time: time | null;
   is_active: boolean | number | string;
-  zoom_link: string
+  zoom_link: string;
+  days: string[];
 }

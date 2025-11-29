@@ -4,6 +4,7 @@ import type { LessonLockType, LessonType } from '@/types/lesson';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowRight, BookOpen, Lock, Unlock } from 'lucide-react';
 import { toast } from 'sonner';
+import { Link } from "react-router-dom";
 
 interface LessonComponentProps {
   lessons?: LessonType[];
@@ -59,11 +60,11 @@ export function LessonsComponent({ lessons, enrollId, isTeacher = 0, classroomId
     }
 
     return (
-      <a href={`/student/enrolls/${enrollId}/lessons/${lesson.id}`}>
+      <Link to={`/student/enrolls/${enrollId}/lessons/${lesson.id}`}>
         <Button variant="default" className="gap-2">
           Enter <ArrowRight size={16} />
         </Button>
-      </a>
+      </Link>
     );
   };
 
@@ -98,7 +99,7 @@ export function LessonsComponent({ lessons, enrollId, isTeacher = 0, classroomId
               </div>
             </div>
 
-            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-primary/10 to-primary/5 pointer-events-none" />
+            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-primary/10 to-primary/5 pointer-events-none" />
           </li>
         ))}
       </ul>
