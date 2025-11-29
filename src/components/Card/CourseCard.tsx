@@ -8,11 +8,11 @@ interface CourseTypeProps {
   course?: any;
   courseId?: number;
   isTeacher?: boolean;
-  teacherName?:string;
+  teacherName?: string;
   days?: string[];
 }
 
-export default function CourseCard({ course, courseId, isTeacher = false ,teacherName,days}: CourseTypeProps) {
+export default function CourseCard({ course, courseId, isTeacher = false, teacherName, days }: CourseTypeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -42,7 +42,7 @@ export default function CourseCard({ course, courseId, isTeacher = false ,teache
                       </Link>
                     </Button>
                   </div>
-                ) : ( 
+                ) : (
                   <div className="flex flex-wrap items-center justify-end gap-3 ">
                     <div className="bg-primary/80 flex flex-row px-3 py-1.5 text-sm rounded-full shadow gap-3">
                       <User2 className=" w-7 h-7 p-2 bg-white/70 rounded-full" />
@@ -54,7 +54,7 @@ export default function CourseCard({ course, courseId, isTeacher = false ,teache
 
               <div className="relative space-y-2">
                 <div
-                  className={`text-muted-foreground text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}
+                  className={`text-muted-foreground min-h-32 text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}
                   dangerouslySetInnerHTML={{ __html: course?.description || '' }}
                 />
 
@@ -85,7 +85,7 @@ export default function CourseCard({ course, courseId, isTeacher = false ,teache
                 </div>
               )}
 
-              {typeof course?.status !== 'undefined' && (
+              {course?.status !== 'undefined' && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Status:</span>
                   <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${course?.status == 1 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
@@ -93,24 +93,20 @@ export default function CourseCard({ course, courseId, isTeacher = false ,teache
                   </span>
                 </div>
               )}
-
-              
             </div>
 
-          
+            {!isTeacher && (
               <div className="flex-1 min-w-0 ">
-                      <div className="text-sm font-medium  tracking-wide mb-3">Class Days</div>
-                        <div className='flex gap-2 flex-wrap'>
-                          {days?.map((day, index) => (
-                            <span
-                              key={index}
-                              className='px-2 py-1 rounded bg-secondary  text-xs uppercase text-indigo-800'>
-                                {day}
-                              </span>
-                          ))}
-                        </div>
-                    
+                <div className="text-sm font-medium  tracking-wide mb-3">Class Days</div>
+                <div className="flex gap-2 flex-wrap">
+                  {days?.map((day, index) => (
+                    <span key={index} className="px-2 py-1 rounded bg-secondary  text-xs uppercase text-indigo-800">
+                      {day}
+                    </span>
+                  ))}
+                </div>
               </div>
+            )}
           </div>
         </div>
       </Card>

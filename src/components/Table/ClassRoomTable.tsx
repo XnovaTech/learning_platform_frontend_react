@@ -3,6 +3,9 @@ import { Edit, Trash2 } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { Link } from 'react-router-dom';
+import { formatDaysRange } from '@/helper/ClassRoom';
+
+
 
 interface ClassRoomTableProps {
   classrooms: ClassRoomType[];
@@ -12,6 +15,8 @@ interface ClassRoomTableProps {
 }
 
 export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDetail = false }: ClassRoomTableProps) {
+
+
   const displayTime = (time: string): string => {
     if (!time) return '';
     const [hours, minutes] = time.split(':');
@@ -25,7 +30,7 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
         <thead className="bg-muted/50">
           <tr className="text-left">
             <th className="px-4 py-3 font-medium">Class Name</th>
-            <th className='px-4 py-3 font-medium'>Days</th>
+            <th className="px-4 py-3 font-medium">Days</th>
             <th className="px-4 py-3 font-medium">Duration</th>
             <th className="px-4 py-3 font-medium">Time</th>
             <th className="px-4 py-3 font-medium">Teacher</th>
@@ -36,20 +41,14 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
         <tbody>
           {classrooms.map((classroom) => (
             <tr key={classroom.id} className="border-t group hover:bg-muted transition-colors">
-              <td className="px-4 py-3 font-medium hover:text-primary hover:underline hover:underline-offset-3 transition-colors duration-300">
+              <td className="px-4 py-3 font-medium text-primary hover:text-primary/80 hover:underline hover:underline-offset-3 transition-colors duration-300">
                 <Link to={`/teacher/courses/classes/${classroom.id}`}>{classroom.class_name}</Link>{' '}
               </td>
-              <td className="px-4 py-3 text-muted-foreground">
-                <div className='flex gap-2 flex-wrap'>
-                  {classroom.days.map((day, index) => (
-                    <span
-                      key={index}
-                      className='px-2 py-1 rounded bg-secondary text-secondary-foreground text-xs uppercase'>
-                        {day}
-                      </span>
-                  ))}
-                </div>
-               
+              <td className="px-4 py-3 capitalize text-muted-foreground">
+                {formatDaysRange(classroom?.days || [])}
+                {/* <span className="inline-flex  capitalize items-center justify-center px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200 hover:bg-blue-100 transition-colors">
+                  {formatDaysRange(classroom?.days || [])}
+                </span> */}
               </td>
               <td className="px-4 py-3 text-muted-foreground">
                 {moment(classroom.start).format('MMM DD')} - {moment(classroom.end).format('MMM DD, YYYY')}
