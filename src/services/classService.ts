@@ -53,3 +53,12 @@ export const getClassesByCategory = async (categoryId: number): Promise<ClassRoo
     throw new Error(error.message);
   }
 };
+
+export const getActiveClassesByTeacher = async (): Promise<ClassRoomType[]> => {
+  try {
+    const { data } = await api.get(`/v1/classes/teacher/active`);
+    return data?.data;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};

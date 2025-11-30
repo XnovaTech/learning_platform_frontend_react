@@ -3,9 +3,7 @@ import { Edit } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { Link } from 'react-router-dom';
-import { formatDaysRange } from '@/helper/ClassRoom';
-
-
+import { displayTime, formatDaysRange } from '@/helper/ClassRoom';
 
 interface ClassRoomTableProps {
   classrooms: ClassRoomType[];
@@ -15,15 +13,6 @@ interface ClassRoomTableProps {
 }
 
 export default function ClassRoomTable({ classrooms, onEdit, isCoureDetail = false }: ClassRoomTableProps) {
-
-
-  const displayTime = (time: string): string => {
-    if (!time) return '';
-    const [hours, minutes] = time.split(':');
-    if (!hours || !minutes) return '';
-    return `${parseInt(hours, 10)}:${minutes.padStart(2, '0')}`;
-  };
-
   return (
     <div className="overflow-x-auto rounded-md">
       <table className="min-w-full text-sm">

@@ -7,3 +7,10 @@ export const formatDaysRange = (days: string[]): string => {
 
   return `${sortedDays[0]} to ${sortedDays[sortedDays.length - 1]}`;
 };
+
+export const  displayTime = (time: string): string => {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':');
+    if (!hours || !minutes) return '';
+    return `${parseInt(hours, 10)}:${minutes.padStart(2, '0')}`;
+  };
