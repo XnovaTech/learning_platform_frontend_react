@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageCircle, Users, Calendar, Clock, User, BookOpen, CalendarDays } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Clock, User, BookOpen, CalendarDays, Video, Check, User2 } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { getClass } from '@/services/classService';
@@ -13,6 +12,8 @@ import { DiscussionComponent } from '@/components/Student/Enroll/DiscussionCompo
 import { useAuth } from '@/context/AuthContext';
 import { ClassMateComponent } from '@/components/Student/Enroll/ClassMateComponent';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
+import { ZoomRoomComponent } from '@/components/Student/Enroll/ZoomRoomComponent';
+import { displayTime, formatDaysRange } from '@/helper/ClassRoom';
 
 export default function ClassDetailPage() {
   const { id } = useParams();
@@ -26,12 +27,6 @@ export default function ClassDetailPage() {
     refetchOnWindowFocus: false,
   });
 
-  const displayTime = (time: string): string => {
-    if (!time) return '';
-    const [hours, minutes] = time.split(':');
-    if (!hours || !minutes) return '';
-    return `${parseInt(hours, 10)}:${minutes.padStart(2, '0')}`;
-  };
 
   return (
     <div className="max-w-9xl p-4 mx-auto space-y-6">
@@ -85,24 +80,24 @@ export default function ClassDetailPage() {
                     <div className="flex items-center gap-3">
                       <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">{classroom?.class_name}</h1>
                       <span
-                        className={`inline-flex items-center text-xs rounded-full px-2 py-0.5  font-medium ${classroom?.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                          } `}
+                        className={`inline-flex items-center text-xs rounded-full px-2 py-0.5  font-medium ${
+                          classroom?.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        } `}
                       >
                         {classroom?.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </div>
 
-                    {classroom?.zoom_link && (
-                      <Button size="sm" asChild variant="primary" className=" ">
-                        <a href={classroom.zoom_link} target="_blank" rel="noopener noreferrer">
-                          Join Zoom
-                        </a>
-                      </Button>
-                    )}
+                    <div className="flex flex-wrap items-center  gap-3 ">
+                      <div className="bg-primary/80 flex flex-row px-3 py-1 text-sm rounded-full shadow gap-3">
+                        <User2 className=" w-7 h-7 p-2 bg-white/70 rounded-full" />
+                        <p className=" font-medium text-white mt-1">Tr.{classroom?.teacher.first_name}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2   gap-4">
                   {/* Duration */}
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-100">
                     <div className="shrink-0 w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -129,21 +124,6 @@ export default function ClassDetailPage() {
                     </div>
                   </div>
 
-                  {/* Teacher */}
-                  {classroom?.teacher && (
-                    <div className="flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-green-50 to-emerald-50 border border-green-100">
-                      <div className="shrink-0 w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                        <User className="size-5 text-green-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">Teacher</div>
-                        <div className="text-sm font-semibold text-green-900">
-                          {classroom.teacher.first_name} {classroom.teacher.last_name}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
                   {/* Students */}
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-orange-50 to-red-50 border border-orange-100">
                     <div className="shrink-0 w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
@@ -155,24 +135,19 @@ export default function ClassDetailPage() {
                     </div>
                   </div>
 
-                   {/* Days */}
-                  <div className=" col-span-2 flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-indigo-50 to-blue-50 border border-orange-100">
-                    <div className="shrink-0 w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-                      <CalendarDays className="size-5 text-indigo-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium text-indigo-700 uppercase tracking-wide mb-1">Days</div>
-                        <div className='flex gap-2 flex-wrap'>
-                          {classroom?.days.map((day, index) => (
-                            <span
-                              key={index}
-                              className='px-2 py-1 rounded bg-secondary  text-xs uppercase text-indigo-800'>
-                                {day}
-                              </span>
-                          ))}
+                  {classroom?.teacher && (
+                    <div className="flex capitalize items-center gap-3 p-4 rounded-xl bg-linear-to-r from-green-50 to-emerald-50 border border-green-100">
+                      <div className="shrink-0 w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                        <CalendarDays className="size-5 text-green-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">Days</div>
+                        <div className="text-sm font-semibold text-green-900">
+                          <div className="flex gap-2 flex-wrap">{formatDaysRange(classroom?.days || [])}</div>
                         </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -202,6 +177,11 @@ export default function ClassDetailPage() {
                     <MessageCircle className="size-4" />
                     <span className="font-medium">Discuss Room</span>
                   </TabsTrigger>
+
+                  <TabsTrigger value="zoom" className="gap-2   rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
+                    <Video className="size-4" />
+                    <span className="font-medium">Join Zoom</span>
+                  </TabsTrigger>
                 </TabsList>
               </div>
 
@@ -218,6 +198,10 @@ export default function ClassDetailPage() {
               {/* Discussion   */}
               <TabsContent value="discussion" className="p-6 space-y-6 mt-0">
                 <DiscussionComponent classId={classroom?.id as number} userId={user?.id} />
+              </TabsContent>
+
+              <TabsContent value="zoom" className="p-6 space-y-6 mt-0">
+                <ZoomRoomComponent zoomLink={classroom?.zoom_link} />
               </TabsContent>
             </Tabs>
           </Card>
