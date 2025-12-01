@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageCircle, Users, Calendar, Clock, User, BookOpen, CalendarDays, Video, Check, User2 } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Clock, BookOpen, CalendarDays, Video, User2 } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { getClass } from '@/services/classService';
