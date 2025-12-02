@@ -13,7 +13,7 @@ import { useAuth } from '@/context/AuthContext';
 import { ClassMateComponent } from '@/components/Student/Enroll/ClassMateComponent';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
 import { ZoomRoomComponent } from '@/components/Student/Enroll/ZoomRoomComponent';
-import { displayTime, formatDaysRange } from '@/helper/ClassRoom';
+import { displayTime } from '@/helper/ClassRoom';
 
 export default function ClassDetailPage() {
   const { id } = useParams();
@@ -143,7 +143,15 @@ export default function ClassDetailPage() {
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">Days</div>
                         <div className="text-sm font-semibold text-green-900">
-                          <div className="flex gap-2 flex-wrap">{formatDaysRange(classroom?.days || [])}</div>
+                            <div className='flex gap-2 flex-wrap'>
+                              {classroom?.days.map((day, index) => (
+                                <span
+                                  key={index}
+                                  className='px-2 py-1 rounded bg-secondary  text-xs uppercase text-green-800/80'>
+                                    {day}
+                                  </span>
+                              ))}
+                            </div>
                         </div>
                       </div>
                     </div>

@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { createClassRoom, updateClassRoom } from '@/services/classService';
 import { listTeachers } from '@/services/userService';
-import { getCourse } from '@/services/courseService';
+// import { getCourse } from '@/services/courseService';
 import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import { X } from 'lucide-react';
 import { DAY_OPTIONS } from '@/constants/days';
@@ -35,14 +35,14 @@ export function ClassroomForm({ open, onOpenChange, editingItem, courseId, form,
     refetchOnWindowFocus: false,
   });
 
-  const { data: courseData } = useQuery({
-    queryKey: ['course', courseId],
-    queryFn: () => getCourse(courseId),
-    enabled: !!courseId && open,
-    refetchOnWindowFocus: false,
-  });
+  // const { data: courseData } = useQuery({
+  //   queryKey: ['course', courseId],
+  //   queryFn: () => getCourse(courseId),
+  //   enabled: !!courseId && open,
+  //   refetchOnWindowFocus: false,
+  // });
 
-  const nextIndex = ((courseData?.class_rooms?.length as number | undefined) ?? 0) + 1;
+  // const nextIndex = ((courseData?.class_rooms?.length as number | undefined) ?? 0) + 1;
 
   const createMutation = useMutation({
     mutationFn: (payload: ClassRoomPayloadType) => createClassRoom(payload),
@@ -66,8 +66,8 @@ export function ClassroomForm({ open, onOpenChange, editingItem, courseId, form,
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const defaultClassName = `Class ${nextIndex}`;
-    const formattedPayload = { ...form, class_name: defaultClassName, start_time: formatTimeToHi(form.start_time), end_time: formatTimeToHi(form.end_time) };
+    // const defaultClassName = `Class ${nextIndex}`;
+    const formattedPayload = { ...form, start_time: formatTimeToHi(form.start_time), end_time: formatTimeToHi(form.end_time) };
 
     if (editingItem) {
       await updateMutation.mutateAsync({ id: editingItem.id, payload: formattedPayload });
@@ -84,6 +84,11 @@ export function ClassroomForm({ open, onOpenChange, editingItem, courseId, form,
         <form onSubmit={onSubmit} className="space-y-4" autoComplete="off">
           <DialogTitle className="text-lg font-semibold mb-7">{editingItem ? 'Edit Class Room' : 'Create Class Room'}</DialogTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className={`space-y-2 col-span-2`}>
+              <Label htmlFor="class_name">Class Name <span className="text-destructive">*</span></Label>
+              <Input id="class_name"  value={form.class_name || ''} onChange={(e) => setForm({ ...form, class_name: e.target.value })} placeholder="Class Name" />
+            </div>
+            
             <div className={`space-y-2 `}>
               <Label htmlFor="teacher_id">
                 Teacher <span className="text-destructive">*</span>

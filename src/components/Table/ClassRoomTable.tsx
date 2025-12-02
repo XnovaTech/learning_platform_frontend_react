@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
-import { Edit } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { Link } from 'react-router-dom';
-import { displayTime, formatDaysRange } from '@/helper/ClassRoom';
+import { displayTime } from '@/helper/ClassRoom';
 
 interface ClassRoomTableProps {
   classrooms: ClassRoomType[];
@@ -12,7 +12,7 @@ interface ClassRoomTableProps {
   isCoureDetail?: boolean;
 }
 
-export default function ClassRoomTable({ classrooms, onEdit, isCoureDetail = false }: ClassRoomTableProps) {
+export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDetail = false }: ClassRoomTableProps) {
   return (
     <div className="overflow-x-auto rounded-md">
       <table className="min-w-full text-sm">
@@ -33,11 +33,17 @@ export default function ClassRoomTable({ classrooms, onEdit, isCoureDetail = fal
               <td className="px-4 py-3 font-medium text-primary hover:text-primary/80 hover:underline hover:underline-offset-3 transition-colors duration-300">
                 <Link to={`/teacher/courses/classes/${classroom.id}`}>{classroom.class_name}</Link>{' '}
               </td>
-              <td className="px-4 py-3 capitalize text-muted-foreground">
-                {formatDaysRange(classroom?.days || [])}
-                {/* <span className="inline-flex  capitalize items-center justify-center px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200 hover:bg-blue-100 transition-colors">
-                  {formatDaysRange(classroom?.days || [])}
-                </span> */}
+              <td className="px-4 py-3 text-muted-foreground">
+                <div className='flex gap-2 flex-wrap'>
+                  {classroom.days.map((day, index) => (
+                    <span
+                      key={index}
+                      className='px-2 py-1 rounded bg-green-300/10 text-green-700 text-xs uppercase'>
+                        {day}
+                      </span>
+                  ))}
+                </div>
+               
               </td>
               <td className="px-4 py-3 text-muted-foreground">
                 {moment(classroom.start).format('MMM DD')} - {moment(classroom.end).format('MMM DD, YYYY')}
@@ -57,9 +63,9 @@ export default function ClassRoomTable({ classrooms, onEdit, isCoureDetail = fal
                     <Button variant="primary" size="sm" onClick={() => onEdit?.(classroom)}>
                       <Edit className="size-4" />
                     </Button>
-                    {/* <Button variant="destructive" size="sm" onClick={() => onDelete?.(classroom.id)}>
+                    <Button variant="destructive" size="sm" onClick={() => onDelete?.(classroom.id)}>
                       <Trash2 className="size-4" />
-                    </Button> */}
+                    </Button>
                   </div>
                 </td>
               )}

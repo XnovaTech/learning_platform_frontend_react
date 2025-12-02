@@ -15,7 +15,7 @@ export default function LessonTable({ lessons, onEdit, onDelete }: LessonTablePr
         <thead className="bg-muted/50">
           <tr className="text-left">
             <th className="px-4 py-3 font-medium">Title</th>
-            <th className="px-4 py-3 font-medium ">Description</th>
+            {/* <th className="px-4 py-3 font-medium ">Description</th> */}
             <th className="px-4 py-3 font-medium">YouTube</th>
             <th className="px-4 py-3 font-medium text-right">Actions</th>
           </tr>
@@ -24,7 +24,7 @@ export default function LessonTable({ lessons, onEdit, onDelete }: LessonTablePr
           {lessons.map((lesson) => (
             <tr key={lesson.id} className="border-t group hover:bg-muted transition-colors">
               <td className="px-4 py-3 font-medium">{lesson?.title}</td>
-              <td className="px-4 py-3 line-clamp-2 text-muted-foreground w-[400px] lg:w-[500px] overflow-hidden" dangerouslySetInnerHTML={{ __html: lesson?.description || '' }}></td>{' '}
+              {/* <td className="px-4 py-3 line-clamp-2 text-muted-foreground w-[400px] lg:w-[500px] overflow-hidden" dangerouslySetInnerHTML={{ __html: lesson?.description || '' }}></td>{' '} */}
               <td className="px-4 py-3">
                 {lesson?.youtube_link ? (
                   <Button asChild variant="red" size="sm" className="gap-2 bg-red-600 ">
