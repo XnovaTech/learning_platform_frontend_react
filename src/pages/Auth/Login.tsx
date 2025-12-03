@@ -32,7 +32,6 @@ export default function Login() {
 
       navigate('/');
     } catch (err: any) {
-      console.log('err',err);
       toast.error(err.response?.data?.message || 'Invalid email or password. Please try again.');
     } finally {
       setIsLoading(false);

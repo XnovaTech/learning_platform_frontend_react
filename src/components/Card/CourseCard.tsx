@@ -36,7 +36,7 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
                 {isTeacher ? (
                   <div className="flex items-center gap-2">
                     <Button asChild variant="primary" size="sm" className="gap-2">
-                      <Link to={`/teacher/courses/edit?id=${courseId}`}>
+                      <Link to={`/teacher/courses/edit/${courseId}`}>
                         <Edit className="size-4" />
                         <span className="hidden sm:inline">Edit</span>
                       </Link>

@@ -36,6 +36,8 @@ const CourseDetailPage = lazy(() => import('@/pages/teacher/courses/CourseDetail
 const CreateCoursePage = lazy(() => import('@/pages/teacher/courses/CreateCoursePage'));
 const EditCoursePage = lazy(() => import('@/pages/teacher/courses/EditCoursePage'));
 const ClassDetailPage = lazy(() => import('@/pages/teacher/courses/classes/ClassDetailPage'));
+const CreateLessonPage = lazy(() => import('@/pages/teacher/courses/lessons/CreateLessonPage'));
+const EditLessonPage = lazy(() => import('@/pages/teacher/courses/lessons/EditLessonPage'));
 const EnrollmentsPage = lazy(() => import('@/pages/teacher/enrollments/EnrollmentsPage'));
 const StudentsPage = lazy(() => import('@/pages/teacher/users/StudentsPage'));
 const TeachersPage = lazy(() => import('@/pages/teacher/users/TeachersPage'));
@@ -106,8 +108,10 @@ export const routes = [
       { path: 'contacts', element: lazyLoad(ContactsPage) },
       { path: 'courses', element: lazyLoad(CoursesPage) },
       { path: 'courses/create', element: lazyLoad(CreateCoursePage) },
-      { path: 'courses/edit', element: lazyLoad(EditCoursePage) },
+      { path: 'courses/edit/:courseId', element: lazyLoad(EditCoursePage) },
       { path: 'courses/classes/:id', element: lazyLoad(ClassDetailPage) },
+      { path: 'courses/:courseId/lessons/create', element: lazyLoad(CreateLessonPage) },
+      { path: 'courses/lessons/:lessonId/edit', element: lazyLoad(EditLessonPage) },
       { path: 'courses/:id', element: lazyLoad(CourseDetailPage) },
       { path: 'enrollments', element: lazyLoad(EnrollmentsPage) },
       { path: 'users/students', element: lazyLoad(StudentsPage) },

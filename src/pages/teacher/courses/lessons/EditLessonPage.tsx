@@ -2,28 +2,27 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
-import { getCourse } from '@/services/courseService';
+import { lessonDetail } from '@/services/lessonService';
 import { Spinner } from '@/components/ui/spinner';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { CourseForm, type CourseFormState } from '@/components/Form/CourseForm';
+import type { LessonPayloadType, LessonType } from '@/types/lesson';
+import { LessonForm } from '@/components/Form/LessonForm';
 
-export default function EditCoursePage() {
+export default function EditLessonPage() {
   const params = useParams();
-  const courseId = Number(params.courseId);
+  const lessonId = Number(params.lessonId);
 
-  const [form, setForm] = useState<CourseFormState>({
+  const [form, setForm] = useState<LessonPayloadType>({
+    course_id: 0,
     title: '',
     description: '',
-    image: null,
-    status: '1',
-    price: '',
-    category_id: '',
+    youtube_link: '',
   });
 
-  const { data: course, isLoading } = useQuery({
-    queryKey: ['course', courseId],
-    queryFn: () => getCourse(courseId),
-    enabled: !Number.isNaN(courseId),
+  const { data: lesson, isLoading } = useQuery<LessonType>({
+    queryKey: ['lesson', lessonId],
+    queryFn: () => lessonDetail(lessonId),
+    enabled: !Number.isNaN(lessonId),
   });
 
   if (isLoading) {
@@ -40,7 +39,7 @@ export default function EditCoursePage() {
 
   return (
     <div className="max-w-8xl p-4 mx-auto space-y-6">
-      {/* Breadcrumbs */}
+      {/* Breadcrumb */}
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -60,13 +59,21 @@ export default function EditCoursePage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">Edit</BreadcrumbPage>
+            <BreadcrumbLink asChild>
+              <Link className="text-base md:text-md" to={`/teacher/courses/${lesson?.course_id}`}>
+                Course Detail
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage className="text-base md:text-md">Edit Lesson</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
-      <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur transition-all duration-300 ease-in-out">
-        <CourseForm editingItem={course || null} form={form} setForm={setForm} />
+      <Card className="border-0 shadow-xl bg-white/80 backdrop-blur transition-all duration-300 ease-in-out">
+        <LessonForm editingItem={lesson || null} courseId={lesson?.course_id} form={form} setForm={setForm} />
       </Card>
     </div>
   );

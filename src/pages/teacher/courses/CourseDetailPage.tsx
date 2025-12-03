@@ -1,7 +1,7 @@
 // Enhanced CourseDetailPage with collapsible description
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
@@ -14,9 +14,7 @@ import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import type { CourseType } from '@/types/course';
 import {  Plus } from 'lucide-react';
 import { ClassroomForm } from '@/components/Form/ClassroomForm';
-import { LessonForm } from '@/components/Form/LessonForm';
 import { deleteLesson } from '@/services/lessonService';
-import type { LessonPayloadType, LessonType } from '@/types/lesson';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Users } from 'lucide-react';
 import ClassRoomTable from '@/components/Table/ClassRoomTable';
@@ -27,14 +25,13 @@ export default function CourseDetailPage() {
   const params = useParams();
   const courseId = Number(params.id);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ClassRoomType | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const [lessonFormOpen, setLessonFormOpen] = useState(false);
-  const [editingLesson, setEditingLesson] = useState<LessonType | null>(null);
   const [lessonConfirmOpen, setLessonConfirmOpen] = useState(false);
   const [deletingLessonId, setDeletingLessonId] = useState<number | null>(null);
 
@@ -61,14 +58,6 @@ export default function CourseDetailPage() {
 
   const [form, setForm] = useState<ClassRoomPayloadType>(defaultForm);
 
-  const defaultLessonForm: LessonPayloadType = {
-    course_id: courseId,
-    title: null,
-    description: null,
-    youtube_link: null,
-  };
-
-  const [lessonForm, setLessonForm] = useState<LessonPayloadType>(defaultLessonForm);
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteClassRoom(id),
@@ -103,7 +92,6 @@ export default function CourseDetailPage() {
     setEditingItem(null);
     setForm(defaultForm);
     setFormOpen(true);
-    console.log(form);
   };
 
   const openEdit = (c: ClassRoomType) => {
@@ -133,31 +121,9 @@ export default function CourseDetailPage() {
     setEditingItem(null);
   };
 
-  const openCreateLesson = () => {
-    setEditingLesson(null);
-    setLessonForm(defaultLessonForm);
-    setLessonFormOpen(true);
-  };
-
-  const openEditLesson = (lesson: LessonType) => {
-    setEditingLesson(lesson);
-    setLessonForm({
-      course_id: lesson.course_id,
-      title: lesson.title,
-      description: lesson.description,
-      youtube_link: lesson.youtube_link,
-    });
-    setLessonFormOpen(true);
-  };
-
   const askDeleteLesson = (id: number) => {
     setDeletingLessonId(id);
     setLessonConfirmOpen(true);
-  };
-
-  const handleLessonFormSuccess = () => {
-    setLessonFormOpen(false);
-    setEditingLesson(null);
   };
 
   return (
@@ -246,8 +212,10 @@ export default function CourseDetailPage() {
                     <h3 className="text-xl font-semibold text-foreground">Lessons</h3>
                     <p className="text-sm text-muted-foreground mt-1">Manage course lessons and materials</p>
                   </div>
-                  <Button type="button" className="gap-2 shadow-sm w-full sm:w-auto" onClick={openCreateLesson}>
-                    <Plus className="size-4" /> Create Lesson
+                  <Button type="button" className="gap-2 shadow-sm w-full sm:w-auto" asChild>
+                    <Link to={`/teacher/courses/${courseId}/lessons/create`}>
+                      <Plus className="size-4" /> Create Lesson
+                    </Link>
                   </Button>
                 </div>
 
@@ -261,7 +229,7 @@ export default function CourseDetailPage() {
                       <p className="text-sm text-muted-foreground mb-4">Create your first lesson to start teaching</p>
                     </div>
                   ) : (
-                    <LessonTable lessons={course?.lessons || []} onEdit={openEditLesson} onDelete={askDeleteLesson} />
+                    <LessonTable lessons={course?.lessons || []} onEdit={(lesson) => navigate(`/teacher/courses/lessons/${lesson.id}/edit`)} onDelete={askDeleteLesson} />
                   )}
                 </div>
               </TabsContent>
@@ -299,15 +267,6 @@ export default function CourseDetailPage() {
         formatTimeToHi={formatTimeToHi}
       />
 
-      <LessonForm
-        open={lessonFormOpen}
-        onOpenChange={setLessonFormOpen}
-        editingItem={editingLesson}
-        courseId={courseId}
-        form={lessonForm}
-        setForm={setLessonForm}
-        onSuccess={handleLessonFormSuccess}
-      />
 
       <ConfirmDialog
         open={lessonConfirmOpen}
