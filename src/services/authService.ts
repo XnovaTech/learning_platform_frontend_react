@@ -1,4 +1,4 @@
-import type { payloadUser } from '@/types/user';
+import type { PayloadUser } from '@/types/user';
 import api from './api';
 
 export const loginUser = async (email: string, password: string) => {
@@ -10,7 +10,7 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
-export const registerUser = async (payload: payloadUser) => {
+export const registerUser = async (payload: PayloadUser) => {
   const response = await api.post('/auth/register', payload);
   return response.data;
 };

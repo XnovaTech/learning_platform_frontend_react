@@ -7,15 +7,15 @@ import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Upload, X } from 'lucide-react';
-import type { payloadUser, TeacherType } from '@/types/user';
+import type { PayloadUser, UserType } from '@/types/user';
 import { updateProfile } from '@/services/userService';
 
 interface ProfileFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  editingItem: TeacherType | null;
-  form: payloadUser;
-  setForm: React.Dispatch<React.SetStateAction<payloadUser>>;
+  editingItem: UserType | null;
+  form: PayloadUser;
+  setForm: React.Dispatch<React.SetStateAction<PayloadUser>>;
   onSuccess: () => void;
   refetch: () => void;
 }

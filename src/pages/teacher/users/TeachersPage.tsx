@@ -12,7 +12,7 @@ import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from '@/components/ui/pagination';
 import { deleteUser, listUsers } from '@/services/userService';
 import { UserForm } from '@/components/Form/UserForm';
-import type { payloadUser, TeacherType } from '@/types/user';
+import type { PayloadUser, UserType } from '@/types/user';
 
 export default function TeachersPage() {
   const queryClient = useQueryClient();
@@ -21,10 +21,10 @@ export default function TeachersPage() {
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [formOpen, setFormOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<TeacherType | null>(null);
+  const [editingItem, setEditingItem] = useState<UserType | null>(null);
   const [page, setPage] = useState(1);
 
-  const defaultForm: payloadUser = {
+  const defaultForm: PayloadUser = {
     first_name: '',
     last_name: '',
     email: null,
@@ -34,7 +34,7 @@ export default function TeachersPage() {
     role: 'teacher',
   };
 
-  const [form, setForm] = useState<payloadUser>(defaultForm);
+  const [form, setForm] = useState<PayloadUser>(defaultForm);
 
   const openCreate = () => {
     setEditingItem(null);
@@ -62,7 +62,7 @@ export default function TeachersPage() {
       const params: any = { search: searchTerm || undefined, page, role: 'teacher' };
       return await listUsers(params as any);
     },
-    staleTime: 30_000,
+    staleTime: 20_000,
     refetchOnWindowFocus: false,
   });
 

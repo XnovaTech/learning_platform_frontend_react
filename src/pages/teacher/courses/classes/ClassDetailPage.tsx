@@ -27,7 +27,6 @@ export default function ClassDetailPage() {
     refetchOnWindowFocus: false,
   });
 
-
   return (
     <div className="max-w-9xl p-4 mx-auto space-y-6">
       {/* Breadcrumbs */}
@@ -142,16 +141,12 @@ export default function ClassDetailPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">Days</div>
-                        <div className="text-sm font-semibold text-green-900">
-                            <div className='flex gap-2 flex-wrap'>
-                              {classroom?.days.map((day, index) => (
-                                <span
-                                  key={index}
-                                  className='px-2 py-1 rounded bg-secondary  text-xs uppercase text-green-800/80'>
-                                    {day}
-                                  </span>
-                              ))}
-                            </div>
+                        <div className="text-sm font-semibold text-green-800 flex flex-wrap gap-1.5">
+                          {classroom?.days?.map((day,index) => (
+                            <span key={day} className="text-sm capitalize" title={day}>
+                              {day}{index < classroom?.days.length - 1 && ","}
+                            </span>
+                          ))}
                         </div>
                       </div>
                     </div>

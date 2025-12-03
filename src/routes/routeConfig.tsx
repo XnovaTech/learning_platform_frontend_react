@@ -25,7 +25,6 @@ const StudentEnrollPage = lazy(() => import('@/pages/student/enrolls/EnrollPage'
 const StudentEnrollDetailPage = lazy(() => import('@/pages/student/enrolls/EnrollDetailPage'));
 const StudentEnrollLessonPage = lazy(() => import('@/pages/student/enrolls/lessons/LessonDetailPage'));
 const StudentExamPage = lazy(() => import('@/pages/student/exams/ExamPage'));
-const StudentProfilePage = lazy(() => import('@/pages/student/profile/ProfilePage'));
 const ContactPage = lazy(() => import('@/pages/student/contacts/ContactPage'));
 
 //teacher
@@ -40,7 +39,7 @@ const ClassDetailPage = lazy(() => import('@/pages/teacher/courses/classes/Class
 const EnrollmentsPage = lazy(() => import('@/pages/teacher/enrollments/EnrollmentsPage'));
 const StudentsPage = lazy(() => import('@/pages/teacher/users/StudentsPage'));
 const TeachersPage = lazy(() => import('@/pages/teacher/users/TeachersPage'));
-const TeacherProfilePage = lazy(() => import('@/pages/teacher/profile/ProfilePage'));
+const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const ClassesPage = lazy(() => import('@/pages/teacher/classes/ClassesPage'));
 
 // layouts
@@ -92,7 +91,7 @@ export const routes = [
       { path: 'enrolls/:enrollId', element: lazyLoad(StudentEnrollDetailPage) },
       { path: 'enrolls/:enrollId/lessons/:lessonId', element: lazyLoad(StudentEnrollLessonPage) },
       { path: 'exams', element: lazyLoad(StudentExamPage) },
-      { path: 'profile', element: lazyLoad(StudentProfilePage) },
+      { path: 'profile', element: lazyLoad(ProfilePage) },
     ],
   },
 
@@ -113,7 +112,7 @@ export const routes = [
       { path: 'enrollments', element: lazyLoad(EnrollmentsPage) },
       { path: 'users/students', element: lazyLoad(StudentsPage) },
       { path: 'users/teachers', element: lazyLoad(TeachersPage) },
-      { path: 'profile', element: lazyLoad(TeacherProfilePage) },
+      { path: 'profile', element: lazyLoad(ProfilePage) },
       { path: 'classes', element: lazyLoad(ClassesPage) },
     ],
   },

@@ -6,16 +6,16 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import type { payloadUser, TeacherType } from '@/types/user';
+import type { PayloadUser, UserType } from '@/types/user';
 import { registerUser } from '@/services/authService';
 import { updateUser } from '@/services/userService';
 
 interface UserFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  editingItem: TeacherType | null;
-  form: payloadUser;
-  setForm: React.Dispatch<React.SetStateAction<payloadUser>>;
+  editingItem: UserType | null;
+  form: PayloadUser;
+  setForm: React.Dispatch<React.SetStateAction<PayloadUser>>;
   onSuccess: () => void;
   isStudent: boolean;
 }
@@ -32,7 +32,7 @@ export function UserForm({ open, onOpenChange, editingItem, form, setForm, onSuc
   };
 
   const createMutation = useMutation({
-    mutationFn: (payload: payloadUser) => registerUser(payload),
+    mutationFn: (payload: PayloadUser) => registerUser(payload),
     onSuccess: async () => {
       toast.success('User created successfully');
       await queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -44,7 +44,7 @@ export function UserForm({ open, onOpenChange, editingItem, form, setForm, onSuc
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: payloadUser }) => updateUser(id, payload),
+    mutationFn: ({ id, payload }: { id: number; payload: PayloadUser }) => updateUser(id, payload),
     onSuccess: async () => {
       toast.success('User updated successfully');
       await queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -58,6 +58,10 @@ export function UserForm({ open, onOpenChange, editingItem, form, setForm, onSuc
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingItem) {
+      if (editingItem.id == null) {
+        toast.error('Missing user id for update');
+        return;
+      }
       await updateMutation.mutateAsync({ id: editingItem.id, payload: form });
     } else {
       await createMutation.mutateAsync(form);

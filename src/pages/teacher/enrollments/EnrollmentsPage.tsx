@@ -33,7 +33,7 @@ export default function EnrollmentsPage() {
       };
       return await listsEnrolls(params as any);
     },
-    staleTime: 30_000,
+    staleTime: 20_000,
     refetchOnWindowFocus: false,
   });
 

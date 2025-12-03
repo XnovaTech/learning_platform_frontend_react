@@ -18,7 +18,7 @@ export default function ClassesPage() {
     queryFn: async () => {
       return await listCategories();
     },
-    staleTime: 30_000,
+    staleTime: 20_000,
     refetchOnWindowFocus: false,
   });
 
@@ -28,7 +28,7 @@ export default function ClassesPage() {
       if (!selectedCategoryId) return [];
       return await getClassesByCategory(Number(selectedCategoryId));
     },
-    staleTime: 30_000,
+    staleTime: 20_000,
     refetchOnWindowFocus: false,
     enabled: !!selectedCategoryId,
   });

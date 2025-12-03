@@ -16,7 +16,7 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-8xl p-6 space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap">
         <h1 className="text-3xl font-medium text-gray-900">Dashboard</h1>
         <p className="text-gray-600 mt-1">Welcome back! Here's your teaching overview.</p>
       </div>
@@ -48,12 +48,12 @@ export default function DashboardPage() {
         ) : classes.length > 0 ? (
           <ClassCalendar classes={classes} />
         ) : (
-          <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 mb-4">
-              <BookOpen className="h-8 w-8 text-gray-400" />
+          <div className="flex flex-col items-center justify-center">
+            <div className="rounded-full bg-primary/90 p-4 mb-4">
+              <BookOpen className="size-8 text-white" />
             </div>
-            <p className="text-gray-600 font-medium">No active classes to display</p>
-            <p className="text-gray-500 text-sm mt-1">Your classes will appear here once they're scheduled</p>
+            <h4 className="text-lg font-semibold text-foreground mb-1">No active classes Found</h4>
+            <p className="text-sm text-muted-foreground mb-4">our classes will appear here once they're scheduled</p>
           </div>
         )}
       </div>

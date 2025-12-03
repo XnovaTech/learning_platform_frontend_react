@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { payloadUser, TeacherType } from '../../../types/user';
+import type { PayloadUser, UserType } from '../types/user';
 import { Edit, Mail, Phone, MapPin, User, Shield } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,11 +9,11 @@ import { Badge } from '@/components/ui/badge';
 
 export default function ProfilePage() {
   const { user, fetchProfile, token } = useAuth();
-  const [editingItem, setEditingItem] = useState<TeacherType | null>(null);
+  const [editingItem, setEditingItem] = useState<UserType | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const refetch = () => fetchProfile(token ?? '');
 
-  const defaultForm: payloadUser = {
+  const defaultForm: PayloadUser = {
     first_name: '',
     last_name: '',
     email: null,
@@ -22,7 +22,7 @@ export default function ProfilePage() {
     password: '',
   };
 
-  const [form, setForm] = useState<payloadUser>(defaultForm);
+  const [form, setForm] = useState<PayloadUser>(defaultForm);
 
   const openEdit = (t: any) => {
     setEditingItem(t);

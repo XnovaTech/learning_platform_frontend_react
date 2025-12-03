@@ -22,7 +22,7 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
             <th className="px-4 py-3 font-medium">Days</th>
             <th className="px-4 py-3 font-medium">Duration</th>
             <th className="px-4 py-3 font-medium">Time</th>
-            <th className="px-4 py-3 font-medium">Teacher</th>
+            {/* <th className="px-4 py-3 font-medium">Teacher</th> */}
             <th className="px-4 py-3 font-medium">Status</th>
             {isCoureDetail && <th className="px-4 py-3 font-medium text-right">Actions</th>}
           </tr>
@@ -34,16 +34,25 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
                 <Link to={`/teacher/courses/classes/${classroom.id}`}>{classroom.class_name}</Link>{' '}
               </td>
               <td className="px-4 py-3 text-muted-foreground">
-                <div className='flex gap-2 flex-wrap'>
-                  {classroom.days.map((day, index) => (
+                <div className="flex gap-2 flex-wrap">
+                  {/* {classroom.days.map((day, index) => (
                     <span
                       key={index}
                       className='px-2 py-1 rounded bg-green-300/10 text-green-700 text-xs uppercase'>
                         {day}
                       </span>
-                  ))}
+                  ))} */}
+
+                  {classroom?.days.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5  border-blue-100 bg-blue-100 w-fit px-2 py-1 rounded-sm text-blue-700 ">
+                      {classroom?.days?.map((day, index) => (
+                        <span key={day} className="text-xs capitalize" title={day}>
+                          {day}{index < classroom.days.length - 1 && ','}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-               
               </td>
               <td className="px-4 py-3 text-muted-foreground">
                 {moment(classroom.start).format('MMM DD')} - {moment(classroom.end).format('MMM DD, YYYY')}
@@ -51,7 +60,7 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
               <td className="px-4 py-3 text-muted-foreground">
                 {displayTime(classroom.start_time)} - {displayTime(classroom.end_time)}
               </td>
-              <td className="px-4 py-3 text-muted-foreground">{classroom.teacher ? `${classroom.teacher.first_name} ${classroom.teacher.last_name}` : '-'}</td>
+              {/* <td className="px-4 py-3 text-muted-foreground">{classroom.teacher ? `${classroom.teacher.first_name} ${classroom.teacher.last_name}` : '-'}</td> */}
               <td className="px-4 py-3">
                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${classroom.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                   {classroom.is_active ? 'Active' : 'Inactive'}

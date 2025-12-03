@@ -85,10 +85,12 @@ export function ClassroomForm({ open, onOpenChange, editingItem, courseId, form,
           <DialogTitle className="text-lg font-semibold mb-7">{editingItem ? 'Edit Class Room' : 'Create Class Room'}</DialogTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className={`space-y-2 col-span-2`}>
-              <Label htmlFor="class_name">Class Name <span className="text-destructive">*</span></Label>
-              <Input id="class_name"  value={form.class_name || ''} onChange={(e) => setForm({ ...form, class_name: e.target.value })} placeholder="Class Name" />
+              <Label htmlFor="class_name">
+                Class Name <span className="text-destructive">*</span>
+              </Label>
+              <Input id="class_name" value={form.class_name || ''} onChange={(e) => setForm({ ...form, class_name: e.target.value })} placeholder="Class Name" />
             </div>
-            
+
             <div className={`space-y-2 `}>
               <Label htmlFor="teacher_id">
                 Teacher <span className="text-destructive">*</span>
@@ -165,35 +167,30 @@ export function ClassroomForm({ open, onOpenChange, editingItem, courseId, form,
                 )}
               </div>
             </div>
-            <div className='space-y-2 col-span-2'>
-                <Label>Class Days</Label>
-                <div className='flex flex-wrap gap-2'>
-                  {
-                    DAY_OPTIONS.map((day) => {
-                      const selected = form.days.includes(day.value);
+            <div className="space-y-3 col-span-2">
+              <Label className="text-base font-semibold">Class Days</Label>
+              <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
+                {DAY_OPTIONS.map((day) => {
+                  const selected = form.days.includes(day.value);
 
-                      return (
-                        <Button
-                          key={day.value}
-                          type='button'
-                          variant={selected ? "default" : "outline"}
-                          className={`px-4 py-1 rounded-3xl ${
-                            selected ? "bg-primary text-primary-foreground" : ""
-                          }`}
-                          onClick={() => 
-                            setForm({
-                              ...form,
-                              days: selected
-                              ? form.days.filter((d) => d !== day.value)
-                              : [...form.days, day.value],
-                            })
-                          }>
-                            {day.label}
-                          </Button>
-                      )
-                    })
-                  }
-                </div>
+                  return (
+                    <Button
+                      key={day.value}
+                      type="button"
+                      variant={selected ? 'default' : 'outline'}
+                      className={`w-full  h-9 rounded-lg font-medium transition-all duration-200 ${selected && 'bg-primary text-primary-foreground shadow-md hover:shadow-lg scale-105'}`}
+                      onClick={() =>
+                        setForm({
+                          ...form,
+                          days: selected ? form.days.filter((d) => d !== day.value) : [...form.days, day.value],
+                        })
+                      }
+                    >
+                      {day.label}
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-end gap-3 pt-4">

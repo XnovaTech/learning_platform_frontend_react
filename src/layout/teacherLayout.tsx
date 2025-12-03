@@ -196,7 +196,7 @@ function HeaderBar({ collapsed, setCollapsed }: { collapsed: boolean; setCollaps
                   </div>
                   <div className="hidden lg:flex flex-col items-start">
                     <span className="text-sm font-semibold text-gray-900 drop-shadow-sm">{user?.first_name}</span>
-                    <span className="text-xs text-gray-500 font-medium">{user?.roles[0]}</span>
+                    <span className="text-xs text-gray-500 font-medium">{user?.roles?.[0]}</span>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-600 group-hover:text-gray-900 transition-transform duration-300 group-hover:rotate-180" />
                 </div>
