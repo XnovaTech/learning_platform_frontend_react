@@ -1,6 +1,6 @@
-// Enhanced CourseDetailPage with collapsible description
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,9 +12,9 @@ import { getCourse } from '@/services/courseService';
 import { deleteClassRoom } from '@/services/classService';
 import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import type { CourseType } from '@/types/course';
-import {  Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { ClassroomForm } from '@/components/Form/ClassroomForm';
-import { deleteLesson } from '@/services/lessonService';
+import { deleteLesson, lessonDetail } from '@/services/lessonService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Users } from 'lucide-react';
 import ClassRoomTable from '@/components/Table/ClassRoomTable';
@@ -23,14 +23,15 @@ import CourseCard from '@/components/Card/CourseCard';
 
 export default function CourseDetailPage() {
   const params = useParams();
+  const navigate = useNavigate();
   const courseId = Number(params.id);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
+  const [statusFilter, setStatusFilter] = useState<number | null>(1);
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ClassRoomType | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState('classrooms');
 
   const [lessonConfirmOpen, setLessonConfirmOpen] = useState(false);
   const [deletingLessonId, setDeletingLessonId] = useState<number | null>(null);
@@ -42,7 +43,6 @@ export default function CourseDetailPage() {
     refetchOnWindowFocus: false,
   });
 
-
   const defaultForm: ClassRoomPayloadType = {
     course_id: courseId,
     teacher_id: null,
@@ -53,11 +53,10 @@ export default function CourseDetailPage() {
     end_time: null,
     is_active: true,
     zoom_link: '',
-    days: []
+    days: [],
   };
 
   const [form, setForm] = useState<ClassRoomPayloadType>(defaultForm);
-
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteClassRoom(id),
@@ -106,7 +105,7 @@ export default function CourseDetailPage() {
       end_time: c.end_time,
       is_active: c.is_active,
       zoom_link: c.zoom_link,
-      days: c.days
+      days: c.days,
     });
     setFormOpen(true);
   };
@@ -126,6 +125,15 @@ export default function CourseDetailPage() {
     setLessonConfirmOpen(true);
   };
 
+  const editLesson = (lesson: any) => {
+    queryClient.prefetchQuery({
+      queryKey: ['lesson', lesson.id],
+      queryFn: () => lessonDetail(lesson.id),
+    });
+
+    navigate(`/teacher/courses/lessons/${lesson.id}/edit`);
+  };
+
   return (
     <div className="max-w-9xl p-4 mx-auto space-y-6">
       <Breadcrumb>
@@ -140,7 +148,7 @@ export default function CourseDetailPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/courses">
+              <Link className="text-base md:text-md" to="/teacher/courses" prefetch="intent">
                 Courses
               </Link>
             </BreadcrumbLink>
@@ -160,11 +168,11 @@ export default function CourseDetailPage() {
         </Card>
       ) : (
         <div className="flex flex-col gap-5">
-          <CourseCard courseId={courseId} course={course} isTeacher={true}/>
+          <CourseCard courseId={courseId} course={course} isTeacher={true} />
 
           <Card className="border-0 shadow-xl mt-0 pt-0 bg-white/80 backdrop-blur overflow-hidden">
-            <Tabs defaultValue="classrooms" className="w-full">
-              <div className="border-b bg-linear-to-r from-slate-50 to-slate-100/50 px-6 py-5">
+            <Tabs defaultValue="classrooms" className="w-full" onValueChange={setActiveTab}>
+              <div className="border-b bg-linear-to-r from-slate-50 to-slate-100/50 px-6 py-5 flex items-center justify-between">
                 <TabsList className=" rounded-2xl bg-white  shadow  h-11">
                   <TabsTrigger
                     value="classrooms"
@@ -178,6 +186,12 @@ export default function CourseDetailPage() {
                     <span className="font-medium">Lessons</span>
                   </TabsTrigger>
                 </TabsList>
+
+                {activeTab === 'classrooms' && (
+                  <Button disabled={course?.lessons.length === 0} type="button" className="gap-2 shadow-sm w-full sm:w-auto" onClick={openCreate}>
+                    <Plus className="size-4" /> Create Class Room
+                  </Button>
+                )}
               </div>
 
               <TabsContent value="classrooms" className="p-6 space-y-6 mt-0">
@@ -186,24 +200,30 @@ export default function CourseDetailPage() {
                     <h3 className="text-xl font-semibold text-foreground">Class Rooms</h3>
                     <p className="text-sm text-muted-foreground mt-1">Manage class schedules and sessions</p>
                   </div>
-                  <Button disabled={course?.lessons.length === 0} type="button" className="gap-2 shadow-sm w-full sm:w-auto" onClick={openCreate}>
-                    <Plus className="size-4" /> Create Class Room
-                  </Button>
+
+                  <div className="flex items-center gap-2">
+                    <Select
+                      value={statusFilter === 1 ? 'active' : 'inactive'}
+                      onValueChange={(value) => {
+                        if (value === 'active') {
+                          setStatusFilter(1);
+                        } else if (value === 'inactive') {
+                          setStatusFilter(0);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="w-[150px] py-0">
+                        <SelectValue placeholder="Filter by status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
-                <div>
-                  {!course?.class_rooms || course?.class_rooms?.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 px-4">
-                      <div className="rounded-full bg-primary/90 p-4 mb-4">
-                        <Users className="size-8 text-white" />
-                      </div>
-                      <h4 className="text-lg font-semibold text-foreground mb-1">No class rooms yet</h4>
-                      <p className="text-sm text-muted-foreground mb-4">Create your first class room to get started</p>
-                    </div>
-                  ) : (
-                    <ClassRoomTable classrooms={course?.class_rooms || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} />
-                  )}
-                </div>
+                <ClassRoomTable classrooms={course?.class_rooms?.filter((c) => c?.is_active == statusFilter) || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} />
               </TabsContent>
 
               <TabsContent value="lessons" className="p-6 space-y-6 mt-0">
@@ -212,6 +232,7 @@ export default function CourseDetailPage() {
                     <h3 className="text-xl font-semibold text-foreground">Lessons</h3>
                     <p className="text-sm text-muted-foreground mt-1">Manage course lessons and materials</p>
                   </div>
+
                   <Button type="button" className="gap-2 shadow-sm w-full sm:w-auto" asChild>
                     <Link to={`/teacher/courses/${courseId}/lessons/create`}>
                       <Plus className="size-4" /> Create Lesson
@@ -219,19 +240,7 @@ export default function CourseDetailPage() {
                   </Button>
                 </div>
 
-                <div>
-                  {!course?.lessons || course?.lessons?.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 px-4">
-                      <div className="rounded-full bg-primary/90 p-4 mb-4">
-                        <BookOpen className="size-8 text-white" />
-                      </div>
-                      <h4 className="text-lg font-semibold text-foreground mb-1">No lessons yet</h4>
-                      <p className="text-sm text-muted-foreground mb-4">Create your first lesson to start teaching</p>
-                    </div>
-                  ) : (
-                    <LessonTable lessons={course?.lessons || []} onEdit={(lesson) => navigate(`/teacher/courses/lessons/${lesson.id}/edit`)} onDelete={askDeleteLesson} />
-                  )}
-                </div>
+                <LessonTable lessons={course?.lessons || []} onEdit={editLesson} onDelete={askDeleteLesson} />
               </TabsContent>
             </Tabs>
           </Card>
@@ -266,7 +275,6 @@ export default function CourseDetailPage() {
         onSuccess={handleFormSuccess}
         formatTimeToHi={formatTimeToHi}
       />
-
 
       <ConfirmDialog
         open={lessonConfirmOpen}

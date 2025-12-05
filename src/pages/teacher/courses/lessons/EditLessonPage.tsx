@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { lessonDetail } from '@/services/lessonService';
 import { Spinner } from '@/components/ui/spinner';
@@ -11,6 +11,7 @@ import { LessonForm } from '@/components/Form/LessonForm';
 export default function EditLessonPage() {
   const params = useParams();
   const lessonId = Number(params.lessonId);
+  const queryClient = useQueryClient();
 
   const [form, setForm] = useState<LessonPayloadType>({
     course_id: 0,
@@ -19,10 +20,14 @@ export default function EditLessonPage() {
     youtube_link: '',
   });
 
-  const { data: lesson, isLoading } = useQuery<LessonType>({
+  const preloadedLesson = queryClient.getQueryData<LessonType>(['lesson', lessonId]);
+
+  const { data: lesson, isLoading } = useQuery({
     queryKey: ['lesson', lessonId],
     queryFn: () => lessonDetail(lessonId),
-    enabled: !Number.isNaN(lessonId),
+    enabled: !preloadedLesson,
+    initialData: preloadedLesson,
+    staleTime: 60 * 1000,
   });
 
   if (isLoading) {

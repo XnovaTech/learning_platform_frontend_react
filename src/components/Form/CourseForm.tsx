@@ -124,11 +124,11 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
       </CardTitle>
 
       <div className="grid grid-cols-1   lg:grid-cols-3 gap-8">
-        <div className={`space-y-2 ${editingItem && "col-span-3"} `}>
+        <div className={`space-y-2  ${editingItem && "col-span-3"} `}>
           <Label htmlFor="title" className="text-sm font-medium">
             Course Title <span className="text-destructive">*</span>
           </Label>
-          <Input id="title" placeholder="e.g. IELTS" value={form.title} onChange={(e) => handleChange('title', e.target.value)} required className="h-11" />
+          <Input id="title" placeholder="e.g. IELTS" value={form.title} onChange={(e) => handleChange('title', e.target.value)} required className="h-10.5" />
         </div>
 
         {!editingItem && (
@@ -156,11 +156,11 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
             Fee
           </Label>
           <div className="relative">
-            <Input id="price" type="number" min="0" step="1" placeholder="eg.1000" value={form.price} onChange={(e) => handleChange('price', Number(e.target.value))} required className="h-11 pl-7" />
+            <Input id="price" type="number" min="0" step="1" placeholder="eg.1000" value={form.price} onChange={(e) => handleChange('price', Number(e.target.value))} required className="h-10.5" />
           </div>
         </div>
 
-        <div className="space-y-2 lg:col-span-3">
+        <div className="space-y-2 col-span-3">
           <Label htmlFor="description">
             Course Description <span className="text-destructive">*</span>
           </Label>
@@ -175,7 +175,7 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
           </div>
         </div>
 
-        <div className="lg:col-span-3 space-y-6">
+        <div className="col-span-3 space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <div className="h-8 w-1 bg-primary rounded-full" />

@@ -7,143 +7,100 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { StudentDataProvider } from '@/context/StudentDataContext';
 
 const navigationItems = [
-  { title: "Home", href: '/student/home', icon: Home },
-  { title: "Profile", href: '/student/profile', icon: UserRound },
-  { title: "Contacts", href: "/student/contacts", icon: MessageCircle },
+  { title: 'Home', href: '/student/home', icon: Home },
+  { title: 'Profile', href: '/student/profile', icon: UserRound },
+  { title: 'Contacts', href: '/student/contacts', icon: MessageCircle },
 ];
 
 const mainNavigationItems = [
-  { title: "My Courses", href: '/student/enrolls', icon: BookText },
-  { title: "New Courses", href: '/student/courses', icon: BookOpen },
-  { title: "Exams", href: "/student/exams", icon: BookOpenCheck }
+  { title: 'My Courses', href: '/student/enrolls', icon: BookText },
+  { title: 'New Courses', href: '/student/courses', icon: BookOpen },
+  { title: 'Exams', href: '/student/exams', icon: BookOpenCheck },
 ];
 
 const mobileNavigationItems = [
-  { title: "Home", href: '/student/home', icon: Home },
-  { title: "My Courses", href: '/student/enrolls', icon: School },
-  { title: "New Courses", href: '/student/courses', icon: BookOpen },
-  { title: "Exams", href: "/student/exams", icon: Tag },
-  { title: "Profile", href: '/student/profile', icon: UserRound },
-  { title: "Contacts", href: "/student/contacts", icon: MessageCircle },
-]
+  { title: 'Home', href: '/student/home', icon: Home },
+  { title: 'My Courses', href: '/student/enrolls', icon: School },
+  { title: 'New Courses', href: '/student/courses', icon: BookOpen },
+  { title: 'Exams', href: '/student/exams', icon: Tag },
+  { title: 'Profile', href: '/student/profile', icon: UserRound },
+  { title: 'Contacts', href: '/student/contacts', icon: MessageCircle },
+];
 
 function MobileSidebarContent() {
-
   const { pathname } = useLocation();
   const { logout } = useAuth();
 
   return (
+    <>
+      <div className="flex-1 overflow-y-auto px-3 py-4">
+        <div className="space-y-2 mt-10">
+          {mobileNavigationItems.map((item) => {
+            const Icon = item.icon;
+            const active = pathname === item.href;
+            return (
+              <div key={item.href} className="relative">
+                <Button
+                  variant="ghost"
+                  asChild
+                  className={` flex items-center justify-start px-10 overflow-hidden transition-all duration-600 w-64 bg-primary/5 text-primary  py-5.5
+      
+                      ${active ? 'bg-primary/60 text-white  rounded-xl shadow-md px-3 py-5.5' : ''}`}
+                >
+                  <Link to={item.href} className="flex items-center justify-between w-full">
+                    <Icon
+                      className={`h-5 w-5 shrink-0 transition-colors ${active ? 'text-white' : 'text-gray-600'}`}/>
 
-    <div className='flex-1 overflow-y-auto px-2 py-4'>
-
-      <div className='space-y-2 mt-10'>
-        {mobileNavigationItems.map((item) => {
-          const Icon = item.icon;
-          const active = pathname === item.href;
-          return (
-
-            <div
-              key={item.href}
-
-              className='relative'
-            >
-              <Button
-                variant="ghost"
-                asChild
-                className={` flex items-center justify-start px-10 overflow-hidden transition-all duration-600 w-64 bg-blue-50 text-primary  py-5.5
-          
-                      ${active
-                    ? 'bg-primary/60 text-white  rounded-2xl shadow-md px-3 py-5.5'
-                    : ''}`}>
-                <Link to={item.href} className='flex items-center justify-between w-full'>
-                  <Icon
-                    className={`h-5 w-5 shrink-0 transition-colors
-              
-                       ${active ? 'text-white' : 'text-gray-600'}`} />
-
-                  <span className='ml-3 pr-5 font-medium text-gray-700 whitespace-nowrap transition-opacity duration-600'>{item.title}</span>
-
-                </Link>
-              </Button>
-
-            </div>
-
-
-          )
-        })}
-        <div className="mt-4 px-2">
-          <Button
-            onClick={logout}
-            variant="ghost"
-            className="flex px-3 py-5.5 items-center justify-start bg-red-900 w-full text-white rounded-2xl mt-10 hover:text-red-950"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="ml-3 font-medium">
-              Logout
-            </span>
-          </Button>
+                    <span className={`ml-3 pr-5 font-medium transition-colors ${active ? 'text-white' : 'text-gray-600'} whitespace-nowrap  transition-opacity duration-600`}>{item.title}</span>
+                  </Link>
+                </Button>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* <div className="mt-4 px-2">
-        <Button
-          onClick={logout}
-          variant="ghost"
-          className="flex items-center w-20 justify-center overflow-hidden transition-all duration-300 hover:w-64 hover:px-3 py-5.5"
-        >
+      <div className="mt-4 p-4  border-t border-gray-100  bg-linear-to-br from-white to-gray-50">
+        <Button onClick={logout} variant="red" className="flex rounded-xl shadow-md transition-all items-center justify-center  w-full text-white">
           <LogOut className="h-4 w-4" />
-          <span className="ml-3 font-medium whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity duration-300">
-            Logout
-          </span>
+          <span className="ml-3 font-medium">Logout</span>
         </Button>
-      </div> */}
-    </div >
-
-  )
+      </div>
+    </>
+  );
 }
 
-
 function SidebarContent({ hovered }: { hovered: boolean }) {
-
   const { pathname } = useLocation();
   const { logout } = useAuth();
 
   return (
-
-    <div className='flex-1 overflow-y-auto px-2 py-4'>
-      <div className='space-y-1'>
+    <div className="flex-1 overflow-y-auto px-2 py-4">
+      <div className="space-y-1">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const active = pathname === item.href;
           return (
-            <div
-              key={item.href}
-              className='relative'
-            >
+            <div key={item.href} className="relative">
               <Button
                 variant="ghost"
                 asChild
                 className={` flex items-center justify-start overflow-hidden 
                   transition-all duration-500
-                    ${hovered
-                    ? 'w-64 px-3 py-5.5'
-                    : ' justify-center py-5.5 bg-transparent'}
-                      ${active && !hovered
-                    ? 'bg-primary/60 text-white  rounded-2xl shadow-md px-3 py-5.5'
-                    : ''}`}>
-                <Link to={item.href} className='flex items-center w-full'>
+                    ${hovered ? 'w-64 px-3 py-5.5' : ' justify-center py-5.5 bg-transparent'}
+                      ${active && !hovered ? 'bg-primary/60 text-white  rounded-2xl shadow-md px-3 py-5.5' : ''}`}
+              >
+                <Link to={item.href} className="flex items-center w-full">
                   <Icon
                     className={`h-5 w-5 shrink-0 transition-colors 
                       ${hovered ? 'text-ocean/60' : 'text-gray-600'}
-                       ${active && !hovered ? 'text-white' : 'text-gray-600'}`} />
-                  {(hovered) && (
-                    <span className='ml-3 font-medium whitespace-nowrap transition-opacity duration-600'>{item.title}</span>
-                  )}
+                       ${active && !hovered ? 'text-white' : 'text-gray-600'}`}
+                  />
+                  {hovered && <span className="ml-3 font-medium whitespace-nowrap transition-opacity duration-600">{item.title}</span>}
                 </Link>
               </Button>
-
             </div>
-          )
+          );
         })}
       </div>
 
@@ -154,23 +111,19 @@ function SidebarContent({ hovered }: { hovered: boolean }) {
           className="flex items-center justify-between px-10 overflow-hidden rounded-2xl  hover:bg-red-800/90 hover:text-white text-red-800 bg-white  py-5.5 w-full"
         >
           <LogOut className="h-5 w-5font-bold mx-auto" />
-
         </Button>
       </div>
-    </div >
-
-  )
+    </div>
+  );
 }
 
 function HeaderBar() {
   const { pathname } = useLocation();
 
-
   return (
-    <header className='sticky top-2 bg-white/50 rounded-3xl backdrop-blur-lg drop-shadow-2xl z-50 mx-5  flex h-16.5 items-center gap-2 px-6 justify-between'>
-
+    <header className="sticky top-2 bg-white/50 rounded-3xl backdrop-blur-lg drop-shadow-2xl z-50 mx-5  flex h-16.5 items-center gap-2 px-6 justify-between">
       {/*Mobile*/}
-      <div className='flex items-center gap-3 md:hidden'>
+      <div className="flex items-center gap-3 md:hidden">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="md:hidden hover:bg-gray-100 rounded-lg" aria-label="Open menu">
@@ -190,49 +143,44 @@ function HeaderBar() {
 
       {/* logo */}
       <Link to="/student" className="flex items-center gap-3 fex-shrink-0">
-        <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-linear-to-br from-primary/70 to-primary shadow-md">
+        <div className=" hidden md:flex  h-9 w-9 items-center justify-center rounded-2xl bg-linear-to-br from-primary/70 to-primary shadow-md">
           <GraduationCap className="h-5 w-5 text-white" />
         </div>
-        <h1 className=" font-semibold text-gray-900">The Crystal Learning Hub</h1>
+        <h1 className="xs:hidden flex md:hidden lg:flex font-semibold text-gray-900">The Crystal Learning Hub</h1>
       </Link>
-
 
       {/* navigation */}
 
-      <nav className='hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8'>
-        {
-          mainNavigationItems.map((item) => {
-            const active = pathname === item.href;
-            const Icon = item.icon;
-            return (
-
-
-              <Link to={item.href} key={item.href} className={`flex items-center uppercase hover:text-primary transition-colors text-xs tracking-wide
-                      ${active ? " font-medium p-3 bg-primary text-white rounded-2xl drop-shadow-2xl" : "border-b-0"}`}>
-                <Icon
-                  className={`h-4 w-4 transition-colors mr-2
+      <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8">
+        {mainNavigationItems.map((item) => {
+          const active = pathname === item.href;
+          const Icon = item.icon;
+          return (
+            <Link
+              to={item.href}
+              key={item.href}
+              className={`flex items-center uppercase hover:text-primary transition-colors text-xs tracking-wide
+                      ${active ? ' font-medium p-3 bg-primary text-white rounded-2xl drop-shadow-2xl' : 'border-b-0'}`}
+            >
+              <Icon
+                className={`h-4 w-4 transition-colors mr-2
                         
-                       ${active ? 'text-white' : 'text-gray-700'}`} />
-                <span className={`  ${active ? 'text-white' : 'text-slate-700'} `}>{item.title}</span>
-              </Link>
-
-
-
-            )
-          })
-        }
+                       ${active ? 'text-white' : 'text-gray-700'}`}
+              />
+              <span className={`  ${active ? 'text-white' : 'text-slate-700'} `}>{item.title}</span>
+            </Link>
+          );
+        })}
       </nav>
 
-
       {/* search */}
-      <div className=' flex items-center justify-center shrink-0'>
+      <div className=" flex items-center justify-center shrink-0">
         <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/70 drop-shadow-2xl hover:bg-primary">
           <Search className="h-5 w-5 text-white" />
         </div>
       </div>
-
     </header>
-  )
+  );
 }
 
 export default function StudentLayout() {
@@ -241,11 +189,10 @@ export default function StudentLayout() {
   return (
     <StudentDataProvider>
       <div className="min-h-screen bg-primary/10 flex">
-        <div className='flex-1 flex flex-col min-w-0'>
+        <div className="flex-1 flex flex-col min-w-0">
           <HeaderBar />
 
-          <div className='flex relative'>
-
+          <div className="flex relative">
             <aside
               onMouseEnter={() => setSidebarHovered(true)}
               onMouseLeave={() => setSidebarHovered(false)}
@@ -257,14 +204,11 @@ export default function StudentLayout() {
               <SidebarContent hovered={sidebarHovered} />
             </aside>
 
-            <main
-              className={`flex-1 overflow-y-auto p-6 md:p-8 transition-all duration-300 ml-0 ${sidebarHovered ? 'md:ml-[180px]' : 'md:ml-[100px]'} ml-0`}>
+            <main className={`flex-1 overflow-y-auto p-6 md:p-8 transition-all duration-300 ml-0 ${sidebarHovered ? 'md:ml-[180px]' : 'md:ml-[100px]'} ml-0`}>
               <Outlet />
             </main>
           </div>
-
         </div>
-
       </div>
     </StudentDataProvider>
   );

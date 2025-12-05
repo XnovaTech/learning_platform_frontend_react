@@ -29,7 +29,7 @@ export function ZoomRoomComponent({ zoomLink }: ZoomRoomCompponentProps) {
                         href={zoomLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block px-8 py-4 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 transition-colors"
+                        className="inline-block px-7 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 transition-colors"
                     >
                         Join Zoom Class
                     </a>

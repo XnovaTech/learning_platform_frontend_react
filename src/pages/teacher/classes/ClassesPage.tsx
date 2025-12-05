@@ -33,8 +33,6 @@ export default function ClassesPage() {
     enabled: !!selectedCategoryId,
   });
 
-   
-
   useEffect(() => {
     if (categories && categories.length > 0 && !selectedCategoryId) {
       setSelectedCategoryId(String(categories[0].id));
@@ -76,7 +74,7 @@ export default function ClassesPage() {
                   <TabsTrigger
                     key={category.id}
                     value={String(category.id)}
-                    className="rounded-xl transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
+                    className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
                   >
                     <span className="font-medium">{category.name}</span>
                   </TabsTrigger>
@@ -89,14 +87,6 @@ export default function ClassesPage() {
                 {isLoading ? (
                   <div className="flex items-center justify-center py-14">
                     <Spinner className="text-primary size-7 md:size-8" />
-                  </div>
-                ) : !classRooms || classRooms.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-16 px-4">
-                    <div className="rounded-full bg-primary/90 p-4 mb-4">
-                      <Users className="size-8 text-white" />
-                    </div>
-                    <h4 className="text-lg font-semibold text-foreground mb-1">No class rooms yet</h4>
-                    <p className="text-sm text-muted-foreground mb-4">No active class in this category</p>
                   </div>
                 ) : (
                   <ClassRoomTable classrooms={classRooms || []} />

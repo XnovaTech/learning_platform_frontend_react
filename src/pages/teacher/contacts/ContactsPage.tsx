@@ -1,8 +1,6 @@
-'';
-
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Send, MessageSquare, User, SearchIcon, Reply } from 'lucide-react';
+import { Send, MessageSquare, User, SearchIcon, Reply, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
@@ -106,13 +104,13 @@ export default function ContactsPage() {
       </div>
 
       {groupedContacts.length === 0 ? (
-        <Card className="p-8">
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="rounded-full bg-primary/10 p-4 mb-4">
-              <MessageSquare className="size-8 text-primary" />
+        <Card>
+          <div className="flex flex-col items-center py-5 justify-center">
+            <div className="rounded-full bg-primary/90 p-4 mb-4">
+              <MessageCircle className="size-8 text-white" />
             </div>
-            <h4 className="text-lg font-semibold text-foreground mb-1">No Messages Yet</h4>
-            <p className="text-sm text-muted-foreground">Student messages will appear here.</p>
+            <h4 className="text-lg font-semibold text-foreground mb-1">No messages yet</h4>
+            <p className="text-md text-muted-foreground mb-1"> feel free to reply student message!</p>
           </div>
         </Card>
       ) : (

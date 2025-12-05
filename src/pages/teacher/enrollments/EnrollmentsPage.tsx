@@ -132,7 +132,6 @@ export default function EnrollmentsPage() {
               </Button>
             </form>
 
-            <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Select
                   value={statusFilter === null ? 'all' : statusFilter === 1 ? 'approved' : 'pending'}
@@ -157,7 +156,6 @@ export default function EnrollmentsPage() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
           </div>
         </div>
 

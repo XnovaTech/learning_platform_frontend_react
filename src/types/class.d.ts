@@ -15,7 +15,7 @@ export interface ClassRoomType {
   end: string;
   start_time: time | null;
   end_time: time | null;
-  is_active: boolean;
+  is_active: boolean | number;
   zoom_link: string;
   days: string[];
 }
