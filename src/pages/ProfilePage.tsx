@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { PayloadUser, UserType } from '../types/user';
+import type {  UpdatePayloadUser, UserType } from '../types/user';
 import { Edit, Mail, Phone, MapPin, User, Shield } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,16 +13,15 @@ export default function ProfilePage() {
   const [formOpen, setFormOpen] = useState(false);
   const refetch = () => fetchProfile(token ?? '');
 
-  const defaultForm: PayloadUser = {
+  const defaultForm: UpdatePayloadUser = {
     first_name: '',
     last_name: '',
     email: null,
     phone: null,
     address: null,
-    password: '',
   };
 
-  const [form, setForm] = useState<PayloadUser>(defaultForm);
+  const [form, setForm] = useState<UpdatePayloadUser>(defaultForm);
 
   const openEdit = (t: any) => {
     setEditingItem(t);
@@ -33,7 +32,7 @@ export default function ProfilePage() {
       last_name: t.last_name,
       email: t.email,
       phone: t.phone,
-      password: '',
+      password: t.password,
       address: t.address,
     });
     setFormOpen(true);

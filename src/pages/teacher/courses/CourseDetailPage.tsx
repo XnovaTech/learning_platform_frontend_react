@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -32,9 +31,9 @@ export default function CourseDetailPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState('classrooms');
-
   const [lessonConfirmOpen, setLessonConfirmOpen] = useState(false);
   const [deletingLessonId, setDeletingLessonId] = useState<number | null>(null);
+  const statusTabValue =  statusFilter === 1 ? 'active' : 'inactive';
 
   const { data: course, isLoading } = useQuery<CourseType>({
     queryKey: ['course', courseId],
@@ -201,26 +200,33 @@ export default function CourseDetailPage() {
                     <p className="text-sm text-muted-foreground mt-1">Manage class schedules and sessions</p>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <Select
-                      value={statusFilter === 1 ? 'active' : 'inactive'}
-                      onValueChange={(value) => {
-                        if (value === 'active') {
-                          setStatusFilter(1);
-                        } else if (value === 'inactive') {
-                          setStatusFilter(0);
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="w-[150px] py-0">
-                        <SelectValue placeholder="Filter by status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Tabs
+                    value={statusTabValue}
+                    onValueChange={(value) => {
+                      if (value === 'active') {
+                        setStatusFilter(1);
+                      } else {
+                        setStatusFilter(0);
+                      }
+                    }}
+                    className="w-full sm:w-auto"
+                  >
+                    <TabsList className="rounded-2xl bg-white shadow h-10">
+                      <TabsTrigger
+                        value="active"
+                        className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5"
+                      >
+                        Active
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="inactive"
+                        className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5"
+                      >
+                        Inactive
+                      </TabsTrigger>
+ 
+                    </TabsList>
+                  </Tabs>
                 </div>
 
                 <ClassRoomTable classrooms={course?.class_rooms?.filter((c) => c?.is_active == statusFilter) || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} />

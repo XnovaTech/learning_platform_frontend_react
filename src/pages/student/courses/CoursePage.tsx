@@ -87,17 +87,17 @@ export default function CoursePage() {
       {categories.length > 0 ? (
         <Tabs defaultValue={categories[0]?.name} className="w-full max-w-8xl  mx-auto">
           {/* --- Tab List --- */}
-            <TabsList className="rounded-2xl bg-white shadow h-11">
-              {categories.map((cat) => (
-                <TabsTrigger
-                  key={cat.id}
-                  value={cat.name}
-                  className="rounded-xl capitalize transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
-                >
-                  {cat.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          <TabsList className="rounded-2xl bg-white shadow h-11">
+            {categories.map((cat) => (
+              <TabsTrigger
+                key={cat.id}
+                value={cat.name}
+                className="rounded-xl capitalize transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
+              >
+                {cat.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
           {/* --- Tab Content --- */}
           {categories?.map((cat) => (
@@ -112,9 +112,9 @@ export default function CoursePage() {
                     >
                       {/* Thumbnail Section */}
                       <div className="relative h-40 bg-linear-to-br from-primary/30 to-primary/5 rounded-t-2xl flex items-center justify-center">
-                        {course?.image ? (
+                        {course?.banner ? (
                           <img
-                            src={course?.image as any}
+                            src={course?.banner as any}
                             alt={course?.title || 'Course Image'}
                             className="w-full h-full lg:w-full object-cover mx-auto border rounded-t-2xl border-primary shadow-sm"
                           />

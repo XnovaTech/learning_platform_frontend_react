@@ -22,7 +22,6 @@ export interface ClassMateType {
   email: string;
 }
 
-
 export interface Payload {
   id?: number;
   cover?: File | string | null;
@@ -37,6 +36,8 @@ export interface Payload {
 
 export interface PayloadUser extends Payload {}
 
-export interface UpdatePayloadUser extends Payload {}
+export interface UpdatePayloadUser extends Payload {
+  password?: string | number;
+}
 
 export type UpdateUserRequest = UpdatePayloadUser | FormData;

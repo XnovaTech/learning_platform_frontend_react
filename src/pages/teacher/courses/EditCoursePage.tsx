@@ -11,19 +11,19 @@ export default function EditCoursePage() {
   const params = useParams();
   const courseId = Number(params.courseId);
 
+  const { data: course, isLoading } = useQuery({
+    queryKey: ['course', courseId],
+    queryFn: () => getCourse(courseId),
+    enabled: !Number.isNaN(courseId),
+  });
+
   const [form, setForm] = useState<CourseFormState>({
     title: '',
     description: '',
     image: null,
     status: '1',
     price: '',
-    category_id: '',
-  });
-
-  const { data: course, isLoading } = useQuery({
-    queryKey: ['course', courseId],
-    queryFn: () => getCourse(courseId),
-    enabled: !Number.isNaN(courseId),
+    category_id: course?.category?.id || '',
   });
 
   if (isLoading) {

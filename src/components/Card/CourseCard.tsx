@@ -78,7 +78,7 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
                 </div>
               )}
 
-              {course?.price != null && (
+              {course?.price > 0 && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Fee:</span>
                   <span className="px-2 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">{course.price?.toLocaleString()} MMK</span>

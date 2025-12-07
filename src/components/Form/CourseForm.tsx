@@ -10,10 +10,10 @@ import { toast } from 'sonner';
 import { createCourse, updateCourse } from '@/services/courseService';
 import { listCategories } from '@/services/categoryService';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { Upload, X, ImageIcon } from 'lucide-react';
 import type { CourseType } from '@/types/course';
 import { useNavigate } from 'react-router-dom';
 import { CardTitle } from '../ui/card';
+import ImageUploader from '../ImageUploader';
 
 interface CourseFormProps {
   editingItem?: CourseType | null;
@@ -26,6 +26,7 @@ export type CourseFormState = {
   description?: string;
   status: number | string;
   image?: File | string | null;
+  banner?: File | string | null;
   price?: number | string;
   category_id?: number | string;
 };
@@ -34,7 +35,7 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: categoryLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: listCategories,
     refetchOnWindowFocus: false,
@@ -46,9 +47,10 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
       title: editingItem.title ?? '',
       description: editingItem.description ?? '',
       image: editingItem?.image ?? null,
+      banner: editingItem?.banner ?? null,
       status: editingItem?.status ?? '1',
       price: editingItem?.price ?? '',
-      category_id: editingItem?.category_id ?? '',
+      category_id: String(editingItem?.category?.id ?? ''),
     });
   }, [editingItem]);
 
@@ -71,40 +73,31 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
     onSuccess: async () => {
       toast.success('Course updated successfully');
       await queryClient.invalidateQueries({ queryKey: ['courses'] });
+      if (editingItem && editingItem.id) {
+        await queryClient.invalidateQueries({ queryKey: ['course', editingItem.id] });
+      }
       handleCancel();
     },
     onError: (e: any) => toast.error(e?.message || 'Failed to update course!'),
   });
 
-  const handleImgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, files } = e.target;
-    if (files && files[0]) {
-      setForm((prev) => ({ ...prev, [id]: files[0] }));
-    }
-  };
-
   const handleChange = (field: string, value: string | number) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const removeImage = () => {
-    setForm((prev) => ({ ...prev, image: null }));
-  };
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const payload = new FormData();
+    const fileFields = ['image', 'banner'];
 
     Object.entries(form).forEach(([key, value]) => {
-      if (value === null || value === undefined) return;
-      if (key === 'image') {
-        if (value instanceof File) {
-          payload.append('image', value);
-        }
-        return;
+      if (value == null) return;
+
+      if (fileFields.includes(key) && value instanceof File) {
+        payload.append(key, value);
+      } else if (!fileFields.includes(key)) {
+        payload.append(key, value as any);
       }
-      payload.append(key, value as any);
     });
 
     if (editingItem) {
@@ -114,7 +107,7 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
     }
   };
 
-  const isLoading = createMutation.isPending || updateMutation.isPending;
+  const isLoading = createMutation.isPending || updateMutation.isPending || categoryLoading;
 
   return (
     <form onSubmit={onSubmit} className="p-6 md:p-8">
@@ -123,8 +116,8 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
         {editingItem ? 'Edit Course' : 'Create Course'}
       </CardTitle>
 
-      <div className="grid grid-cols-1   lg:grid-cols-3 gap-8">
-        <div className={`space-y-2  ${editingItem && "col-span-3"} `}>
+      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4   gap-7`}>
+        <div className={`space-y-2 col-span-2   ${editingItem && 'md:col-span-1'}   lg:col-span-2   `}>
           <Label htmlFor="title" className="text-sm font-medium">
             Course Title <span className="text-destructive">*</span>
           </Label>
@@ -132,7 +125,7 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
         </div>
 
         {!editingItem && (
-          <div className="space-y-2">
+          <div className=" col-span-2 md:col-span-1 space-y-2">
             <Label htmlFor="category_id" className="text-sm font-medium">
               Category <span className="text-destructive">*</span>
             </Label>
@@ -151,7 +144,7 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
           </div>
         )}
 
-        <div className={`space-y-2 ${editingItem && "col-span-3"} `}>
+        <div className={`space-y-2 col-span-2   md:col-span-1 ${editingItem ? 'lg:col-span-2' : 'lg:col-span-1'} `}>
           <Label htmlFor="price" className="text-sm font-medium">
             Fee
           </Label>
@@ -160,7 +153,7 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
           </div>
         </div>
 
-        <div className="space-y-2 col-span-3">
+        <div className="space-y-2 col-span-2 md:col-span-2 lg:col-span-4">
           <Label htmlFor="description">
             Course Description <span className="text-destructive">*</span>
           </Label>
@@ -175,44 +168,8 @@ export function CourseForm({ editingItem = null, form, setForm }: CourseFormProp
           </div>
         </div>
 
-        <div className="col-span-3 space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <div className="h-8 w-1 bg-primary rounded-full" />
-              Cover Image
-            </h3>
-
-            <div className="space-y-3">
-              {form.image ? (
-                <div className="relative group">
-                  <div className="w-full overflow-hidden rounded-lg border-2 border-primary/20 bg-muted/20">
-                    <img src={form.image instanceof File ? URL.createObjectURL(form.image) : form.image} alt="Course cover preview" className="w-full h-56 object-cover" />
-                  </div>
-                  <Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg" onClick={removeImage}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <label
-                  htmlFor="image"
-                  className="w-full h-56 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors cursor-pointer bg-muted/10 hover:bg-muted/20 group"
-                >
-                  <ImageIcon className="h-12 w-12 text-muted-foreground/50 group-hover:text-primary/70 transition-colors mb-3" />
-                  <p className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">Click to upload image</p>
-                  <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 5MB</p>
-                </label>
-              )}
-              <Input id="image" type="file" accept="image/*" onChange={handleImgChange} className="hidden" />
-
-              {!form.image && (
-                <Button type="button" className="w-full" onClick={() => document.getElementById('image')?.click()}>
-                  <Upload className="h-4 w-4 mr-2" />
-                  Choose File
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
+        <ImageUploader label="Cover Image" value={form?.image || null} onChange={(file) => setForm((prev) => ({ ...prev, image: file }))} />
+        <ImageUploader label="Banner Image" value={form.banner || null} onChange={(file) => setForm((prev) => ({ ...prev, banner: file }))} />
       </div>
 
       <div className="flex items-center gap-3 justify-end mt-8 pt-6 border-t">

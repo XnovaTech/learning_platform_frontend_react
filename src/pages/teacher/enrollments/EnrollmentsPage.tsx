@@ -8,7 +8,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
 import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from '@/components/ui/pagination';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { deleteEnroll, listsEnrolls, updateEnroll } from '@/services/enrollService';
 
 export default function EnrollmentsPage() {
@@ -22,6 +22,8 @@ export default function EnrollmentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<number | null>(null);
   const [page, setPage] = useState(1);
+
+  const statusTabValue = statusFilter === null ? 'all' : statusFilter === 1 ? 'approved' : 'pending';
 
   const { data, isLoading } = useQuery({
     queryKey: ['enrollments', { search: searchTerm, page, status: statusFilter }],
@@ -132,30 +134,32 @@ export default function EnrollmentsPage() {
               </Button>
             </form>
 
-              <div className="flex items-center gap-2">
-                <Select
-                  value={statusFilter === null ? 'all' : statusFilter === 1 ? 'approved' : 'pending'}
-                  onValueChange={(value) => {
-                    setPage(1);
-                    if (value === 'all') {
-                      setStatusFilter(null);
-                    } else if (value === 'approved') {
-                      setStatusFilter(1);
-                    } else {
-                      setStatusFilter(0);
-                    }
-                  }}
-                >
-                  <SelectTrigger className="w-[150px] py-0">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Tabs
+                value={statusTabValue}
+                onValueChange={(value) => {
+                  setPage(1);
+                  if (value === 'all') {
+                    setStatusFilter(null);
+                  } else if (value === 'approved') {
+                    setStatusFilter(1);
+                  } else {
+                    setStatusFilter(0);
+                  }
+                }}
+                className="w-full sm:w-auto"
+              >
+                <TabsList className="rounded-2xl bg-white shadow h-10">
+                  <TabsTrigger value="all" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
+                    All
+                  </TabsTrigger>
+                  <TabsTrigger value="pending" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
+                    Pending
+                  </TabsTrigger>
+                  <TabsTrigger value="approved" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
+                    Approved
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
           </div>
         </div>
 

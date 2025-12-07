@@ -11,6 +11,7 @@ export interface CourseType {
   description?: string;
   status: number | string;
   image?: File | string | null;
+  banner?: File | string | null;
   price?: number | string;
   //classRooms: ClassRoomType[];
   class_rooms: ClassRoomType[];
@@ -33,6 +34,7 @@ export type CoursePayloadType =
     description?: string;
     status: number | string;
     image?: File | string | null;
+    banner?: File | string | null;
     price?: number | string;
   }
   | FormData;
