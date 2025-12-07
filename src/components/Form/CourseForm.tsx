@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -10,30 +10,28 @@ import { toast } from 'sonner';
 import { createCourse, updateCourse } from '@/services/courseService';
 import { listCategories } from '@/services/categoryService';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import type { CourseType } from '@/types/course';
+import type { CoursePayloadType, CourseType } from '@/types/course';
 import { useNavigate } from 'react-router-dom';
 import { CardTitle } from '../ui/card';
 import ImageUploader from '../ImageUploader';
 
 interface CourseFormProps {
   editingItem?: CourseType | null;
-  form: CourseFormState;
-  setForm: React.Dispatch<React.SetStateAction<CourseFormState>>;
 }
 
-export type CourseFormState = {
-  title: string;
-  description?: string;
-  status: number | string;
-  image?: File | string | null;
-  banner?: File | string | null;
-  price?: number | string;
-  category_id?: number | string;
-};
-
-export function CourseForm({ editingItem = null, form, setForm }: CourseFormProps) {
+export function CourseForm({ editingItem = null }: CourseFormProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const defaultForm: CoursePayloadType = {
+    title: '',
+    description: '',
+    image: null,
+    category_id: '',
+    status: '1',
+    price: '',
+  };
+  const [form, setForm] = useState<CoursePayloadType>(defaultForm);
 
   const { data: categories = [], isLoading: categoryLoading } = useQuery({
     queryKey: ['categories'],

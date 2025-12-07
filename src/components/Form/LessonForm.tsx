@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,13 +15,20 @@ import { CardTitle } from '../ui/card';
 interface LessonFormProps {
   editingItem?: LessonType | null;
   courseId?: number;
-  form: LessonPayloadType;
-  setForm: React.Dispatch<React.SetStateAction<LessonPayloadType>>;
 }
 
-export function LessonForm({ editingItem = null, courseId, form, setForm }: LessonFormProps) {
+export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const defaultForm: LessonPayloadType = {
+    course_id: courseId,
+    title: null,
+    description: null,
+    youtube_link: null,
+  };
+
+  const [form, setForm] = useState<LessonPayloadType>(defaultForm);
 
   useEffect(() => {
     if (!editingItem) return;
@@ -51,7 +58,7 @@ export function LessonForm({ editingItem = null, courseId, form, setForm }: Less
     mutationFn: ({ id, payload }: { id: number; payload: LessonPayloadType }) => updateLesson(id, payload),
     onSuccess: async () => {
       toast.success('Lesson updated successfully');
-      await queryClient.invalidateQueries({ queryKey: ['lesson', editingItem?.id] });
+      await queryClient.invalidateQueries({ queryKey: ['course', editingItem?.course_id] });
       handleCancel();
     },
     onError: (e: any) => toast.error(e?.message || 'Failed to update lesson!'),

@@ -27,14 +27,18 @@ export interface CourseListResponse {
   total: number;
 }
 
-export type CoursePayloadType =
-  | {
-    category_id: number | string;
+export interface Payload {
+   category_id: number | string;
     title: string;
     description?: string;
     status: number | string;
     image?: File | string | null;
     banner?: File | string | null;
     price?: number | string;
-  }
-  | FormData;
+}
+
+export interface CoursePayloadType extends Payload {}
+
+export type CourseFormType  = CoursePayloadType | FormData;
+
+

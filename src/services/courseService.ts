@@ -1,7 +1,7 @@
-import type { CourseListResponse, CoursePayloadType, CourseType } from '@/types/course';
+import type { CourseListResponse, CourseFormType, CourseType } from '@/types/course';
 import api from './api';
 
-export const listCourses = async (form?: Partial<CoursePayloadType>): Promise<CourseListResponse> => {
+export const listCourses = async (form?: Partial<CourseFormType>): Promise<CourseListResponse> => {
   try {
     const { data } = await api.get('/v1/courses', { params: form });
     return data?.data;
@@ -19,7 +19,7 @@ export const getCourseWithClass = async (): Promise<CourseType[]> => {
   }
 };
 
-export const createCourse = async (payload: CoursePayloadType): Promise<CourseType> => {
+export const createCourse = async (payload: CourseFormType): Promise<CourseType> => {
   try {
     const { data } = await api.post('/v1/courses', payload);
     return data?.data;
@@ -28,7 +28,7 @@ export const createCourse = async (payload: CoursePayloadType): Promise<CourseTy
   }
 };
 
-export const updateCourse = async (id: number, payload: CoursePayloadType): Promise<CourseType> => {
+export const updateCourse = async (id: number, payload: CourseFormType): Promise<CourseType> => {
   try {
     if (typeof FormData !== 'undefined' && payload instanceof FormData) {
       payload.append('_method', 'PUT');

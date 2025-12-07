@@ -20,18 +20,23 @@ export default function EnrollmentsPage() {
   const [studentId, setStudentId] = useState<number | null>(null);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<number | null>(null);
+  const [tab, setTab] = useState<'current' | 'old' | 'new'>('current');
   const [page, setPage] = useState(1);
 
-  const statusTabValue = statusFilter === null ? 'all' : statusFilter === 1 ? 'approved' : 'pending';
+  const filters = (() => {
+    if (tab === 'current') return { is_active: 1, is_finish: 0 };
+    if (tab === 'old') return { is_active: 0, is_finish: 1 };
+    return { is_active: 0, is_finish: 0 };
+  })();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['enrollments', { search: searchTerm, page, status: statusFilter }],
+    queryKey: ['enrollments', { search: searchTerm, page, ...filters }],
     queryFn: async () => {
       const params: any = {
         search: searchTerm || undefined,
         page,
-        status: statusFilter !== null ? statusFilter : undefined,
+        is_active: filters.is_active,
+        is_finish: filters.is_finish,
       };
       return await listsEnrolls(params as any);
     },
@@ -118,7 +123,7 @@ export default function EnrollmentsPage() {
 
       <Card className="p-4 space-y-4">
         <div className="flex flex-col gap-3">
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+          <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
             <form
               className=" w-full flex items-center max-w-lg md:max-w-md"
               onSubmit={(e) => {
@@ -134,32 +139,29 @@ export default function EnrollmentsPage() {
               </Button>
             </form>
 
-              <Tabs
-                value={statusTabValue}
-                onValueChange={(value) => {
-                  setPage(1);
-                  if (value === 'all') {
-                    setStatusFilter(null);
-                  } else if (value === 'approved') {
-                    setStatusFilter(1);
-                  } else {
-                    setStatusFilter(0);
-                  }
-                }}
-                className="w-full sm:w-auto"
-              >
-                <TabsList className="rounded-2xl bg-white shadow h-10">
-                  <TabsTrigger value="all" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
-                    All
-                  </TabsTrigger>
-                  <TabsTrigger value="pending" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
-                    Pending
-                  </TabsTrigger>
-                  <TabsTrigger value="approved" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
-                    Approved
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+            <Tabs
+              value={tab}
+              onValueChange={(value) => {
+                setPage(1);
+                setTab(value as 'current' | 'old' | 'new');
+              }}
+              className="w-full sm:w-auto"
+            >
+              <TabsList className="rounded-2xl bg-white shadow h-10">
+                <TabsTrigger
+                  value="current"
+                  className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5"
+                >
+                  Current
+                </TabsTrigger>
+                <TabsTrigger value="old" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
+                  Old
+                </TabsTrigger>
+                <TabsTrigger value="new" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
+                  New
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
         </div>
 
@@ -198,7 +200,9 @@ export default function EnrollmentsPage() {
                       <td className="px-4 py-3 font-medium">
                         {enrollment.student?.first_name} {enrollment.student?.last_name}
                       </td>
-                      <td className="px-4 py-3  text-muted-foreground">{enrollment.class_room?.course?.title || '-'} ({enrollment.class_room?.course?.title?.category || '-'}) </td>
+                      <td className="px-4 py-3  text-muted-foreground">
+                        {enrollment.class_room?.course?.title || '-'} ({enrollment.class_room?.course?.title?.category || '-'}){' '}
+                      </td>
 
                       <td className="px-4 py-3  text-muted-foreground">{enrollment.class_room?.class_name || '-'}</td>
                       <td className="px-4 py-3  text-muted-foreground">
@@ -214,7 +218,13 @@ export default function EnrollmentsPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
                           {!enrollment.status && (
-                            <Button size="sm" variant="primary" className="gap-2 py-4 cursor-pointer" onClick={() => askApprove(enrollment.id,enrollment.student.id)} disabled={approveMutation.isPending}>
+                            <Button
+                              size="sm"
+                              variant="primary"
+                              className="gap-2 py-4 cursor-pointer"
+                              onClick={() => askApprove(enrollment.id, enrollment.student.id)}
+                              disabled={approveMutation.isPending}
+                            >
                               <CheckCircle2 className="size-4 transition-all duration-300 ease-in-out" />
                               <span className="hidden text-xs lg:flex">Approve</span>
                             </Button>

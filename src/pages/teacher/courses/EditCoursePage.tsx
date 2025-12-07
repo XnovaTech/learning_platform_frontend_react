@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { getCourse } from '@/services/courseService';
 import { Spinner } from '@/components/ui/spinner';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { CourseForm, type CourseFormState } from '@/components/Form/CourseForm';
+import { CourseForm } from '@/components/Form/CourseForm';
 
 export default function EditCoursePage() {
   const params = useParams();
@@ -15,15 +14,6 @@ export default function EditCoursePage() {
     queryKey: ['course', courseId],
     queryFn: () => getCourse(courseId),
     enabled: !Number.isNaN(courseId),
-  });
-
-  const [form, setForm] = useState<CourseFormState>({
-    title: '',
-    description: '',
-    image: null,
-    status: '1',
-    price: '',
-    category_id: course?.category?.id || '',
   });
 
   if (isLoading) {
@@ -66,7 +56,7 @@ export default function EditCoursePage() {
       </Breadcrumb>
 
       <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur transition-all duration-300 ease-in-out">
-        <CourseForm editingItem={course || null} form={form} setForm={setForm} />
+        <CourseForm editingItem={course || null} />
       </Card>
     </div>
   );

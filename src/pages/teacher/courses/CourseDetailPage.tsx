@@ -33,7 +33,7 @@ export default function CourseDetailPage() {
   const [activeTab, setActiveTab] = useState('classrooms');
   const [lessonConfirmOpen, setLessonConfirmOpen] = useState(false);
   const [deletingLessonId, setDeletingLessonId] = useState<number | null>(null);
-  const statusTabValue =  statusFilter === 1 ? 'active' : 'inactive';
+  const statusTabValue = statusFilter === 1 ? 'active' : 'inactive';
 
   const { data: course, isLoading } = useQuery<CourseType>({
     queryKey: ['course', courseId],
@@ -51,6 +51,7 @@ export default function CourseDetailPage() {
     start_time: null,
     end_time: null,
     is_active: true,
+    is_finish: false,
     zoom_link: '',
     days: [],
   };
@@ -103,6 +104,7 @@ export default function CourseDetailPage() {
       start_time: c.start_time,
       end_time: c.end_time,
       is_active: c.is_active,
+      is_finish: c.is_finish,
       zoom_link: c.zoom_link,
       days: c.days,
     });
@@ -224,7 +226,6 @@ export default function CourseDetailPage() {
                       >
                         Inactive
                       </TabsTrigger>
- 
                     </TabsList>
                   </Tabs>
                 </div>

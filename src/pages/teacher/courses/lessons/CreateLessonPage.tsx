@@ -1,20 +1,11 @@
-import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import type { LessonPayloadType } from '@/types/lesson';
 import { LessonForm } from '@/components/Form/LessonForm';
 
 export default function CreateLessonPage() {
   const params = useParams();
   const courseId = Number(params.courseId);
-
-  const [form, setForm] = useState<LessonPayloadType>({
-    course_id: courseId,
-    title: null,
-    description: null,
-    youtube_link: null,
-  });
 
   return (
     <div className="max-w-8xl p-4 mx-auto space-y-6">
@@ -52,7 +43,7 @@ export default function CreateLessonPage() {
       </Breadcrumb>
 
       <Card className="border-0 shadow-xl bg-white/80 backdrop-blur">
-        <LessonForm courseId={courseId} form={form} setForm={setForm}  />
+        <LessonForm courseId={courseId} />
       </Card>
     </div>
   );

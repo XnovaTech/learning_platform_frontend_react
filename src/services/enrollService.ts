@@ -1,4 +1,5 @@
 import type { EnrollType, EnrollPayloadType } from '@/types/enroll';
+import type { ClassRoomType } from '@/types/class';
 import api from './api';
 
 export const listsEnrolls = async (form?: Partial<EnrollPayloadType>): Promise<any> => {
@@ -40,6 +41,15 @@ export const updateEnroll = async (id: number, payload: any): Promise<any> => {
 export const deleteEnroll = async (id: number): Promise<void> => {
   try {
     await api.delete(`/v1/enrollments/${id}`);
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+export const getEnrollActiveClassByStudent = async (): Promise<ClassRoomType[]> => {
+  try {
+    const { data } = await api.get('/v1/enrollments/student/active');
+    return data?.data ?? [];
   } catch (error: any) {
     throw new Error(error.message);
   }

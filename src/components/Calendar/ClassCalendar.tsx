@@ -18,9 +18,10 @@ const DAY_MAP: Record<string, number> = {
 
 interface CalendarProps {
   classes: ClassRoomType[];
+  isTeacher: boolean;
 }
 
-export default function ClassCalendar({ classes }: CalendarProps) {
+export default function ClassCalendar({ classes, isTeacher }: CalendarProps) {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -83,7 +84,6 @@ export default function ClassCalendar({ classes }: CalendarProps) {
     setIsModalOpen(true);
   };
 
-
   const isToday = (date: Date | null) => {
     if (!date) return false;
     return date.toDateString() === today.toDateString();
@@ -109,6 +109,7 @@ export default function ClassCalendar({ classes }: CalendarProps) {
             <h2 className=" font-medium">
               {MONTH_NAMES[currentMonth].slice(0, 3)} {currentYear}
             </h2>
+            
             <Button onClick={goToPreviousMonth} className="hover:scale-100 rounded-md" size="sm">
               <ChevronLeft className="h-3 w-3" />
             </Button>
@@ -129,7 +130,7 @@ export default function ClassCalendar({ classes }: CalendarProps) {
         </div>
 
         {/* date  */}
-        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-2">
+        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-2">
           {calendarDays.map((date, index) => {
             if (!date) {
               return <div key={`empty-${index}`} className="min-h-26" />;
@@ -160,18 +161,17 @@ export default function ClassCalendar({ classes }: CalendarProps) {
 
                 {events.length > 0 && (
                   <div className="mt-1 space-y-1">
-                    {events?.slice(0,2)?.map((event, idx) => (
+                    {events?.slice(0, 2)?.map((event, idx) => (
                       <div key={idx} className="text-xs bg-primary/90 text-white rounded-sm px-1.5 py-0.5 truncate font-medium hover:bg-primary/100 transition-colors">
                         {event?.course?.category?.name || ''} - {event.class_name}
                       </div>
                     ))}
 
                     {events?.length > 2 && (
-                      <Button type="button" variant="ghost" size="sm" className="w-full h-auto p-1 text-xs text-primary hover:bg-primary/10 font-medium" >
-                         more + 
+                      <Button type="button" variant="ghost" size="sm" className="w-full h-auto p-1 text-xs text-primary hover:bg-primary/10 font-medium">
+                        more +
                       </Button>
                     )}
-                 
                   </div>
                 )}
               </div>
@@ -181,7 +181,7 @@ export default function ClassCalendar({ classes }: CalendarProps) {
       </div>
 
       {/* detail */}
-      <CalendarDetailBox isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} date={selectedDate} events={selectedDate ? getEventsForDate(selectedDate) : []} isTeacher={true} />
+      <CalendarDetailBox isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} date={selectedDate} events={selectedDate ? getEventsForDate(selectedDate) : []} isTeacher={isTeacher} />
     </>
   );
 }

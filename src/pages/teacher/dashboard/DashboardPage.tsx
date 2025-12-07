@@ -46,7 +46,7 @@ export default function DashboardPage() {
             <Spinner className="text-primary size-7 md:size-8" />
           </div>
         ) : classes.length > 0 ? (
-          <ClassCalendar classes={classes} />
+          <ClassCalendar classes={classes} isTeacher={true} />
         ) : (
           <div className="flex flex-col items-center justify-center">
             <div className="rounded-full bg-primary/90 p-4 mb-4">

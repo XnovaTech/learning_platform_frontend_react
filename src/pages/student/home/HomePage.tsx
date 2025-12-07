@@ -4,6 +4,9 @@ import Hello from '../../../../public/lottie/Hello.json';
 import { Card, CardContent } from '@/components/ui/card';
 import { BookAIcon, BookAlert, LayoutDashboard, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ClassCalendar from '@/components/Calendar/ClassCalendar';
+import { useQuery } from '@tanstack/react-query';
+import { getEnrollActiveClassByStudent } from '@/services/enrollService';
 
 export default function HomePage() {
   const { studentData, isLoading, isError } = useStudentData();
@@ -11,6 +14,13 @@ export default function HomePage() {
   const enrollments = studentData?.enrollments || [];
   const activeEnroll = enrollments.filter((e) => Number(e.status) === 1);
   const pendingEnroll = enrollments.filter((e) => Number(e.status) === 0);
+
+  const { data: classes = [], isLoading: calendarLoading } = useQuery({
+    queryKey: ['student', 'active-classes'],
+    queryFn: async () => await getEnrollActiveClassByStudent(),
+    staleTime: 20_000,
+    refetchOnWindowFocus: false,
+  });
 
   if (isLoading)
     return (
@@ -81,8 +91,14 @@ export default function HomePage() {
       </div>
 
       {/* calendar */}
-      <div className="min-h-[60vh] overflow-hidden">
-
+      <div className="min-h-[60vh] overflow-hidden mt-6">
+        {calendarLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <Loader2 className="w-6 h-6 text-primary animate-spin" />
+          </div>
+        ) : (
+          <ClassCalendar classes={classes} isTeacher={false} />
+        )}
       </div>
     </>
   );
