@@ -116,7 +116,7 @@ export default function ContactsPage() {
       ) : (
         <div className="flex flex-col md:flex-row gap-4 h-[calc(100vh-200px)]">
           {/* users */}
-          <Card className=" w-full md:w-60  flex-shrink-0 p-4 border-primary/40 border overflow-hidden">
+          <Card className=" w-full md:w-60  shrink-0 p-4 border-primary/40 border overflow-hidden">
             <h3 className="text-sm font-semibold text-gray-700 mb-2 px-2 ">Students</h3>
             <div className="flex flex-row md:flex-col  gap-2 overflow-auto md:h-[calc(100%-2rem)]">
               {groupedContacts.map((group) => {
@@ -170,7 +170,7 @@ export default function ContactsPage() {
                     <div key={contact.id} className="space-y-2">
                       <div className="flex flex-col  items-start  group" onMouseEnter={() => setHoveredMessageId(contact.id)} onMouseLeave={() => setHoveredMessageId(null)}>
                         <div className="max-w-[80%] relative p-3 rounded-2xl rounded-tl-none shadow-sm bg-primary text-white">
-                          <p className="text-sm leading-relaxed text-white whitespace-pre-wrap break-words">{contact.message}</p>
+                          <p className="text-sm leading-relaxed text-white whitespace-pre-wrap wrap-break-word">{contact.message}</p>
                           <span className="text-xs text-gray-100 mt-1">{moment(contact.created_at).fromNow()}</span>
 
                           {!contact.reply && hoveredMessageId === contact.id && (
@@ -191,7 +191,7 @@ export default function ContactsPage() {
                       {contact.reply && (
                         <div className="flex flex-col items-end">
                           <div className="max-w-[80%] p-3 rounded-2xl rounded-tr-none shadow-sm bg-primary/90 text-white border border-gray-200">
-                            <p className="text-sm leading-relaxed text-white whitespace-pre-wrap break-words">{contact.reply}</p>
+                            <p className="text-sm leading-relaxed text-white whitespace-pre-wrap wrap-break-word">{contact.reply}</p>
                             <span className="text-xs text-gray-100 mt-1">{moment(contact.updated_at).fromNow()}</span>
                           </div>
                         </div>

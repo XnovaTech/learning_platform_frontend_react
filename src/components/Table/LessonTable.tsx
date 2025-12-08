@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { BookOpen, Edit, Trash2, Youtube } from 'lucide-react';
 import type { LessonType } from '@/types/lesson';
+import { Link } from 'react-router-dom';
 
 interface LessonTableProps {
   lessons: LessonType[];
@@ -32,7 +33,12 @@ export default function LessonTable({ lessons, onEdit, onDelete }: LessonTablePr
           <tbody>
             {lessons.map((lesson) => (
               <tr key={lesson.id} className="border-t group hover:bg-muted transition-colors">
-                <td className="px-4 py-3 font-medium">{lesson?.title}</td>
+                <td className="px-4 py-3 font-medium text-primary hover:text-primary/80 hover:underline hover:underline-offset-3 transition-colors duration-300">
+
+                      <Link to={`/teacher/courses/${lesson?.course_id}/lessons/${lesson?.id}`}>
+                             {lesson?.title}
+                      </Link>
+               </td>
                 {/* <td className="px-4 py-3 line-clamp-2 text-muted-foreground w-[400px] lg:w-[500px] overflow-hidden" dangerouslySetInnerHTML={{ __html: lesson?.description || '' }}></td>{' '} */}
                 <td className="px-4 py-3">
                   {lesson?.youtube_link ? (

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { BookOpen, School, LogOut, GraduationCap, Menu, Tag, Home, MessageCircle, UserRound, Search, BookOpenCheck, BookText } from 'lucide-react';
+import { BookOpen, School, LogOut, Menu, Tag, Home, MessageCircle, UserRound, Search, BookOpenCheck, BookText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { StudentDataProvider } from '@/context/StudentDataContext';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Users, GraduationCap, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle, School } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Users, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle, School } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';

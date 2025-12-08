@@ -68,7 +68,7 @@ export default function ClassesPage() {
           </div>
         ) : (
           <Tabs value={selectedCategoryId} onValueChange={setSelectedCategoryId} className="w-full">
-            <div className="border-b bg-gradient-to-r from-slate-50 to-slate-100/50 px-5 pb-4">
+            <div className="border-b bg-linear-to-r from-slate-50 to-slate-100/50 px-5 pb-4">
               <TabsList className="rounded-2xl bg-white shadow h-11">
                 {categories?.map((category: CategoryType) => (
                   <TabsTrigger
