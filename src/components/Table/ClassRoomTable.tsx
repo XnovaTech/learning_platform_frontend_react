@@ -1,9 +1,14 @@
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, Users } from 'lucide-react';
+import { Edit, MessageCircle, Trash2, Users } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { Link } from 'react-router-dom';
 import { displayTime } from '@/helper/ClassRoom';
+import { deleteClassConversations } from '@/services/classService';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '../ui/dialog-context-menu';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface ClassRoomTableProps {
   classrooms: ClassRoomType[];
@@ -13,6 +18,25 @@ interface ClassRoomTableProps {
 }
 
 export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDetail = false }: ClassRoomTableProps) {
+  const [deletingConvId, setDeletingConvId] = useState<number | null>(null);
+  const [conversatioOpen, setconversatioOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const deleteConversationMutation = useMutation({
+    mutationFn: (id: number) => deleteClassConversations(id),
+    onSuccess: async (_, id) => {
+      toast.success('Finished Classroom & deleted conversation successfully');
+      await queryClient.invalidateQueries({ queryKey: ['classes', id] });
+      setconversatioOpen(false);
+      setDeletingConvId(null);
+    },
+    onError: (e: any) => toast.error(e?.message || 'Failed to delete lesson!'),
+  });
+
+  const askDeleteConversation = (id: number) => {
+    setDeletingConvId(id);
+    setconversatioOpen(true);
+  };
 
   return (
     <div className="overflow-x-auto rounded-md">
@@ -32,7 +56,6 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
               <th className="px-4 py-3 font-medium">Days</th>
               <th className="px-4 py-3 font-medium">Duration</th>
               <th className="px-4 py-3 font-medium">Time</th>
-              {/* <th className="px-4 py-3 font-medium">Teacher</th> */}
               {/* <th className="px-4 py-3 font-medium">Status</th> */}
               {isCoureDetail && <th className="px-4 py-3 font-medium text-right">Actions</th>}
             </tr>
@@ -86,6 +109,9 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
                       <Button variant="destructive" size="sm" onClick={() => onDelete?.(classroom.id)}>
                         <Trash2 className="size-4" />
                       </Button>
+                      <Button className='hover:scale-100' size="sm" onClick={() => askDeleteConversation(classroom.id)}>
+                        Finish
+                      </Button>
                     </div>
                   </td>
                 )}
@@ -94,6 +120,24 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
           </tbody>
         </table>
       )}
+
+      <ConfirmDialog
+        open={conversatioOpen}
+        onOpenChange={setconversatioOpen}
+        title="Finish Classrooom & Delete Coversation ?"
+        description="This action cannot be undone. The classroom conversation will be permanently removed."
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={deleteConversationMutation.isPending}
+        destructive
+        onCancel={() => {
+          setconversatioOpen(false);
+          setDeletingConvId(null);
+        }}
+        onConfirm={() => {
+          if (deletingConvId != null) deleteConversationMutation.mutate(deletingConvId);
+        }}
+      />
     </div>
   );
 }

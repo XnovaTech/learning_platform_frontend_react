@@ -112,9 +112,9 @@ export default function CoursePage() {
                     >
                       {/* Thumbnail Section */}
                       <div className="relative h-40 bg-linear-to-br from-primary/30 to-primary/5 rounded-t-2xl flex items-center justify-center">
-                        {course?.banner ? (
+                        {course?.image ? (
                           <img
-                            src={course?.banner as any}
+                            src={course?.image as any}
                             alt={course?.title || 'Course Image'}
                             className="w-full h-full lg:w-full object-cover mx-auto border rounded-t-2xl border-primary shadow-sm"
                           />
