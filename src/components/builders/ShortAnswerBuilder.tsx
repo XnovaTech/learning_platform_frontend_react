@@ -18,7 +18,7 @@ export default function ShortAnswerBuilder({initial, onChange}: Props) {
     return (
         <div className="space-y-4">
             <div>
-                <Label>Question</Label>
+                <Label className="mb-2 font-medium">Question</Label>
                 <Input 
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
@@ -26,7 +26,7 @@ export default function ShortAnswerBuilder({initial, onChange}: Props) {
             </div>
 
             <div>
-                <Label>Correct Answer</Label>
+                <Label className=" mb-2 font-medium">Correct Answer</Label>
                 <Input 
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}

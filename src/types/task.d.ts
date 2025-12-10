@@ -45,6 +45,7 @@ export type ExtraData =
     | DragDropExtraData
     | MatchingExtraData
     | FillBlankExtraData
+    | LongAnswerExtraData
     | Record<string, any>;
 
 export interface LessonTaskType {
@@ -63,6 +64,12 @@ export interface LessonTaskType {
 
     created_at?: string;
     updated_at?: string;
+
+    targets?: { id: string; text: string }[];
+    items?: { id: string; text: string }[];
+
+    left?: { id: string; text: string }[];
+    right?: { id: string; text: string }[];
 }
 
 

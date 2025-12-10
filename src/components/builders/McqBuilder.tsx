@@ -51,11 +51,11 @@ export default function McqBuilder({ initial, onChange }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <Label>Question</Label>
+        <Label className=' font-medium mb-2'>Question</Label>
         <Input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Enter MCQ Question" className='mt-1'/>
       </div>
 
-      <div className="font-medium">Options</div>
+      <div className="font-medium text-sm">Options</div>
 
       <div className="space-y-3">
         {options.map((opt, i) => (

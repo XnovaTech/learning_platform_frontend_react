@@ -38,7 +38,7 @@ export default function FillBlankBuilder({ initial, onChange }: Props) {
         <div className="space-y-4">
             {/* Question */}
             <div>
-                <Label>Question (use __ for blank)</Label>
+                <Label className=" font-medium mb-2">Question (use __ for blank)</Label>
                 <Textarea
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
@@ -47,7 +47,7 @@ export default function FillBlankBuilder({ initial, onChange }: Props) {
                 />
 
                 <div className="mt-2">
-                    <div className="font-medium">Preview</div>
+                    <div className="font-medium mb-2">Preview</div>
                     <div
                         className="p-2 border rounded bg-white"
                         dangerouslySetInnerHTML={{ __html: preview }}
@@ -57,7 +57,7 @@ export default function FillBlankBuilder({ initial, onChange }: Props) {
 
             {/* Correct Answer */}
             <div>
-                <Label>Correct Answer</Label>
+                <Label className=" font-medium mb-2">Correct Answer</Label>
                 <Input
                     value={correctAnswer}
                     placeholder="Correct answer"

@@ -165,7 +165,7 @@ export default function EnrollmentsPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-md  min-h-[240px]">
+        <div className="overflow-x-auto rounded-md  min-h-60">
           {isLoading ? (
             <div className="flex items-center justify-center py-14">
               <Spinner className="text-primary size-7 md:size-8" />

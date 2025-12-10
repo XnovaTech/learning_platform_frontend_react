@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { DragDropBuilder, FillBlankBuilder, MatchingBuilder, ShortAnswerBuilder, LongAnswerBuilder, McqBuilder, TrueFalseBuilder } from '@components/builders';
 
-import type { TaskType, DragDropExtraData, MatchingExtraData, CreateLessonTaskPayloadType, LongAnswerExtraData } from '@/types/task';
+import type { TaskType, DragDropExtraData, MatchingExtraData, CreateLessonTaskPayloadType } from '@/types/task';
 
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -10,18 +10,21 @@ import { Button } from '../ui/button';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createLessonTask } from '@/services/lessonTaskService';
 import { toast } from 'sonner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '../ui/label';
 
 type Props = {
   initial?: CreateLessonTaskPayloadType | null;
   lessonId: number | undefined;
+  refetch: () => Promise<any>;
 };
 
-export default function TaskBuilderManager({ initial, lessonId }: Props) {
+export default function TaskBuilderManager({ initial, lessonId, refetch }: Props) {
   const queryClient = useQueryClient();
 
   const [type, setType] = useState<TaskType>(initial?.task_type ?? 'drag_drop');
   const [points, setPoints] = useState<number>(initial?.points ?? 1);
-  const [order, setOrder] = useState<number>(initial?.order ?? 1);
+  // const [order, setOrder] = useState<number>(initial?.order ?? 1);
 
   // from builders
   const [extraData, setExtraData] = useState<any>(initial?.extra_data ?? {});
@@ -31,6 +34,7 @@ export default function TaskBuilderManager({ initial, lessonId }: Props) {
     onSuccess: async () => {
       toast.success('Task Created Successfully');
       await queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      refetch();
     },
     onError: (e: any) => {
       toast.error(e?.message || 'Failed to create task');
@@ -91,8 +95,8 @@ export default function TaskBuilderManager({ initial, lessonId }: Props) {
       }));
     }
 
-    if (type === 'true_false'){
-        return [];
+    if (type === 'true_false') {
+      return [];
     }
 
     return [];
@@ -106,8 +110,9 @@ export default function TaskBuilderManager({ initial, lessonId }: Props) {
       task_type: type,
       question: extraData.question,
       correct_answer: extraData.correct_answer ?? null,
+      extra_data: type === 'long' ? extraData.extra_data : undefined,
       points,
-      order,
+      order: 1,
       options: convertExtraToOptions(),
     };
 
@@ -134,9 +139,8 @@ export default function TaskBuilderManager({ initial, lessonId }: Props) {
       case 'mcq':
         return <McqBuilder initial={extraData} onChange={setExtraData} />;
 
-        
-    case 'true_false':
-        return <TrueFalseBuilder initial={extraData} onChange={setExtraData}/>
+      case 'true_false':
+        return <TrueFalseBuilder initial={extraData} onChange={setExtraData} />;
       default:
         return null;
     }
@@ -144,39 +148,42 @@ export default function TaskBuilderManager({ initial, lessonId }: Props) {
 
   return (
     <div className="space-y-5 p-5 border rounded bg-white shadow">
- 
-
-      {/* TYPE */}
-      <div>
-        <label className="font-medium">Task Type</label>
-        <select className="w-full border p-2 rounded" value={type} onChange={(e) => setType(e.target.value as TaskType)}>
-          <option value="drag_drop">Drag & Drop</option>
-          <option value="fill_blank">Fill-in-the-Blank</option>
-          <option value="matching">Matching</option>
-          <option value="long">Long Question</option>
-          <option value="short">Short Question</option>
-          <option value="mcq">Multiple Choice Question</option>
-          <option value="true_false">True False</option>
-        </select>
-      </div>
-
       {/* POINTS + ORDER */}
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="font-medium">Points</label>
+      <div className="grid grid-cols-4 gap-3">
+        {/* TYPE */}
+        <div className=" col-span-3">
+          <Label className="font-medium mb-2">Task Type</Label>
+          <Select value={type} onValueChange={(v) => setType(v as TaskType)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select question type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="drag_drop">Drag & Drop</SelectItem>
+              <SelectItem value="fill_blank">Fill-in-the-Blank</SelectItem>
+              <SelectItem value="matching">Matching</SelectItem>
+              <SelectItem value="long">Long Question</SelectItem>
+              <SelectItem value="short">Short Question</SelectItem>
+              <SelectItem value="mcq">Multiple Choice Question</SelectItem>
+              <SelectItem value="true_false">True False</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="col-span-1">
+          <Label className="font-medium mb-3">Marks</Label>
           <Input type="number" value={points} onChange={(e) => setPoints(Number(e.target.value))} />
         </div>
 
-        <div>
-          <label className="font-medium">Order</label>
+        {/* <div>
+          <Label className="font-medium mb-2">Task Order</Label>
           <Input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} />
-        </div>
+        </div> */}
       </div>
 
       {/* BUILDER */}
       <div className="border rounded p-4 bg-gray-50">{renderBuilder()}</div>
 
-      <Button type="submit" className="w-full" onClick={onSubmit} >
+      <Button type="submit" className="w-full" onClick={onSubmit}>
         Save Task
       </Button>
     </div>

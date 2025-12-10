@@ -10,6 +10,15 @@ export const listLessonTasks = async (lessonId: number): Promise<LessonTaskType[
     }
 }
 
+export const getStudentLessonTasks = async (lessonId: number): Promise<LessonTaskType[]> => {
+    try {
+        const {data} = await api.get(`/v1/lesson/tasks/by-student/${lessonId}`);
+        return data?.data;
+    } catch (error: any){
+        throw new Error(error.message);
+    }
+}
+
 export const createLessonTask = async (payload: CreateLessonTaskPayloadType): Promise<LessonTaskType> => {
     try {
         const {data} = await api.post('v1/lesson/tasks', payload);

@@ -25,11 +25,11 @@ export default function LongAnswerBuilder({ initial, onChange }: Props) {
   return (
     <div className="space-y-3">
       <div>
-        <Label>Question</Label>
+        <Label className=' font-medium mb-2'>Question</Label>
         <Textarea value={question} onChange={(e) => setQuestion(e.target.value)} rows={4} placeholder="Write long answer question here..." />
       </div>
       <div>
-        <Label className="font-medium">Minimum Word Count</Label>
+        <Label className="font-medium mb-2">Minimum Word Count</Label>
         <Input type="number" min={0} value={minWords} onChange={(e) => setMinWords(Number(e.target.value))} placeholder="e.g. 150" />
         <p className="text-sm text-gray-500 mt-1">Students must write at least this many words.</p>
       </div>

@@ -22,8 +22,9 @@ export default function DragDropBuilder({ initial, onChange }: Props) {
     onChange({ question, items, targets });
   }, [ question, items, targets]);
 
-  const addItem = () => setItems((s) => [...s, '']);
-  const addTarget = () => setTargets((s) => [...s, '']);
+  const addItem = () => (setItems((s) => [...s, '']), setTargets((s) => [...s, '']));
+  // const addItem = () => setItems((s) => [...s, '']);
+  //const addTarget = () => setTargets((s) => [...s, '']);
 
   const updateItem = (idx: number, val: string) => setItems((s) => s.map((it, i) => (i === idx ? val : it)));
   const updateTarget = (idx: number, val: string) => setTargets((s) => s.map((it, i) => (i === idx ? val : it)));
@@ -50,15 +51,15 @@ export default function DragDropBuilder({ initial, onChange }: Props) {
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className=' col-span-2'>
-        <Label>Question</Label>
+        <Label className=' font-medium mb-2'>Question</Label>
         <Textarea value={question} onChange={(e) => setQuestion(e.target.value)} rows={4} placeholder="Write long answer question here..." />
       </div>
       <div>
-        <div className="flex justify-between items-center mb-2">
-          <div className="font-medium">Draggable Items</div>
-          <Button size="sm" onClick={addItem}>
+        <div className="flex justify-between items-center mb-4">
+          <div className="font-medium text-sm">Draggable Items</div>
+          {/* <Button size="sm" onClick={addItem}>
             Add
-          </Button>
+          </Button> */}
         </div>
 
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEndItems}>
@@ -82,8 +83,8 @@ export default function DragDropBuilder({ initial, onChange }: Props) {
 
       <div>
         <div className="flex justify-between items-center mb-2">
-          <div className="font-medium">Targets (drop zones)</div>
-          <Button size="sm" onClick={addTarget}>
+          <div className="font-medium text-sm">Targets (drop zones)</div>
+          <Button size="sm" onClick={addItem}>
             Add
           </Button>
         </div>

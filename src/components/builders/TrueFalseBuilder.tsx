@@ -24,12 +24,12 @@ export default function TrueFalseBuilder({ initial, onChange }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <Label>Question</Label>
+        <Label className=' mb-2 font-medium'>Question</Label>
         <Input value={question} onChange={(e) => setQuestion(e.target.value)} />
       </div>
 
       <div>
-        <Label>Correct Answer</Label>
+        <Label className=' mb-2 font-medium'>Correct Answer</Label>
         <RadioGroup value={correctAnswer ? 'true' : 'false'} onValueChange={(val) => setCorrectAnswer(val === 'true')} className="flex gap-4 mt-1">
           <div className="flex items-center gap-2">
             <RadioGroupItem value="true" id="tf-true" />

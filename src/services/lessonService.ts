@@ -53,3 +53,12 @@ export const lessonDetail = async (lessonId: Number): Promise<LessonType> => {
     throw new Error(error.message);
   }
 };
+
+export const getLessonByStudent = async (lessonId: Number): Promise<LessonType> => {
+  try {
+    const { data } = await api.get(`/v1/lessons/student/${lessonId}`);
+    return data?.data;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};

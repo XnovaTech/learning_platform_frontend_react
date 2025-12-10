@@ -1,12 +1,14 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { lessonDetail } from "@/services/lessonService";
+import { getLessonByStudent } from "@/services/lessonService";
 import type { LessonType } from "@/types/lesson";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import ReactPlayer from 'react-player'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useParams, Link } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import LessonTaskComponent from "@/components/Student/Enroll/Tasks/LessonTaskComponent";
 
 
 
@@ -20,7 +22,7 @@ export default function LessonDetailPage() {
 
     const { data: lesson, isLoading } = useQuery<LessonType>({
         queryKey: ['lesson', lessonID],
-        queryFn: () => lessonDetail(lessonID),
+        queryFn: () => getLessonByStudent(lessonID),
         enabled: !Number.isNaN(lessonID),
         refetchOnWindowFocus: false,
         refetchOnMount: false
@@ -71,35 +73,7 @@ export default function LessonDetailPage() {
                 </div>
             </div>
 
-            <div className=" drop-shadow-2xl backdrop-blur-lg bg-white/50 dark:bg-slate-900/80 rounded-2xl p-6 md:p-8">
-                <h2 className=" text-xl font-semibold text-slate-800 mb-6">Lesson Video</h2>
-                {lesson?.youtube_link ? (
-                    <div className=" aspect-video rounded-xl overflow-hidden drop-shadow-md border border-gray-200 dark:border-gray-700">
-                        <ReactPlayer
-                            src={lesson.youtube_link}
-                            className="react-player"
-                            width="100%" height="100%"
-                            controls
-                            style={{ borderRadius: '1rem' }}
-                            config={{
-                                youtube: {
-                                    playerVars: {
-                                        rel: 0,
-                                        showinfo: 0,
-                                        modestbranding: 1,
-                                        disablekb: 1,
-                                        fs: 0,
-                                    },
-                                } as any,
-                            }}
-                        />
-                    </div>
-                ) : (
-                    <p className="text-center text-gray-600 dark:text-gray-300 py-10 text-lg">No video available for this lesson.</p>
-                )}
-            </div>
-
-            {/* <Tabs
+            <Tabs
                 defaultValue="youtube"
                 className="w-full max-w-7xl mx-auto my-6">
                 <TabsList className="flex flex-wrap justify-center gap-2 md:gap-6  bg-white/50 backdrop-blur-lg drop-shadow-2xl rounded-xl p-2 h-12.5">
@@ -112,11 +86,11 @@ export default function LessonDetailPage() {
                     </TabsTrigger>
 
                     <TabsTrigger
-                        value="zoom"
+                        value="tasks"
                         className="px-4 py-2  font-medium rounded-xl transition-all
                                                        hover:bg-primary-100 data-[state=active]:bg-sky-600 data-[state=active]:text-white"
                     >
-                        Live Class (Zoom)
+                        Tasks
                     </TabsTrigger>
                 </TabsList>
 
@@ -148,35 +122,10 @@ export default function LessonDetailPage() {
                         )}
                     </div>
                 </TabsContent>
-                <TabsContent value="zoom" className="mt-3 w-full">
-                    <div className=" drop-shadow-2xl backdrop-blur-lg bg-white/50 dark:bg-slate-900/80 rounded-2xl p-6 md:p-8 text-center">
-                        {lesson?.zoom_link ? (
-                            <>
-                                <div className="flex mb-4 justify-center">
-                                    <Lottie lottieRef={lottieRef} animationData={Hello} loop={true} className=" w-52" />
-                                </div>
-
-                                <h3 className="text-2xm font-semibold text-gray-800 mb-3">
-                                    Join the Live Class !
-                                </h3>
-                                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                                    Click below to enter the Zoom meeting room.
-                                </p>
-                                <a
-                                    href={lesson.zoom_link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-block px-8 py-4 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 transition-colors"
-                                >
-                                    Join Zoom Class
-                                </a>
-                            </>
-                        ) : (
-                            <p className="text-center text-gray-600 dark:text-gray-300 py-10 text-lg">No Zoom link available for this lesson.</p>
-                        )}
-                    </div>
+                <TabsContent value="tasks" className="mt-3 w-full">
+                    <LessonTaskComponent lessonId={lessonID} />
                 </TabsContent>
-            </Tabs> */}
+            </Tabs> 
 
 
 
