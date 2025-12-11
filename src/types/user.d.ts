@@ -22,6 +22,8 @@ export interface ClassMateType {
   email: string;
 }
 
+export type statusType = 'new' | 'current' | 'old';
+
 export interface Payload {
   id?: number;
   cover?: File | string | null;
@@ -32,6 +34,7 @@ export interface Payload {
   address: string | null;
   password: string | number;
   role?: string;
+  status?: statusType;
 }
 
 export interface PayloadUser extends Payload {}

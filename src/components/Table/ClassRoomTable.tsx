@@ -126,10 +126,10 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
         onOpenChange={setconversatioOpen}
         title="Finish Classrooom & Delete Coversation ?"
         description="This action cannot be undone. The classroom conversation will be permanently removed."
-        confirmText="Delete"
+        confirmText="Finish"
         cancelText="Cancel"
         loading={deleteConversationMutation.isPending}
-        destructive
+        destructive={false}
         onCancel={() => {
           setconversatioOpen(false);
           setDeletingConvId(null);

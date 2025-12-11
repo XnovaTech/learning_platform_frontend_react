@@ -47,7 +47,7 @@ export const deleteClassRoom = async (id: number): Promise<void> => {
 
 export const deleteClassConversations = async (id: number): Promise<void> => {
   try {
-    await api.delete(`/v1/classes/${id}/conversations`);
+    await api.delete(`/v1/classes/${id}/finish`);
   } catch (error: any) {
     throw new Error(error.message);
   }

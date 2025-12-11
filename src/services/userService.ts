@@ -28,7 +28,6 @@ export const listUsers = async (form?: Partial<PayloadUser>): Promise<any> => {
   }
 };
 
-
 export const updateUser = async (id: number, payload: PayloadUser): Promise<any> => {
   try {
     const { data } = await api.put(`/v1/users/${id}`, payload);
@@ -50,7 +49,7 @@ export const updateProfile = async (id: number, payload: UpdateUserRequest): Pro
   } catch (error: any) {
     throw new Error(error.message);
   }
-}
+};
 
 export const deleteUser = async (id: number): Promise<void> => {
   try {
@@ -59,4 +58,3 @@ export const deleteUser = async (id: number): Promise<void> => {
     throw new Error(error.message);
   }
 };
-

@@ -1,5 +1,3 @@
-'';
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit, Trash2, SearchIcon, Users } from 'lucide-react';
@@ -12,7 +10,8 @@ import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from '@/components/ui/pagination';
 import { deleteUser, listUsers } from '@/services/userService';
 import { UserForm } from '@/components/Form/UserForm';
-import type { PayloadUser, UserType } from '@/types/user';
+import type { PayloadUser, UserType, statusType } from '@/types/user';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function StudentsPage() {
   const queryClient = useQueryClient();
@@ -22,6 +21,7 @@ export default function StudentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<UserType | null>(null);
+  const [tab, setTab] = useState<statusType>('current');
   const [page, setPage] = useState(1);
 
   const defaultForm: PayloadUser = {
@@ -57,9 +57,9 @@ export default function StudentsPage() {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ['users', { search: searchTerm, page, role: 'student' }],
+    queryKey: ['users', { search: searchTerm, page, role: 'student', status: tab }],
     queryFn: async () => {
-      const params: any = { search: searchTerm || undefined, page, role: 'student' };
+      const params: any = { search: searchTerm || undefined, page, role: 'student', status: tab };
       return await listUsers(params as any);
     },
     staleTime: 20_000,
@@ -127,11 +127,28 @@ export default function StudentsPage() {
             </Button>
           </form>
 
-          {(data?.total ?? 0) > 0 && (
-            <Button className="rounded-full hidden md:flex">
-              Students :<span>{data?.total}</span>
-            </Button>
-          )}
+          <div className="flex items-center flex-wrap gap-2">
+            <Tabs
+              value={tab}
+              onValueChange={(value) => {
+                setTab(value as statusType);
+                setPage(1);
+              }}
+              className="w-full sm:w-auto"
+            >
+              <TabsList className="rounded-2xl bg-white shadow h-10">
+                {['Current', 'Old', 'New'].map((status) => (
+                  <TabsTrigger
+                    key={status}
+                    value={status.toLowerCase()}
+                    className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5"
+                  >
+                    {status}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
 
         <div className="overflow-x-auto rounded-md  min-h-[240px]">
@@ -143,6 +160,7 @@ export default function StudentsPage() {
             <table className="min-w-full text-sm ">
               <thead className="bg-muted/50">
                 <tr className="text-left">
+                  <th className="px-4 py-3 font-medium">No</th>
                   <th className="px-4 py-3 font-medium">Name</th>
                   <th className="px-4 py-3 font-medium">Email</th>
                   <th className="px-4 py-3 font-medium">Phone</th>
@@ -153,7 +171,7 @@ export default function StudentsPage() {
               <tbody>
                 {!data || data.users.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="py-14 px-4 text-center">
+                    <td colSpan={6} className="py-14 px-4 text-center">
                       <div className="flex flex-col items-center justify-center">
                         <div className="rounded-full bg-primary/90 p-4 mb-4">
                           <Users className="size-8 text-white" />
@@ -164,14 +182,15 @@ export default function StudentsPage() {
                     </td>
                   </tr>
                 ) : (
-                  data.users?.map((user: any) => (
+                  data.users?.map((user: any, index: number) => (
                     <tr key={user.id} className="border-t group hover:bg-muted transition-colors">
+                      <td className="px-4 py-3 font-medium">{index + 1}</td>
                       <td className="px-4 py-3 font-medium">
                         {user.first_name} {user.last_name}{' '}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
                       <td className="px-4 py-3 text-muted-foreground">{user.phone || '-'}</td>
-                      <td className="px-4 py-3 hidden md:flex text-muted-foreground max-w-[30ch] truncate ">{user.address || '-'}</td>
+                      <td className="px-4 py-3 line-clamp-1 hidden md:flex text-muted-foreground max-w-[30ch] truncate ">{user.address || '-'}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
                           <Button size="sm" variant="primary" className="gap-2 py-4 " onClick={() => openEdit(user)}>
@@ -179,7 +198,7 @@ export default function StudentsPage() {
                             <span className="hidden text-xs lg:flex">Edit</span>
                           </Button>
 
-                          <Button size="sm"  variant="destructive" className="gap-2 py-4 " onClick={() => askDelete(user?.id)}>
+                          <Button size="sm" variant="destructive" className="gap-2 py-4 " onClick={() => askDelete(user?.id)}>
                             <Trash2 className=" size-4 transition-all duration-300 ease-in-out " />
                             <span className="hidden text-xs lg:flex">Delete</span>
                           </Button>

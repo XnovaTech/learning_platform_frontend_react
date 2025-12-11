@@ -39,19 +39,19 @@ function MobileSidebarContent() {
             const Icon = item.icon;
             const active = pathname === item.href;
             return (
-              <div key={item.href} className="relative">
+              <div key={item.href} className="relative group">
                 <Button
                   variant="ghost"
                   asChild
-                  className={` flex items-center justify-start px-10 overflow-hidden transition-all duration-600 w-64 bg-primary/5 text-primary  py-5.5
+                  className={`hover:bg-primary/60 ease-in-out   rounded-xl  flex  items-center justify-start px-10 overflow-hidden transition-all duration-600 w-64 bg-primary/5 text-primary  py-5.5
       
-                      ${active ? 'bg-primary/60 text-white  rounded-xl shadow-md px-3 py-5.5' : ''}`}
+                      ${active ? 'bg-primary/60 text-white  shadow-md px-3 py-5.5' : ''}`}
                 >
                   <Link to={item.href} className="flex items-center justify-between w-full">
                     <Icon
-                      className={`h-5 w-5 shrink-0 transition-colors ${active ? 'text-white' : 'text-gray-600'}`}/>
+                      className={`h-5 w-5 shrink-0 duration-500 group-hover:text-white transition-colors ${active ? 'text-white' : 'text-gray-600'}`} />
 
-                    <span className={`ml-3 pr-5 font-medium transition-colors ${active ? 'text-white' : 'text-gray-600'} whitespace-nowrap  transition-opacity duration-600`}>{item.title}</span>
+                    <span className={`ml-3 pr-5 font-medium duration-500 transition-colors group-hover:text-white ${active ? 'text-white' : 'text-gray-600'} whitespace-nowrap  transition-opacity duration-600`}>{item.title}</span>
                   </Link>
                 </Button>
               </div>
@@ -144,7 +144,7 @@ function HeaderBar() {
       {/* logo */}
       <Link to="/student" className="flex items-center gap-3 fex-shrink-0">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/70 to-primary shadow-md">
-           <img src='/logo.png' className='object-cover'/>
+          <img src='/logo.png' className='object-cover' />
         </div>
         <h1 className=" font-semibold text-gray-900">The Crystal Academy</h1>
       </Link>

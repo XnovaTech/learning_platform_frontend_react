@@ -20,13 +20,12 @@ export default function EnrollmentsPage() {
   const [studentId, setStudentId] = useState<number | null>(null);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [tab, setTab] = useState<'current' | 'old' | 'new'>('current');
+  const [tab, setTab] = useState<'pending' | 'approved'>('pending');
   const [page, setPage] = useState(1);
 
   const filters = (() => {
-    if (tab === 'current') return { is_active: 1, is_finish: 0 };
-    if (tab === 'old') return { is_active: 0, is_finish: 1 };
-    return { is_active: 0, is_finish: 0 };
+    if (tab === 'pending') return { status: 0 };
+    return { status: 1 };
   })();
 
   const { data, isLoading } = useQuery({
@@ -35,8 +34,7 @@ export default function EnrollmentsPage() {
       const params: any = {
         search: searchTerm || undefined,
         page,
-        is_active: filters.is_active,
-        is_finish: filters.is_finish,
+        status: filters.status,
       };
       return await listsEnrolls(params as any);
     },
@@ -143,22 +141,23 @@ export default function EnrollmentsPage() {
               value={tab}
               onValueChange={(value) => {
                 setPage(1);
-                setTab(value as 'current' | 'old' | 'new');
+                setTab(value as 'pending' | 'approved');
               }}
               className="w-full sm:w-auto"
             >
               <TabsList className="rounded-2xl bg-white shadow h-10">
                 <TabsTrigger
-                  value="current"
+                  value="pending"
                   className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5"
                 >
-                  Current
+                  Pending
                 </TabsTrigger>
-                <TabsTrigger value="old" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
-                  Old
-                </TabsTrigger>
-                <TabsTrigger value="new" className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5">
-                  New
+
+                <TabsTrigger
+                  value="approved"
+                  className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5"
+                >
+                  Approved
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -178,7 +177,7 @@ export default function EnrollmentsPage() {
                   <th className="px-4 py-3 font-medium">Course</th>
                   <th className="px-4 py-3 font-medium">Class</th>
                   <th className="px-4 py-3 font-medium">Time</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
+                  {/* <th className="px-4 py-3 font-medium">Status</th> */}
                   <th className="px-4 py-3 font-medium text-right  ">Actions</th>
                 </tr>
               </thead>
@@ -201,7 +200,8 @@ export default function EnrollmentsPage() {
                         {enrollment.student?.first_name} {enrollment.student?.last_name}
                       </td>
                       <td className="px-4 py-3  text-muted-foreground">
-                        {enrollment.class_room?.course?.title || '-'} ({enrollment.class_room?.course?.title?.category || '-'}){' '}
+                        {enrollment.class_room?.course?.title || '-'}
+                        {/* ({enrollment.class_room?.course?.title?.category || '-'}){' '} */}
                       </td>
 
                       <td className="px-4 py-3  text-muted-foreground">{enrollment.class_room?.class_name || '-'}</td>
@@ -209,15 +209,15 @@ export default function EnrollmentsPage() {
                         {formatTimeToHi(enrollment.class_room?.start_time)} - {formatTimeToHi(enrollment.class_room?.end_time)}
                       </td>
 
-                      <td className="px-4  py-3">
+                      {/* <td className="px-4  py-3">
                         <span className={`px-2 py-1  text-xs rounded-full  font-medium ${enrollment.status ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                           {enrollment.status ? 'Approved' : 'Pending'}
                         </span>
-                      </td>
+                      </td> */}
 
                       <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-2">
-                          {!enrollment.status && (
+                        {!enrollment.status && (
+                          <div className="flex items-center justify-end gap-2">
                             <Button
                               size="sm"
                               variant="primary"
@@ -228,13 +228,13 @@ export default function EnrollmentsPage() {
                               <CheckCircle2 className="size-4 transition-all duration-300 ease-in-out" />
                               <span className="hidden text-xs lg:flex">Approve</span>
                             </Button>
-                          )}
 
-                          <Button size="sm" variant="destructive" className="gap-2 py-4 cursor-pointer" onClick={() => askDelete(enrollment?.id)} disabled={deleteMutation.isPending}>
-                            <Trash2 className="size-4 transition-all duration-300 ease-in-out" />
-                            <span className="hidden text-xs lg:flex">Delete</span>
-                          </Button>
-                        </div>
+                            <Button size="sm" variant="destructive" className="gap-2 py-4 cursor-pointer" onClick={() => askDelete(enrollment?.id)} disabled={deleteMutation.isPending}>
+                              <Trash2 className="size-4 transition-all duration-300 ease-in-out" />
+                              <span className="hidden text-xs lg:flex">Delete</span>
+                            </Button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))
