@@ -12,7 +12,6 @@ import { useState } from "react";
 import type {
   DragEndEvent,
   DragStartEvent,
-  DragOverEvent,
 } from "@dnd-kit/core";
 
 import type { LessonTaskType } from "@/types/task";
@@ -21,7 +20,7 @@ import { cn } from "@/lib/utils";
 
 interface DragDropTaskComponentProps {
   task: LessonTaskType;
-  onAnswer: (value: any) => void;
+  onAnswer: (taskId: number, value: any) => void;
 }
 
 export default function DragDropTaskComponent({
@@ -53,14 +52,14 @@ export default function DragDropTaskComponent({
 
     setAssigned((prev) => {
       const newState = { ...prev, [targetId]: itemId };
-      onAnswer(newState);
+      onAnswer(task.id, newState);
       return newState;
     });
   };
 
   const reset = () => {
     setAssigned({});
-    onAnswer({});
+    onAnswer(task.id, {});
   };
 
   return (
@@ -76,12 +75,13 @@ export default function DragDropTaskComponent({
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-2 gap-6">
+        <div className="space-y-6 bg-primary/5 p-6 rounded-xl">
           {/* ITEMS */}
-          <div className="space-y-3">
+          <div className="space-y-3 mb-3 border-b pb-4">
             <h3 className="font-semibold text-lg">Items</h3>
 
-            {items
+            <div className=" flex flex-wrap gap-3 w-full">
+                 {items
               .filter(
                 (item) => !Object.values(assigned).includes(item.id.toString())
               )
@@ -92,12 +92,15 @@ export default function DragDropTaskComponent({
                   text={item.text}
                 />
               ))}
+            </div>
+         
           </div>
 
           {/* DROP TARGETS */}
-          <div className="space-y-3">
+          <div className="space-y-6">
             <h3 className="font-semibold text-lg">Targets</h3>
 
+              <div className=" flex flex-wrap gap-3">
             {targets.map((target) => (
               <DropZone
                 key={target.id}
@@ -107,9 +110,11 @@ export default function DragDropTaskComponent({
                 items={items}
               />
             ))}
+            </div>
           </div>
         </div>
       </DndContext>
+      <small className=" text-sm font-semibold text-gray-700"> * Note - Please Drag items to targets</small>
     </div>
   );
 }

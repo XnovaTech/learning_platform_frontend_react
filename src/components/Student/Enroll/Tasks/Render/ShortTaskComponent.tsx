@@ -11,7 +11,6 @@ export default function ShortTaskComponent({task, onAnswer}: ShortTaskComponentP
         <Input
             type="text"
             placeholder="Type your answer here"
-            className="max-w-lg mx-auto"
             onChange={e => onAnswer(task.id, e.target.value)}
         />
     )

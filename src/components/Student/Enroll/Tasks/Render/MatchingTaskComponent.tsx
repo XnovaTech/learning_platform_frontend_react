@@ -3,7 +3,7 @@ import type { LessonTaskType } from "@/types/task";
 
 interface MatchingTaskComponentProps {
   task: LessonTaskType;
-  onAnswer: (value: any) => void;
+  onAnswer: (taskId:number, value: any) => void;
 }
 
 export default function MatchingTaskComponent({
@@ -77,7 +77,7 @@ export default function MatchingTaskComponent({
 
     const updated = { ...pairs, [selectedLeft]: id };
     setPairs(updated);
-    onAnswer(updated);
+    onAnswer(task.id, updated);
 
     setSelectedLeft(null);
   };
@@ -98,15 +98,15 @@ export default function MatchingTaskComponent({
               y1={left.y + left.height / 2}
               x2={right.x}
               y2={right.y + right.height / 2}
-              stroke="blue"
-              strokeWidth={3}
+              stroke="green"
+              strokeWidth={2}
               strokeLinecap="round"
             />
           );
         })}
       </svg>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className=" flex justify-around gap-8">
         {/* LEFT */}
         <div className="space-y-4">
           {task.left?.map((item) => (

@@ -21,7 +21,7 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
         <div className={`flex flex-col   items-start gap-4`}>
           <div className={`w-full h-56 px-2  lg:h-60`}>
             {course?.banner ? (
-              <img src={course?.banner as any} alt={course?.title || 'Course Banner'} className="w-full h-full object-cover mx-auto rounded-xl px-1 py-1" />
+              <img src={course?.banner as any} alt={course?.title || 'Course Banner'} className="w-full h-full object-center mx-auto rounded-xl px-1 py-1" />
             ) : (
               <div className="w-full h-full  flex items-center justify-center shadow-md mx-auto border rounded-xl border-primary bg-primary/10 text-primary">
                 <span className="text-5xl font-bold">{(course?.title?.[0] ?? 'C').toUpperCase()}</span>

@@ -24,7 +24,7 @@ export default function LongTaskComponent({task, onAnswer}: LongTaskComponentPro
                 }}    
             />
 
-            <p className={`text-sm ${wordCount < minWords ? "text-red-500" : "text-green-600"}`}>
+            <p className={`text-sm font-semibold text-end ${wordCount < minWords ? "text-red-500" : "text-green-600"}`}>
                 Word Count: {wordCount} / {minWords}
             </p>
         </div>

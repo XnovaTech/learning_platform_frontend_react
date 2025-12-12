@@ -44,9 +44,15 @@ export function LessonsComponent({ lessons = [], enrollId, isTeacher = 0, classr
     const Icon = isLocked ? Unlock : Lock;
 
     return (
-      <Button size="sm" onClick={() => handleLockToggle(lesson.id, isLocked)} className="cursor-pointer hover:bg-ocean/10 text-orange-800 bg-ocean/5 font-semibold gap-2 text-sm rounded-2xl">
+      <>
+      <Button variant="default" onClick={() => handleLockToggle(lesson.id, isLocked)} className="cursor-pointer hover:bg-white/50 text-orange-800 bg-white font-semibold gap-2 text-sm rounded-2xl mr-2">
         {label} <Icon size={16} />
       </Button>
+
+      <Link to={`/teacher/courses/classes/${classroomId}/lessons/${lesson.id}/records`}>
+      <Button variant="default">Task Records</Button>
+      </Link>
+      </>
     );
   };
 
@@ -92,7 +98,10 @@ export function LessonsComponent({ lessons = [], enrollId, isTeacher = 0, classr
                 <div className="flex gap-4">
                   <p className="text-gray-600 flex-1 group-hover:text-primary transition-colors">{lesson.title}</p>
 
-                  <div className="flex justify-end">{isTeacher === 1 ? teacherPov(lesson) : studentPov(lesson)}</div>
+                  <div className="flex justify-end">
+                    {isTeacher === 1 ? teacherPov(lesson) : studentPov(lesson)}
+                   
+                  </div>
                 </div>
               </div>
 

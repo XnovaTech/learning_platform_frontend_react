@@ -17,7 +17,7 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
     <div className="space-y-8">
       {/** ------------  Long Questions -------------- */}
       {longTasks.length > 0 && (
-        <div className="p-4 border rounded-2xl bg-amber-300/10">
+        <div className="p-4 border rounded-2xl bg-slate-300/5">
           <h3 className="font-semibold mb-4 text-lg">Long Questions</h3>
 
           <div className="space-y-6">
@@ -36,7 +36,7 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
 
       {/* ---------------- SHORT QUESTIONS ---------------- */}
       {shortTasks.length > 0 && (
-        <div className="p-4 border rounded-2xl bg-amber-800/10">
+        <div className="p-4 border rounded-2xl bg-slate-300/5">
           <h3 className="font-semibold mb-4 text-lg">Short Questions</h3>
 
           <div className="space-y-6">
@@ -58,7 +58,7 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
       {/** -------------  Fill in The Questions ------------- */}
       {
         blankTasks.length > 0 && (
-          <div className="p-4 border rounded-2xl bg-primary/20">
+          <div className="p-4 border rounded-2xl bg-slate-300/5">
             <h3 className="font-semibold mb-4 text-lg">Fill in The Blanks Questions</h3>
 
             <div className="space-y-6">
@@ -80,7 +80,7 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
 
       {/* ---------------- MCQ ---------------- */}
       {mcqTasks.length > 0 && (
-        <div className="p-4 border rounded-2xl bg-emerald-700/10">
+        <div className="p-4 border rounded-2xl bg-slate-300/5">
           <h3 className="font-semibold mb-4 text-lg">MCQ Questions</h3>
 
           <div className="space-y-6">
@@ -105,7 +105,7 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
 
       {/* ---------------- TRUE / FALSE ---------------- */}
       {tfTasks.length > 0 && (
-        <div className="p-4 border rounded-2xl bg-blue-900/10">
+        <div className="p-4 border rounded-2xl bg-slate-300/5">
           <h3 className="font-semibold mb-4 text-lg">True/False Questions</h3>
 
           <div className="space-y-6">
@@ -126,7 +126,7 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
 
       {/* ---------------- DRAG & DROP ---------------- */}
       {dragTasks.length > 0 && (
-        <div className="p-4 border rounded-2xl bg-lime-400/10">
+        <div className="p-4 border rounded-2xl bg-slate-300/5">
           <h3 className="font-semibold mb-4 text-lg">Drag & Drop Questions</h3>
 
           <div className="space-y-6">
@@ -164,7 +164,7 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
 
       {/* ---------------- MATCHING ---------------- */}
       {matchingTasks.length > 0 && (
-        <div className="p-4 border rounded-2xl bg-lime-500/20">
+        <div className="p-4 border rounded-2xl bg-slate-300/5">
           <h3 className="font-semibold mb-4 text-lg">Matching Questions</h3>
 
           <div className="space-y-6">

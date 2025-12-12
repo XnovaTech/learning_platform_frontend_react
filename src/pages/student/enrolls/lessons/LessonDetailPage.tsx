@@ -123,7 +123,7 @@ export default function LessonDetailPage() {
                     </div>
                 </TabsContent>
                 <TabsContent value="tasks" className="mt-3 w-full">
-                    <LessonTaskComponent lessonId={lessonID} />
+                    <LessonTaskComponent lessonId={lessonID} enrollId = {enrollID}/>
                 </TabsContent>
             </Tabs> 
 
