@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Edit, MessageCircle, Trash2, Users } from 'lucide-react';
+import { Edit, Trash2, Users } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { Link } from 'react-router-dom';
