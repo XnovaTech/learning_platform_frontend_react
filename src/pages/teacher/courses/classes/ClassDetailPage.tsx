@@ -13,7 +13,7 @@ import { useAuth } from '@/context/AuthContext';
 import { ClassMateComponent } from '@/components/Student/Enroll/ClassMateComponent';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
 import { ZoomRoomComponent } from '@/components/Student/Enroll/ZoomRoomComponent';
-import { displayTime, formatDaysRange } from '@/helper/ClassRoom';
+import { displayTime } from '@/helper/ClassRoom';
 
 export default function ClassDetailPage() {
   const { id } = useParams();
@@ -24,9 +24,7 @@ export default function ClassDetailPage() {
     queryKey: ['classes', classId],
     queryFn: () => getClass(classId),
     enabled: !Number.isNaN(classId),
-    refetchOnWindowFocus: false,
   });
-
 
   return (
     <div className="max-w-9xl p-4 mx-auto space-y-6">
@@ -142,8 +140,13 @@ export default function ClassDetailPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">Days</div>
-                        <div className="text-sm font-semibold text-green-900">
-                          <div className="flex gap-2 flex-wrap">{formatDaysRange(classroom?.days || [])}</div>
+                        <div className="text-sm font-semibold text-green-800 flex flex-wrap gap-1.5">
+                          {classroom?.days?.map((day, index) => (
+                            <span key={day} className="text-sm capitalize" title={day}>
+                              {day}
+                              {index < classroom?.days.length - 1 && ','}
+                            </span>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -154,57 +157,50 @@ export default function ClassDetailPage() {
           </Card>
 
           {/* Tabs  */}
-          <Card className="border-0 shadow-xl mt-0 pt-0 bg-white/80 backdrop-blur overflow-hidden">
-            <Tabs defaultValue="classmates" className="w-full">
-              <div className="border-b bg-linear-to-r from-slate-50 to-slate-100/50 px-6 py-5">
-                <TabsList className=" rounded-2xl bg-white  shadow  h-11">
-                  <TabsTrigger value="lessons" className="gap-2 rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
-                    <BookOpen className="size-4" />
-                    <span className="font-medium">Lessons</span>
-                  </TabsTrigger>
+          <Tabs defaultValue="classmates" className="w-full">
+            <TabsList className=" rounded-2xl bg-white  shadow  h-11">
+              <TabsTrigger value="lessons" className="gap-2 rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
+                <BookOpen className="size-4" />
+                <span className="font-medium">Lessons</span>
+              </TabsTrigger>
 
-                  <TabsTrigger
-                    value="classmates"
-                    className="gap-2 rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
-                  >
-                    <Users className="size-4" />
-                    <span className="font-medium">Class Mates</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="discussion"
-                    className="gap-2   rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
-                  >
-                    <MessageCircle className="size-4" />
-                    <span className="font-medium">Discuss Room</span>
-                  </TabsTrigger>
+              <TabsTrigger value="classmates" className="gap-2 rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
+                <Users className="size-4" />
+                <span className="font-medium">Class Mates</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="discussion"
+                className="gap-2   rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
+              >
+                <MessageCircle className="size-4" />
+                <span className="font-medium">Discuss Room</span>
+              </TabsTrigger>
 
-                  <TabsTrigger value="zoom" className="gap-2   rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
-                    <Video className="size-4" />
-                    <span className="font-medium">Join Zoom</span>
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+              <TabsTrigger value="zoom" className="gap-2   rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
+                <Video className="size-4" />
+                <span className="font-medium">Join Zoom</span>
+              </TabsTrigger>
+            </TabsList>
 
-              {/* Lesssons */}
-              <TabsContent value="lessons" className="p-6 space-y-6 mt-0">
-                <LessonsComponent lessons={classroom?.lessons} isTeacher={1} classroomId={classroom?.id} />
-              </TabsContent>
+            {/* Lesssons */}
+            <TabsContent value="lessons" className="py-4 space-y-6 mt-0">
+              <LessonsComponent lessons={classroom?.lessons} isTeacher={1} classroomId={classroom?.id} />
+            </TabsContent>
 
-              {/* Class Mates  */}
-              <TabsContent value="classmates" className="p-6 space-y-6 mt-0">
-                <ClassMateComponent classMates={classroom?.class_mates} />
-              </TabsContent>
+            {/* Class Mates  */}
+            <TabsContent value="classmates" className="py-4 space-y-6 mt-0">
+              <ClassMateComponent classMates={classroom?.class_mates} />
+            </TabsContent>
 
-              {/* Discussion   */}
-              <TabsContent value="discussion" className="p-6 space-y-6 mt-0">
-                <DiscussionComponent classId={classroom?.id as number} userId={user?.id} />
-              </TabsContent>
+            {/* Discussion   */}
+            <TabsContent value="discussion" className="py-4 space-y-6 mt-0">
+              <DiscussionComponent classId={classroom?.id as number} userId={user?.id} />
+            </TabsContent>
 
-              <TabsContent value="zoom" className="p-6 space-y-6 mt-0">
-                <ZoomRoomComponent zoomLink={classroom?.zoom_link} />
-              </TabsContent>
-            </Tabs>
-          </Card>
+            <TabsContent value="zoom" className="py-4 space-y-6 mt-0">
+              <ZoomRoomComponent zoomLink={classroom?.zoom_link} />
+            </TabsContent>
+          </Tabs>
         </div>
       )}
     </div>

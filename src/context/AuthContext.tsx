@@ -2,13 +2,13 @@ import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser, registerUser, getUserProfile } from '@/services/authService';
 import { toast } from 'sonner';
-import type { payloadUser, UserType } from '@/types/user';
+import type { PayloadUser, UserType } from '@/types/user';
 
 interface AuthContextType {
   user: UserType | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (payload: payloadUser) => Promise<void>;
+  register: (payload: PayloadUser) => Promise<void>;
   logout: () => void;
   fetchProfile: (t: string) => void;
 }
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return data.data.user;
   };
 
-  const register = async (payload: payloadUser) => {
+  const register = async (payload: PayloadUser) => {
     const data = await registerUser(payload);
     const token = data.data.token;
     const userData = data.data.user;

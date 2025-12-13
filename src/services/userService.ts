@@ -1,4 +1,4 @@
-import type { payloadUser, UserPayloadType, UserType } from '@/types/user';
+import type { PayloadUser, UpdateUserRequest, UserType } from '@/types/user';
 import api from './api';
 
 export const listTeachers = async (): Promise<any[]> => {
@@ -19,7 +19,7 @@ export const listStudents = async (): Promise<any[]> => {
   }
 };
 
-export const listUsers = async (form?: Partial<payloadUser>): Promise<any> => {
+export const listUsers = async (form?: Partial<PayloadUser>): Promise<any> => {
   try {
     const { data } = await api.get('/v1/users', { params: form });
     return data?.data;
@@ -28,8 +28,7 @@ export const listUsers = async (form?: Partial<payloadUser>): Promise<any> => {
   }
 };
 
-
-export const updateUser = async (id: number, payload: payloadUser): Promise<any> => {
+export const updateUser = async (id: number, payload: PayloadUser): Promise<any> => {
   try {
     const { data } = await api.put(`/v1/users/${id}`, payload);
     return data?.data;
@@ -38,7 +37,7 @@ export const updateUser = async (id: number, payload: payloadUser): Promise<any>
   }
 };
 
-export const updateProfile = async (id: number, payload: UserPayloadType): Promise<UserType> => {
+export const updateProfile = async (id: number, payload: UpdateUserRequest): Promise<UserType> => {
   try {
     if (typeof FormData !== 'undefined' && payload instanceof FormData) {
       payload.append('_method', 'PUT');
@@ -50,7 +49,7 @@ export const updateProfile = async (id: number, payload: UserPayloadType): Promi
   } catch (error: any) {
     throw new Error(error.message);
   }
-}
+};
 
 export const deleteUser = async (id: number): Promise<void> => {
   try {
@@ -59,4 +58,3 @@ export const deleteUser = async (id: number): Promise<void> => {
     throw new Error(error.message);
   }
 };
-

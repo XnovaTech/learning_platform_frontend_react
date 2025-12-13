@@ -21,7 +21,7 @@ export default function CoursesPage() {
       const params: any = { search: searchTerm || undefined, page };
       return await listCourses(params as any);
     },
-    staleTime: 30_000,
+    staleTime: 20_000,
     refetchOnWindowFocus: false,
   });
 
@@ -67,7 +67,7 @@ export default function CoursesPage() {
           )}
         </div>
 
-        <div className="overflow-x-auto rounded-md  min-h-[240px]">
+        <div className="overflow-x-auto rounded-md  min-h-60">
           {isLoading ? (
             <div className="flex items-center justify-center py-14">
               <Spinner className="text-primary size-7 md:size-8" />

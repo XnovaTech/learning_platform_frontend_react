@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { BookOpen, Users } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,7 +18,7 @@ export default function ClassesPage() {
     queryFn: async () => {
       return await listCategories();
     },
-    staleTime: 30_000,
+    staleTime: 20_000,
     refetchOnWindowFocus: false,
   });
 
@@ -28,12 +28,10 @@ export default function ClassesPage() {
       if (!selectedCategoryId) return [];
       return await getClassesByCategory(Number(selectedCategoryId));
     },
-    staleTime: 30_000,
+    staleTime: 20_000,
     refetchOnWindowFocus: false,
     enabled: !!selectedCategoryId,
   });
-
-   
 
   useEffect(() => {
     if (categories && categories.length > 0 && !selectedCategoryId) {
@@ -70,13 +68,13 @@ export default function ClassesPage() {
           </div>
         ) : (
           <Tabs value={selectedCategoryId} onValueChange={setSelectedCategoryId} className="w-full">
-            <div className="border-b bg-gradient-to-r from-slate-50 to-slate-100/50 px-5 pb-4">
+            <div className="border-b bg-linear-to-r from-slate-50 to-slate-100/50 px-5 pb-4">
               <TabsList className="rounded-2xl bg-white shadow h-11">
                 {categories?.map((category: CategoryType) => (
                   <TabsTrigger
                     key={category.id}
                     value={String(category.id)}
-                    className="rounded-xl transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
+                    className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
                   >
                     <span className="font-medium">{category.name}</span>
                   </TabsTrigger>
@@ -89,14 +87,6 @@ export default function ClassesPage() {
                 {isLoading ? (
                   <div className="flex items-center justify-center py-14">
                     <Spinner className="text-primary size-7 md:size-8" />
-                  </div>
-                ) : !classRooms || classRooms.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-16 px-4">
-                    <div className="rounded-full bg-primary/90 p-4 mb-4">
-                      <Users className="size-8 text-white" />
-                    </div>
-                    <h4 className="text-lg font-semibold text-foreground mb-1">No class rooms yet</h4>
-                    <p className="text-sm text-muted-foreground mb-4">No active class in this category</p>
                   </div>
                 ) : (
                   <ClassRoomTable classrooms={classRooms || []} />

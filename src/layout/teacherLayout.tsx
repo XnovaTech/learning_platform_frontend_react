@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Users, GraduationCap, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle, School } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Users, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle, School } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -34,13 +34,13 @@ const getIconClasses = (active: boolean) =>
 function SidebarHeader({ collapsed }: { collapsed: boolean }) {
   return (
     <div className="border-b  border-gray-100 px-4 py-5 bg-linear-to-br from-white to-gray-50">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-primary/40 to-primary/95 shadow-sm shadow-primary/20 transition-all duration-300 hover:shadow-xl hover:scale-105">
-          <GraduationCap className="h-5 w-5 text-white" />
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex h-16 w-16 items-center justify-center rounded-xl shadow-sm shadow-primary/20 transition-all duration-300 hover:shadow-xl hover:scale-105">
+          <img src='/logo.png' className='object-cover'/>
         </div>
         {!collapsed && (
           <div className="flex flex-col">
-            <span className="transition-all duration-500 font-semibold  tracking-tight text-gray-900">Crystal Learning</span>
+            <span className="transition-all duration-500 font-semibold  tracking-tight text-gray-900 uppercase">The Crystal Academy</span>
           </div>
         )}
       </div>
@@ -196,7 +196,7 @@ function HeaderBar({ collapsed, setCollapsed }: { collapsed: boolean; setCollaps
                   </div>
                   <div className="hidden lg:flex flex-col items-start">
                     <span className="text-sm font-semibold text-gray-900 drop-shadow-sm">{user?.first_name}</span>
-                    <span className="text-xs text-gray-500 font-medium">{user?.roles[0]}</span>
+                    <span className="text-xs text-gray-500 font-medium">{user?.roles?.[0]}</span>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-600 group-hover:text-gray-900 transition-transform duration-300 group-hover:rotate-180" />
                 </div>

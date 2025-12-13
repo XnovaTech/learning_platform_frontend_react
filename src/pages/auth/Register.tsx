@@ -48,8 +48,8 @@ export default function RegisterPage() {
             <div className="flex flex-col md:flex-row max-w-4xl w-full rounded-xl overflow-hidden shadow-2xl">
                 <div className="md:w-1/2 bg-ocean/60 p-8 flex flex-col justify-center items-center text-white space-y-4">
                     <div className=" relative z-10 text-center space-y-4 md:space-y-6">
-                        <h1 className="text-2xl md:text-3xl font-bold tracking-wide drop-shadow-2xl">
-                            THE CRYSTAL <br /> LEARNING HUB
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-wide drop-shadow-2xl uppercase">
+                            THE CRYSTAL <br /> Academy
                         </h1>
                         <Lottie animationData={welcome} loop={true} className="w-9/12 mx-auto" />
                         <p className="text-lg font-light ">Let start your learning journey.</p>

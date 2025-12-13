@@ -15,7 +15,8 @@ export interface ClassRoomType {
   end: string;
   start_time: time | null;
   end_time: time | null;
-  is_active: boolean;
+  is_active: boolean | number;
+  is_finish: boolean | number;
   zoom_link: string;
   days: string[];
 }
@@ -28,7 +29,8 @@ export interface ClassRoomPayloadType {
   end: string | null | date;
   start_time: time | null;
   end_time: time | null;
-  is_active: boolean | number | string;
+  is_active: boolean | number;
+  is_finish: boolean | number;
   zoom_link: string;
   days: string[];
 }

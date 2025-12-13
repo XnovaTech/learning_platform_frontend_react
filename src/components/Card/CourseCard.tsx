@@ -18,12 +18,12 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
   return (
     <div>
       <Card className="border-0 shadow-xl bg-white/80 p-4 backdrop-blur overflow-hidden">
-        <div className={`flex flex-col ${isExpanded ? 'lg:flex-col' : 'lg:flex-row'}  items-start gap-4`}>
-          <div className={`w-full h-56 px-2 ${isExpanded ? 'lg:w-full' : 'lg:w-120'}  lg:h-60`}>
-            {course?.image ? (
-              <img src={course?.image as any} alt={course?.title || 'Course image'} className="w-full h-full object-cover mx-auto rounded-xl px-1 py-1" />
+        <div className={`flex flex-col   items-start gap-4`}>
+          <div className={`w-full h-56 px-2  lg:h-60`}>
+            {course?.banner ? (
+              <img src={course?.banner as any} alt={course?.title || 'Course Banner'} className="w-full h-full object-center mx-auto rounded-xl px-1 py-1" />
             ) : (
-              <div className="w-full h-full lg:w-66 lg:h-52 flex items-center justify-center shadow-md mx-auto border rounded-xl border-primary bg-primary/10 text-primary">
+              <div className="w-full h-full  flex items-center justify-center shadow-md mx-auto border rounded-xl border-primary bg-primary/10 text-primary">
                 <span className="text-5xl font-bold">{(course?.title?.[0] ?? 'C').toUpperCase()}</span>
               </div>
             )}
@@ -32,11 +32,11 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
           <div className="w-full space-y-4">
             <div className="space-y-2">
               <div className="flex flex-wrap space-y-2 items-center justify-between ">
-                <h2 className="text-xl md:text-2xl font-bold tracking-tight">{course?.title}</h2>
+                <h2 className="text-xl md:text-2xl font-semibold tracking-tight">{course?.title}</h2>
                 {isTeacher ? (
                   <div className="flex items-center gap-2">
                     <Button asChild variant="primary" size="sm" className="gap-2">
-                      <Link to={`/teacher/courses/edit?id=${courseId}`}>
+                      <Link to={`/teacher/courses/edit/${courseId}`}>
                         <Edit className="size-4" />
                         <span className="hidden sm:inline">Edit</span>
                       </Link>
@@ -78,7 +78,7 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
                 </div>
               )}
 
-              {course?.price != null && (
+              {course?.price > 0 && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Fee:</span>
                   <span className="px-2 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">{course.price?.toLocaleString()} MMK</span>

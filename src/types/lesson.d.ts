@@ -1,4 +1,5 @@
 import { CourseType } from './course';
+import type { LessonTaskType } from './task';
 
 export interface LessonType {
   id: number;
@@ -9,6 +10,7 @@ export interface LessonType {
   youtube_link: string;
   is_locked: number;
   classroom_lesson_locks?: Array;
+  tasks: LessonTaskType[];
 }
 
 export interface LessonPayloadType {

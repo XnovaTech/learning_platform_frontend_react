@@ -5,7 +5,7 @@ export interface EnrollType {
   id: number;
   student_id: number;
   student: UserType;
-  class_id: nummber;
+  class_id: number;
   class_room: ClassRoomType;
   class_mates: ClassMateType[];
   status: number;

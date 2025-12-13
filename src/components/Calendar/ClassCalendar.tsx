@@ -4,7 +4,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { ClassRoomType } from '@/types/class';
 import CalendarDetailBox from '@/components/Calendar/CalendarDetailBox';
-import { displayTime } from '@/helper/ClassRoom';
 import { DAYS_OF_WEEK, MONTH_NAMES } from '@/mocks/class';
 
 const DAY_MAP: Record<string, number> = {
@@ -19,9 +18,10 @@ const DAY_MAP: Record<string, number> = {
 
 interface CalendarProps {
   classes: ClassRoomType[];
+  isTeacher: boolean;
 }
 
-export default function ClassCalendar({ classes }: CalendarProps) {
+export default function ClassCalendar({ classes, isTeacher }: CalendarProps) {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -109,6 +109,7 @@ export default function ClassCalendar({ classes }: CalendarProps) {
             <h2 className=" font-medium">
               {MONTH_NAMES[currentMonth].slice(0, 3)} {currentYear}
             </h2>
+            
             <Button onClick={goToPreviousMonth} className="hover:scale-100 rounded-md" size="sm">
               <ChevronLeft className="h-3 w-3" />
             </Button>
@@ -129,10 +130,10 @@ export default function ClassCalendar({ classes }: CalendarProps) {
         </div>
 
         {/* date  */}
-        <div className="grid grid-cols-5 lg:grid-cols-7 gap-2">
+        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-2">
           {calendarDays.map((date, index) => {
             if (!date) {
-              return <div key={`empty-${index}`} className="aspect-square" />;
+              return <div key={`empty-${index}`} className="min-h-26" />;
             }
 
             const events = getEventsForDate(date);
@@ -143,16 +144,16 @@ export default function ClassCalendar({ classes }: CalendarProps) {
                 key={index}
                 onClick={() => handleDateClick(date)}
                 className={`
-                  relative aspect-square border border-gray-300 rounded-lg p-2 cursor-pointer
+                  relative min-h-28 border border-gray-300 rounded-lg p-2 cursor-pointer
                   transition-all hover:border-primary hover:shadow-md
                   ${events.length > 0 ? 'bg-primary/5 border-primary/20' : 'bg-white'}
-                  ${isTodayDate ? 'ring-1 ring-primary' : ''}
+                  ${isTodayDate ? 'ring-2 ring-primary' : ''}
                 `}
               >
                 <span
                   className={`
                     text-sm font-semibold
-                    ${isTodayDate ? 'bg-primary text-white rounded-full px-2 py-1' : 'text-slate-700'}
+                    ${isTodayDate ? 'bg-primary text-white rounded-sm px-2 py-1' : 'text-slate-700'}
                   `}
                 >
                   {date.getDate()}
@@ -160,14 +161,17 @@ export default function ClassCalendar({ classes }: CalendarProps) {
 
                 {events.length > 0 && (
                   <div className="mt-1 space-y-1">
-                    {events?.map((event, idx) => (
-                      <div key={idx} className="text-xs bg-primary text-white rounded-sm  px-1.5 py-0.5 truncate font-medium">
+                    {events?.slice(0, 2)?.map((event, idx) => (
+                      <div key={idx} className="text-xs bg-primary/90 text-white rounded-sm px-1.5 py-0.5 truncate font-medium hover:bg-primary/100 transition-colors">
                         {event?.course?.category?.name || ''} - {event.class_name}
-                        <div className=" opacity-90  ">
-                          {displayTime(event.start_time)} - {displayTime(event.end_time)}
-                        </div>
                       </div>
                     ))}
+
+                    {events?.length > 2 && (
+                      <Button type="button" variant="ghost" size="sm" className="w-full h-auto p-1 text-xs text-primary hover:bg-primary/10 font-medium">
+                        more +
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
@@ -177,7 +181,7 @@ export default function ClassCalendar({ classes }: CalendarProps) {
       </div>
 
       {/* detail */}
-      <CalendarDetailBox isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} date={selectedDate} events={selectedDate ? getEventsForDate(selectedDate) : []} />
+      <CalendarDetailBox isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} date={selectedDate} events={selectedDate ? getEventsForDate(selectedDate) : []} isTeacher={isTeacher} />
     </>
   );
 }
