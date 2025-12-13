@@ -34,7 +34,7 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
     if (!editingItem) return;
     setForm({
       course_id: editingItem.course_id,
-      title: editingItem.title,
+      title: editingItem.title ?? '',
       description: editingItem.description,
       youtube_link: editingItem.youtube_link,
     });
@@ -87,7 +87,7 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
           <Label htmlFor="title">
             Title <span className="text-destructive">*</span>
           </Label>
-          <Input id="title" type="text" value={form.title || ''} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Enter lesson title" required />
+          <Input id="title" type="text" value={form.title ?? ''} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Enter lesson title" required />
         </div>
 
         <div className="space-y-2">
@@ -102,7 +102,7 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
           <div className="rounded-xl border  bg-transparent border-gray-50 focus-within:ring-1 focus-within:ring-primary transition-all duration-300">
             <ReactQuill
               theme="snow"
-              className="rounded-xl min-h-[180px] [&_.ql-toolbar]:rounded-t-xl [&_.ql-container]:rounded-b-xl [&_.ql-container]:min-h-[160px]"
+              className="rounded-xl min-h-[180px] [&_.ql-toolbar]:rounded-t-xl [&_.ql-container]:rounded-b-xl [&_.ql-container]:min-h-40"
               value={form.description || ''}
               onChange={(value: string) => setForm({ ...form, description: value })}
               placeholder="Write your lesson content here..."

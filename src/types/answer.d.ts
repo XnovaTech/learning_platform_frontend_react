@@ -20,3 +20,12 @@ export interface StudentLessonSubmitPayload {
     enroll_id?: number;
     answers: Record<number, string | Record<string, string>>;
 }
+
+export interface StudentsLessonTaskRecordType {
+    enroll_id: number,
+    student_id: number,
+    first_name: string,
+    last_name: string,
+    total_points: number,
+    lesson_point: number
+}
