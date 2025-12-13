@@ -33,7 +33,7 @@ export default function DragDropTaskComponent({
 
   const items = task.items ?? [];
   const targets = task.targets ?? [];
-
+  console.log(activeId);
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id.toString());
   };
