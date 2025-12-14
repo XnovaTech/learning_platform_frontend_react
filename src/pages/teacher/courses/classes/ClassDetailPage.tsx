@@ -189,7 +189,7 @@ export default function ClassDetailPage() {
 
             {/* Class Mates  */}
             <TabsContent value="classmates" className="py-4 space-y-6 mt-0">
-              <ClassMateComponent classMates={classroom?.class_mates} />
+              <ClassMateComponent classMates={classroom?.class_mates} classRoom={classroom}  isTeacher={1}  />
             </TabsContent>
 
             {/* Discussion   */}

@@ -222,7 +222,7 @@ export default function CourseDetailPage() {
                       </TabsTrigger>
                       <TabsTrigger
                         value="inactive"
-                        className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-5.5"
+                        className="rounded-xl transition-all capitalize duration-300 cursor-pointer data-[state=active]:bg-red-600 data-[state=active]:text-primary-foreground px-5.5"
                       >
                         Inactive
                       </TabsTrigger>
