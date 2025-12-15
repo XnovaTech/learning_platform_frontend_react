@@ -21,24 +21,32 @@ import { cn } from "@/lib/utils";
 interface DragDropTaskComponentProps {
   task: LessonTaskType;
   onAnswer: (taskId: number, value: any) => void;
+  value?: Record<string, string | null>;
+  readonly?: boolean
 }
 
 export default function DragDropTaskComponent({
   task,
   onAnswer,
+  value = {},
+  readonly = false,
 }: DragDropTaskComponentProps) {
   const sensors = useSensors(useSensor(PointerSensor));
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [assigned, setAssigned] = useState<Record<string, string | null>>({});
+  const [assigned, setAssigned] = useState<Record<string, string | null>>(value);
 
   const items = task.items ?? [];
   const targets = task.targets ?? [];
+
   console.log(activeId);
   const handleDragStart = (event: DragStartEvent) => {
+    if (readonly) return;
     setActiveId(event.active.id.toString());
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
+    if (readonly) return;
+
     const { active, over } = event;
     setActiveId(null);
 
@@ -58,17 +66,23 @@ export default function DragDropTaskComponent({
   };
 
   const reset = () => {
+    if (readonly) return;
     setAssigned({});
     onAnswer(task.id, {});
   };
 
   return (
     <div className="p-4 space-y-4">
-      <div className="flex justify-end">
+      {
+        !readonly && (
+            <div className="flex justify-end">
         <Button variant="outline" onClick={reset}>
           Reset
         </Button>
       </div>
+        )
+      }
+      
 
       <DndContext
         sensors={sensors}
@@ -90,6 +104,7 @@ export default function DragDropTaskComponent({
                   key={item.id}
                   id={item.id.toString()}
                   text={item.text}
+                  readOnly = {readonly}
                 />
               ))}
             </div>
@@ -108,13 +123,14 @@ export default function DragDropTaskComponent({
                 text={target.text}
                 assignedItem={assigned[target.id]}
                 items={items}
+                readOnly={readonly}
               />
             ))}
             </div>
           </div>
         </div>
       </DndContext>
-      <small className=" text-sm font-semibold text-gray-700"> * Note - Please Drag items to targets</small>
+      {!readonly && <small className="text-sm font-semibold text-gray-700">* Note - Please Drag items to targets</small>}
     </div>
   );
 }
@@ -122,7 +138,7 @@ export default function DragDropTaskComponent({
 /* --------------------------
    DRAGGABLE ITEM
 --------------------------- */
-function DraggableItem({ id, text }: { id: string; text: string }) {
+function DraggableItem({ id, text , readOnly}: { id: string; text: string, readOnly?: boolean }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
   });
@@ -135,9 +151,12 @@ function DraggableItem({ id, text }: { id: string; text: string }) {
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
-      {...attributes}
-      className="p-3 rounded-xl border bg-blue-100 shadow-sm cursor-grab active:cursor-grabbing transition"
+      {...(!readOnly ? { ...listeners, ...attributes } : {})}
+      className={cn(
+        "p-3 rounded-xl border bg-blue-100 shadow-sm transition",
+        !readOnly && "cursor-grab active:cursor-grabbing",
+        readOnly && "opacity-70 cursor-not-allowed"
+      )}
     >
       {text}
     </div>
@@ -152,11 +171,13 @@ function DropZone({
   text,
   assignedItem,
   items,
+  readOnly
 }: {
   id: string;
   text: string;
   assignedItem: string | null | undefined;
   items: any[];
+  readOnly?: boolean
 }) {
   const { isOver, setNodeRef } = useDroppable({
     id,
@@ -169,8 +190,9 @@ function DropZone({
       ref={setNodeRef}
       className={cn(
         "p-4 min-h-20 border-2 border-dashed rounded-xl transition",
-        isOver ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50",
-        matchedItem && "border-green-500 bg-green-50"
+        isOver && !readOnly ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50",
+        matchedItem && "border-green-500 bg-green-50",
+        readOnly && "cursor-not-allowed"
       )}
     >
       <div className="text-gray-600 text-sm">{text}</div>

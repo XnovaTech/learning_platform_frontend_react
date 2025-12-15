@@ -9,25 +9,29 @@ import type { LessonTaskType } from "@/types/task";
 
 interface TaskRendererComponentProps {
     task: LessonTaskType;
-    onAnswer: any;
+    onAnswer?: any;
+    value?: any;
+    readonly?: boolean;
+    onScoreChange?: (taskId: number, score: number) => void;
+    score?: number
 }
 
-export default function TaskRendererComponent({task, onAnswer}: TaskRendererComponentProps) {
+export default function TaskRendererComponent({task, onAnswer, value, readonly = false, onScoreChange, score}: TaskRendererComponentProps) {
     switch (task.task_type) {
         case 'mcq':
-            return <McqTaskComponent task={task} onAnswer={onAnswer} />;
+            return <McqTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
         case 'true_false':
-            return <TfTaskComponent task={task} onAnswer={onAnswer} />;
+            return <TfTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly}/>;
         case 'short':
-            return <ShortTaskComponent task={task} onAnswer={onAnswer} />;
+            return <ShortTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score}/>;
         case 'long':
-            return <LongTaskComponent task={task} onAnswer={onAnswer} />;
+            return <LongTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score}/>;
         case 'fill_blank':
-            return <FillBlankTaskComponent task={task} onAnswer={onAnswer} />;
+            return <FillBlankTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly}/>;
         case 'drag_drop':
-            return <DragDropTaskComponent task={task} onAnswer={onAnswer} />;
+            return <DragDropTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly}/>;
         case 'matching':
-            return <MatchingTaskComponent task={task} onAnswer={onAnswer} />;
+            return <MatchingTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly}/>;
         default:
             return <div>Unsupported task type</div>;
     }

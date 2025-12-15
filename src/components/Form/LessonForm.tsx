@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
-import { createLesson, updateLesson } from '@/services/lessonService';
+import { createLesson, updateLesson, uploadLessonDescriptionImage } from '@/services/lessonService';
 import type { LessonPayloadType, LessonType } from '@/types/lesson';
 import { useNavigate } from 'react-router-dom';
 import { CardTitle } from '../ui/card';
@@ -20,6 +20,7 @@ interface LessonFormProps {
 export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const quillRef = useRef<any>(null);
 
   const defaultForm: LessonPayloadType = {
     course_id: courseId,
@@ -27,6 +28,60 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
     description: null,
     youtube_link: null,
   };
+  
+  //upload desc image
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.click();
+
+    input.onchange = async () => {
+      if (!input.files?.[0]) return;
+
+      const formData = new FormData();
+      formData.append('image', input.files[0]);
+
+      const res = await uploadLessonDescriptionImage(formData);
+
+      const editor = quillRef.current?.getEditor();
+
+      if (!editor) return;
+
+      const range = editor?.getSelection();
+
+      console.log('response data is', res.url)
+        editor.insertEmbed(range.index,'image', res.url);
+        editor.setSelection(range.index + 1);
+
+        console.log("data is", editor.root.innerHTML);
+    };
+  };
+
+  // quill modules
+  const quillModules = {
+    toolbar: {
+      container: [
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'image'],
+        ['clean'],
+      ],
+      handlers:{
+        image: imageHandler,
+      }
+    }
+  }
+
+  const quillFormats = [
+    'bold',
+    'italic',
+    'underline',
+    'list',
+    'bullet',
+    'link',
+    'image'
+  ]
 
   const [form, setForm] = useState<LessonPayloadType>(defaultForm);
 
@@ -101,7 +156,10 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
           <Label htmlFor="description">Description</Label>
           <div className="rounded-xl border  bg-transparent border-gray-50 focus-within:ring-1 focus-within:ring-primary transition-all duration-300">
             <ReactQuill
+              ref={quillRef}
               theme="snow"
+              formats={quillFormats}
+              modules={quillModules}
               className="rounded-xl min-h-[180px] [&_.ql-toolbar]:rounded-t-xl [&_.ql-container]:rounded-b-xl [&_.ql-container]:min-h-40"
               value={form.description || ''}
               onChange={(value: string) => setForm({ ...form, description: value })}

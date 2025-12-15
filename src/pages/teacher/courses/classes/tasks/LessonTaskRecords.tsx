@@ -36,7 +36,9 @@ export default function LessonTaskRecords() {
             <Card key={data.enroll_id} className="shadow-md border border-slate-50 hover:shadow-lg transition">
               <CardHeader>
                 <CardTitle className="text-xl flex justify-between items-center">
-                  <span>{data.first_name} {data.last_name}</span> 
+                  <span>
+                    {data.first_name} {data.last_name}
+                  </span>
                   <p className=" text-sm px-3 py-2 rounded-2xl bg-primary text-white">
                     {data.total_points} / {data.lesson_point}
                   </p>
@@ -45,13 +47,11 @@ export default function LessonTaskRecords() {
               <CardContent className="pt-0">
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">Student ID: {data.student_id}</p>
 
-                <Link
-  to={`/teacher/courses/classes/${data.enroll_id}/lesson/${lessonId}/records/detail`}
->
-  <Button variant="secondary" className="w-full rounded-xl shadow-sm">
-    View Details
-  </Button>
-</Link>
+                <Link to={`/teacher/courses/classes/${data.enroll_id}/lesson/${lessonId}/records/detail`}>
+                  <Button variant="secondary" className="w-full rounded-xl shadow-sm">
+                    View Details
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}

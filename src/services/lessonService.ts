@@ -28,6 +28,17 @@ export const updateLesson = async (id: number, payload: LessonPayloadType): Prom
   }
 };
 
+export const uploadLessonDescriptionImage = async (payload: FormData) => {
+  try {
+    const {data} = await api.post('/v1/lessons/upload-description-image', payload , {
+        headers: {'Content-Type': 'multipart/form-data'},
+    });
+    return data;
+  } catch (error: any){
+    throw new Error(error.message);
+  }
+}
+
 export const updateLockState = async ({ lessonId, classroomId, is_locked }: LessonLockType): Promise<LessonType> => {
   try {
     const { data } = await api.post(`/v1/lessons/${lessonId}/lock-state/${classroomId}`, { locked: is_locked });
