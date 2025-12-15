@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import type {  UpdatePayloadUser, UserType } from '../types/user';
-import { Edit, Mail, Phone, MapPin, User, Shield } from 'lucide-react';
+import type { UpdatePayloadUser, UserType } from '../types/user';
+import { Edit, Mail, Phone, MapPin, User, Shield, Download, Award } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ProfileForm } from '@/components/Form/ProfileForm';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
+import { getStudentCertificates, downloadCertificate } from '@/services/userCertificateService';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export default function ProfilePage() {
   const { user, fetchProfile, token } = useAuth();
@@ -22,6 +25,21 @@ export default function ProfilePage() {
   };
 
   const [form, setForm] = useState<UpdatePayloadUser>(defaultForm);
+
+  const { data: certificates = [], isLoading } = useQuery({
+    queryKey: ['certificates', user?.id],
+    queryFn: async () => {
+      return await getStudentCertificates();
+    },
+    staleTime: 20_000,
+    refetchOnWindowFocus: false,
+  });
+
+  const downloadMutation = useMutation({
+    mutationFn: ({ certificateId, className }: { certificateId: number; className: string }) => downloadCertificate(certificateId, className),
+    onSuccess: () => toast.success('Certificate downloaded successfully'),
+    onError: (error: any) => toast.error(error?.message || 'Failed to download certificate'),
+  });
 
   const openEdit = (t: any) => {
     setEditingItem(t);
@@ -111,6 +129,47 @@ export default function ProfilePage() {
                 <InfoItem icon={MapPin} label="Address" value={user.address} />
               </CardContent>
             </Card>
+
+            {user.roles?.[0] === 'student' && (
+              <Card className="border-0 shadow-lg">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-semibold flex items-center ml-3 gap-2">
+                    <Award className="h-4 w-4" />
+                    My Certificates
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {isLoading ? (
+                    <p className="text-sm text-gray-500">Loading certificates...</p>
+                  ) : certificates.length > 0 ? (
+                    <div className="space-y-3">
+                      {certificates.map((certificate) => (
+                        <div key={certificate.id} className="flex items-center justify-between p-3 rounded-lg border bg-gray-50    transition-all duration-300 hover:shadow">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-sm">
+                              {certificate.enrollment?.class_room.course.title} - {certificate.enrollment?.class_room.class_name}
+                            </h4>
+                            <p className="text-sm text-gray-600 mb-1">Total Mark: {certificate.total_mark}</p>
+                            <p className="text-xs text-gray-600">{certificate.teacher_remark && ` • ${certificate.teacher_remark}`}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant={'red'}
+                            onClick={() => downloadMutation.mutate({ certificateId: certificate.id, className: certificate.enrollment?.class_room?.class_name ?? '' })}
+                            className="ml-3"
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            {downloadMutation.isPending ? 'Downloading...' : 'Download'}
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">No certificates available yet.</p>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 

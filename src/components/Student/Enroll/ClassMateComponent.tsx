@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import type { ClassRoomType } from '@/types/class';
 import { useMutation } from '@tanstack/react-query';
-import { downloadCertificates } from '@/services/classService';
+import { downloadCertificates } from '@/services/userCertificateService';
 
 interface ClassMateProps {
   classMates: ClassMateType[] | undefined;
