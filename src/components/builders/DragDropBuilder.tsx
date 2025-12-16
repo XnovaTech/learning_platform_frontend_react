@@ -5,8 +5,6 @@ import type { DragDropExtraData } from '@/types/task';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { GripVertical, Trash2 } from 'lucide-react';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
 
 type Props = {
   initial?: DragDropExtraData | null;
@@ -14,13 +12,12 @@ type Props = {
 };
 
 export default function DragDropBuilder({ initial, onChange }: Props) {
-  const [question, setQuestion] = useState(initial?.question ?? '');
   const [items, setItems] = useState<string[]>(initial?.items ?? []);
   const [targets, setTargets] = useState<string[]>(initial?.targets ?? []);
 
   useEffect(() => {
-    onChange({ question, items, targets });
-  }, [ question, items, targets]);
+    onChange({items, targets});
+  }, [ items, targets]);
 
   const addItem = () => (setItems((s) => [...s, '']), setTargets((s) => [...s, '']));
   // const addItem = () => setItems((s) => [...s, '']);
@@ -50,10 +47,7 @@ export default function DragDropBuilder({ initial, onChange }: Props) {
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      <div className=' col-span-2'>
-        <Label className=' font-medium mb-2'>Question</Label>
-        <Textarea value={question} onChange={(e) => setQuestion(e.target.value)} rows={4} placeholder="Write long answer question here..." />
-      </div>
+
       <div>
         <div className="flex justify-between items-center mb-4">
           <div className="font-medium text-sm">Draggable Items</div>

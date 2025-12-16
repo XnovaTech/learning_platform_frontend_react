@@ -21,13 +21,17 @@ export interface LessonTaskOptionType {
 }
 
 export interface DragDropExtraData {
-    question: string;
     items: string[];
     targets: string[];
 }
 
+type DragDropWithBlankExtraData = {
+  paragraph: string;
+  blanks: Blank[];
+  items: string[];
+};
+
 export interface MatchingExtraData {
-    question: string
     left: string[];
     right: string[];
     matches?: Record<string, string>;

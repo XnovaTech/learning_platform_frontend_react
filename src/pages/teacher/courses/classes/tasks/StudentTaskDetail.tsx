@@ -37,6 +37,8 @@ export default function StudentTaskDetail() {
     );
   }
 
+  console.log('task record is', answers)
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto p-4">
       <h1 className="text-2xl font-semibold mb-4">Student Answers & Marks</h1>

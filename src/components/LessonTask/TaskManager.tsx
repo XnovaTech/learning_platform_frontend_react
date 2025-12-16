@@ -12,6 +12,8 @@ import { createLessonTask } from '@/services/lessonTaskService';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '../ui/label';
+import { uploadImage } from '@/services/lessonTaskService';
+import { LessonTaskQuill } from '../ui/lesson-task-quill';
 
 type Props = {
   initial?: CreateLessonTaskPayloadType | null;
@@ -24,6 +26,7 @@ export default function TaskBuilderManager({ initial, lessonId, refetch }: Props
 
   const [type, setType] = useState<TaskType>(initial?.task_type ?? 'drag_drop');
   const [points, setPoints] = useState<number>(initial?.points ?? 1);
+  const [question, setQuestion] = useState(initial?.question ?? '')
   // const [order, setOrder] = useState<number>(initial?.order ?? 1);
 
   // from builders
@@ -108,7 +111,7 @@ export default function TaskBuilderManager({ initial, lessonId, refetch }: Props
     const payload: CreateLessonTaskPayloadType = {
       lesson_id: Number(lessonId),
       task_type: type,
-      question: extraData.question,
+      question: question,
       correct_answer: extraData.correct_answer ?? null,
       extra_data: type === 'long' ? extraData.extra_data : undefined,
       points,
@@ -171,8 +174,17 @@ export default function TaskBuilderManager({ initial, lessonId, refetch }: Props
 
         <div className="col-span-1">
           <Label className="font-medium mb-3">Marks</Label>
-          <Input type="number" value={points} onChange={(e) => setPoints(Number(e.target.value))} />
+          <Input value={points} onChange={(e) => setPoints(Number(e.target.value))} />
         </div>
+
+         <div className='col-span-4'>
+        <Label className=' font-medium mb-2'>Question</Label>
+        <LessonTaskQuill 
+          value={question}
+          onChange={setQuestion}
+          uploadFn={uploadImage}/>
+      
+      </div>
 
         {/* <div>
           <Label className="font-medium mb-2">Task Order</Label>

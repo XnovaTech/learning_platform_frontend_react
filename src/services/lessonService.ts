@@ -33,7 +33,7 @@ export const uploadLessonDescriptionImage = async (payload: FormData) => {
     const {data} = await api.post('/v1/lessons/upload-description-image', payload , {
         headers: {'Content-Type': 'multipart/form-data'},
     });
-    return data;
+    return data?.data?.original;
   } catch (error: any){
     throw new Error(error.message);
   }

@@ -3,7 +3,6 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 import { Trash2 } from 'lucide-react';
-import { Label } from '../ui/label';
 
 type MCQOption = {
   option_text: string;
@@ -12,20 +11,19 @@ type MCQOption = {
 
 type Props = {
   initial?: {
-    question?: string;
     options?: MCQOption[];
   };
 
-  onChange: (data: { question: string; options: MCQOption[] }) => void;
+  onChange: (data: { options: MCQOption[] }) => void;
 };
 
 export default function McqBuilder({ initial, onChange }: Props) {
-  const [question, setQuestion] = useState(initial?.question ?? '');
+
   const [options, setOptions] = useState<MCQOption[]>(initial?.options ?? [{ option_text: '', is_correct: false }]);
 
   useEffect(() => {
-    onChange({ question, options });
-  }, [question, options]);
+    onChange({ options });
+  }, [options]);
 
   const addOption = () => {
     setOptions((s) => [...s, { option_text: '', is_correct: false }]);
@@ -50,10 +48,6 @@ export default function McqBuilder({ initial, onChange }: Props) {
 
   return (
     <div className="space-y-4">
-      <div>
-        <Label className=' font-medium mb-2'>Question</Label>
-        <Input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Enter MCQ Question" className='mt-1'/>
-      </div>
 
       <div className="font-medium text-sm">Options</div>
 
@@ -64,7 +58,7 @@ export default function McqBuilder({ initial, onChange }: Props) {
               checked={opt.is_correct}
               onCheckedChange={() => handleCorrectClick(i)}
             />
-
+            <p>{i + 1}. </p>
             <Input className="flex-1" value={opt.option_text} onChange={(e) => updateOption(i, 'option_text', e.target.value)} placeholder={`Option ${i + 1}`} />
 
             <Button variant="ghost" onClick={() => removeOption(i)}>

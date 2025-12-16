@@ -23,9 +23,14 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
           <div className="space-y-6">
             {longTasks.map((task, index) => (
               <div key={task.id}>
-                <p className="font-medium">
-                  {index + 1}. {task.question} ({task.points} pts)
-                </p>
+                <div className=' flex gap-3'>
+                  <p className='text-muted-foreground text-base font-semibold'>{index + 1}</p>
+                   <div
+                      className='leading-relaxed'
+                      dangerouslySetInnerHTML={{ __html: task.question || '' }}
+                    />
+                    <p className='text-muted-foreground text-base font-semibold'>({task.points} pts)</p>
+                </div>
 
                 <p className="mt-1 text-gray-700">Min Words: {(task.extra_data as LongAnswerExtraData)?.min_word_count}</p>
               </div>
@@ -42,10 +47,14 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
           <div className="space-y-6">
             {shortTasks.map((task, index) => (
               <div key={task.id}>
-                <p className="font-medium">
-                  {index + 1}. {task.question} ({task.points} pts)
-                </p>
-
+                <div className=' flex gap-3'>
+                  <p className='text-muted-foreground text-base font-semibold'>{index + 1}</p>
+                   <div
+                      className='leading-relaxed'
+                      dangerouslySetInnerHTML={{ __html: task.question || '' }}
+                    />
+                    <p className='text-muted-foreground text-base font-semibold'>({task.points} pts)</p>
+                </div>
                 <p className="mt-1 px-2 py-1 rounded bg-gray-100 text-gray-800">
                   Answer: <span className="font-semibold">{task.correct_answer}</span>
                 </p>
@@ -64,9 +73,14 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
             <div className="space-y-6">
               {blankTasks.map((task, index) => (
                 <div key={task.id}>
-                  <p className="font-medium">
-                    {index + 1}. {task.question} ({task.points} pts)
-                  </p>
+                  <div className=' flex gap-3'>
+                  <p className='text-muted-foreground text-base font-semibold'>{index + 1}</p>
+                   <div
+                      className='leading-relaxed'
+                      dangerouslySetInnerHTML={{ __html: task.question || '' }}
+                    />
+                    <p className='text-muted-foreground text-base font-semibold'>({task.points} pts)</p>
+                </div>
 
                   <p className="mt-1 px-2 py-1 rounded bg-gray-100 text-gray-800">
                     Answers: <span className="font-semibold">{(task.correct_answer)}</span>
@@ -86,9 +100,14 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
           <div className="space-y-6">
             {mcqTasks.map((task, index) => (
               <div key={task.id}>
-                <p className="font-medium">
-                  {index + 1}. {task.question} ({task.points} pts)
-                </p>
+                 <div className=' flex gap-3'>
+                  <p className='text-muted-foreground text-base font-semibold'>{index + 1}</p>
+                   <div
+                      className='leading-relaxed'
+                      dangerouslySetInnerHTML={{ __html: task.question || '' }}
+                    />
+                    <p className='text-muted-foreground text-base font-semibold'>({task.points} pts)</p>
+                </div>
 
                 <ul className="list-disc list-inside space-y-1 mt-2">
                   {task.options?.map((option: any) => (
@@ -111,9 +130,14 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
           <div className="space-y-6">
             {tfTasks.map((task, index) => (
               <div key={task.id}>
-                <p className="font-medium">
-                  {index + 1}. {task.question} ({task.points} pts)
-                </p>
+                 <div className=' flex gap-3'>
+                  <p className='text-muted-foreground text-base font-semibold'>{index + 1}</p>
+                   <div
+                      className='leading-relaxed'
+                      dangerouslySetInnerHTML={{ __html: task.question || '' }}
+                    />
+                    <p className='text-muted-foreground text-base font-semibold'>({task.points} pts)</p>
+                </div>
 
                 <p className="mt-2 px-2 py-1 rounded bg-gray-100 text-gray-800">
                   Correct Answer: <span className="font-semibold">{task.correct_answer === 'true' ? 'True' : 'False'}</span>
@@ -143,9 +167,14 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
 
               return (
                 <div key={task.id}>
-                  <p className="font-medium mb-3">
-                    {index + 1}. {task.question} ({task.points} pts)
-                  </p>
+                   <div className=' flex gap-3'>
+                  <p className='text-muted-foreground text-base font-semibold'>{index + 1}</p>
+                   <div
+                      className='leading-relaxed'
+                      dangerouslySetInnerHTML={{ __html: task.question || '' }}
+                    />
+                    <p className='text-muted-foreground text-base font-semibold'>({task.points} pts)</p>
+                </div>
 
                   <div className="space-y-3">
                     {Object.entries(groups).map(([key, pair]: any) => (
@@ -178,9 +207,14 @@ export default function TaskList({ tasks = [] }: TaskListProps) {
 
               return (
                 <div key={task.id}>
-                  <p className="font-medium mb-3">
-                    {index + 1}. {task.question} ({task.points} pts)
-                  </p>
+                  <div className=' flex gap-3'>
+                  <p className='text-muted-foreground text-base font-semibold'>{index + 1}</p>
+                   <div
+                      className='leading-relaxed'
+                      dangerouslySetInnerHTML={{ __html: task.question || '' }}
+                    />
+                    <p className='text-muted-foreground text-base font-semibold'>({task.points} pts)</p>
+                </div>
 
                   <div className="space-y-3">
                     {Object.entries(groups).map(([key, pair]: any) => {
