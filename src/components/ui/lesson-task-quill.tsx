@@ -48,15 +48,21 @@ export function LessonTaskQuill({ value, onChange, uploadFn }: QuillHelperProps)
   const quillFormats = ['bold', 'italic', 'underline', 'list', 'link', 'image'];
 
   return (
-    <ReactQuill
-      ref={quillRef}
-      theme="snow"
-      formats={quillFormats}
-      modules={quillModules}
-      value={value}
-      onChange={onChange}
-      placeholder="Write your question here..."
-      className="rounded-xl min-h-[150px] [&_.ql-toolbar]:rounded-t-xl [&_.ql-container]:rounded-b-xl [&_.ql-container]:min-h-[140px]"
-    />
+     <div className="rounded-xl border bg-transparent border-gray-50 focus-within:ring-1 focus-within:ring-primary transition-all duration-300">
+      <ReactQuill
+        ref={quillRef}
+        theme="snow"
+        formats={quillFormats}
+        modules={quillModules}
+        defaultValue={value} 
+        onBlur={() => {
+          const editor = quillRef.current?.getEditor();
+          if (!editor) return;
+          onChange(editor.root.innerHTML);
+        }}
+        placeholder="Write your question here..."
+        className="rounded-xl min-h-[150px] [&_.ql-toolbar]:rounded-t-xl [&_.ql-container]:rounded-b-xl [&_.ql-container]:min-h-[140px]"
+      />
+    </div>
   );
 }

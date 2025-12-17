@@ -103,7 +103,7 @@ export default function LessonDetailPage() {
           </div>
 
           <TabsContent value="taskList" className="p-6 space-y-6 mt-0">
-            <TaskList tasks={lesson?.tasks}/>
+            <TaskList tasks={lesson?.tasks} refetch={refetch}/>
           </TabsContent>
 
           <TabsContent value="createTask" className="p-6 space-y-6 mt-0">
