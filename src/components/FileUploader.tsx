@@ -48,7 +48,7 @@ export default function FileUploader({ label, existing, newFiles, onRemoveExisti
 
       {allFiles.length > 0 && (
         <div className="space-y-2">
-          {existing.map((doc, index) => (
+          {existing.map((doc) => (
             <div key={`existing-${doc.id}`} className="flex items-center justify-between p-2 border rounded-lg">
               <div className="flex items-center gap-2">
                 <FileIcon className="h-5 w-5 text-muted-foreground" />
