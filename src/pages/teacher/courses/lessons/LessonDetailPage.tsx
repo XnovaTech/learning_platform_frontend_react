@@ -1,34 +1,27 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
-import { Card, CardTitle } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { lessonDetail } from '@/services/lessonService';
-import type { LessonType } from '@/types/lesson';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 import TaskBuilderManager from '@/components/LessonTask/TaskManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import TaskList from '@/components/LessonTask/TaskList';
-import DocumentItem from '@/components/Files/DocumentItem';
+import type { LessonType } from '@/types/lesson';
+import { Card } from '@/components/ui/card';
+import LessonCard from '@/components/Card/LessonCard';
 
 export default function LessonDetailPage() {
   const params = useParams();
   const lessonId = Number(params.lessonId);
-  const queryClient = useQueryClient();
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const preloadedLesson = queryClient.getQueryData<LessonType>(['lesson', lessonId]);
 
   const {
     data: lesson,
     isLoading,
     refetch,
-  } = useQuery({
+  } = useQuery<LessonType>({
     queryKey: ['lesson', lessonId],
     queryFn: () => lessonDetail(lessonId),
-    enabled: !preloadedLesson,
-    initialData: preloadedLesson,
+    enabled: !Number.isNaN(lessonId),
     staleTime: 60 * 1000,
   });
 
@@ -78,33 +71,8 @@ export default function LessonDetailPage() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <Card className="border-0 shadow-xl bg-white/80 p-4 backdrop-blur overflow-hidden">
-        <CardTitle className="text-3xl font-semibold">{lesson?.title}</CardTitle>
+      <LessonCard lesson={lesson} />
 
-        {lesson?.description !== null ? (
-          <>
-            <div
-              className={`text-muted-foreground min-h-28 text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}
-              dangerouslySetInnerHTML={{ __html: lesson?.description || '' }}
-            />
-            <Button
-              variant="link"
-              onClick={() => setIsExpanded((prev) => !prev)}
-              className="text-primary flex justify-end text-sm transition-all  p-0 font-medium hover:underline underline-offset-1 mt-1"
-            >
-              {isExpanded ? 'Show Less' : 'Read More'}
-            </Button>
-          </>
-        ) : (
-          <div className="space-y-3 min-h-32 h-68   overflow-y-auto ">
-            {lesson?.documents && lesson.documents.length > 0 ? (
-              lesson.documents.map((doc) => <DocumentItem key={doc.id} doc={doc} />)
-            ) : (
-              <p className="text-center text-muted-foreground">No documents available for this lesson.</p>
-            )}
-          </div>
-        )}
-      </Card>
       <Card className="border-0 shadow-xl mt-0 pt-0 bg-white/80 backdrop-blur overflow-hidden">
         <Tabs defaultValue="taskList" className="w-full">
           <div className="border-b bg-linear-to-r from-slate-50 to-slate-100/50 px-6 py-5 flex items-center justify-between">
@@ -119,7 +87,7 @@ export default function LessonDetailPage() {
           </div>
 
           <TabsContent value="taskList" className="p-6 space-y-6 mt-0">
-            <TaskList tasks={lesson?.tasks} refetch={refetch}/>
+            <TaskList tasks={lesson?.tasks} refetch={refetch} />
           </TabsContent>
 
           <TabsContent value="createTask" className="p-6 space-y-6 mt-0">
