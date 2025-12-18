@@ -20,6 +20,17 @@ export const getStudentLessonTasks = async (lessonId: number): Promise<LessonTas
     }
 }
 
+export const uploadImage = async (payload: FormData) => {
+    try {
+        const {data} = await api.post('/v1/lessons/task/upload/image', payload, {
+         headers: {'Content-Type': 'multipart/form-data'}
+    });
+    return data?.data?.original
+    } catch (error: any){
+        throw new Error(error.message)
+    } 
+}
+
 export const createLessonTask = async (payload: CreateLessonTaskPayloadType): Promise<LessonTaskType> => {
     try {
         const {data} = await api.post('v1/lesson/tasks', payload);

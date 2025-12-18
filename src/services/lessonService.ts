@@ -1,4 +1,4 @@
-import type { LessonType, LessonPayloadType, LessonLockType } from '@/types/lesson';
+import type { LessonType, LessonLockType, LessonFormType } from '@/types/lesson';
 import api from './api';
 
 export const listLessons = async (): Promise<LessonType[]> => {
@@ -10,7 +10,7 @@ export const listLessons = async (): Promise<LessonType[]> => {
   }
 };
 
-export const createLesson = async (payload: LessonPayloadType): Promise<LessonType> => {
+export const createLesson = async (payload: LessonFormType): Promise<LessonType> => {
   try {
     const { data } = await api.post('/v1/lessons', payload);
     return data?.data;
@@ -19,7 +19,7 @@ export const createLesson = async (payload: LessonPayloadType): Promise<LessonTy
   }
 };
 
-export const updateLesson = async (id: number, payload: LessonPayloadType): Promise<LessonType> => {
+export const updateLesson = async (id: number, payload: LessonFormType): Promise<LessonType> => {
   try {
     const { data } = await api.put(`/v1/lessons/${id}`, payload);
     return data?.data;
@@ -27,6 +27,17 @@ export const updateLesson = async (id: number, payload: LessonPayloadType): Prom
     throw new Error(error.message);
   }
 };
+
+export const uploadLessonDescriptionImage = async (payload: FormData) => {
+  try {
+    const {data} = await api.post('/v1/lessons/upload-description-image', payload , {
+        headers: {'Content-Type': 'multipart/form-data'},
+    });
+    return data?.data?.original;
+  } catch (error: any){
+    throw new Error(error.message);
+  }
+}
 
 export const updateLockState = async ({ lessonId, classroomId, is_locked }: LessonLockType): Promise<LessonType> => {
   try {
@@ -62,3 +73,5 @@ export const getLessonByStudent = async (lessonId: Number): Promise<LessonType> 
     throw new Error(error.message);
   }
 };
+
+

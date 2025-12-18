@@ -2,39 +2,42 @@ import React, { useState } from 'react';
 
 import { DragDropBuilder, FillBlankBuilder, MatchingBuilder, ShortAnswerBuilder, LongAnswerBuilder, McqBuilder, TrueFalseBuilder } from '@components/builders';
 
-import type { TaskType, DragDropExtraData, MatchingExtraData, CreateLessonTaskPayloadType } from '@/types/task';
+import type { TaskType, DragDropExtraData, MatchingExtraData, CreateLessonTaskPayloadType, UpdateLessonTaskPayloadType } from '@/types/task';
 
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { Label } from '../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createLessonTask } from '@/services/lessonTaskService';
+import { createLessonTask, updateLessonTask, uploadImage } from '@/services/lessonTaskService';
 import { toast } from 'sonner';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '../ui/label';
+import { LessonTaskQuill } from '../ui/lesson-task-quill';
 
 type Props = {
   initial?: CreateLessonTaskPayloadType | null;
   lessonId: number | undefined;
   refetch: () => Promise<any>;
+  taskId?: number;
+  onClose?: () => void;
 };
 
-export default function TaskBuilderManager({ initial, lessonId, refetch }: Props) {
+export default function TaskBuilderManager({ initial, lessonId, refetch, taskId, onClose }: Props) {
   const queryClient = useQueryClient();
 
-  const [type, setType] = useState<TaskType>(initial?.task_type ?? 'drag_drop');
+  const [type, setType] = useState<TaskType>(initial?.task_type ?? 'long');
   const [points, setPoints] = useState<number>(initial?.points ?? 1);
+  const [question, setQuestion] = useState(initial?.question ?? '');
   // const [order, setOrder] = useState<number>(initial?.order ?? 1);
-
-  // from builders
   const [extraData, setExtraData] = useState<any>(initial?.extra_data ?? {});
 
   const createMutation = useMutation({
-    mutationFn: createLessonTask,
+    mutationFn: taskId ? (payload: UpdateLessonTaskPayloadType) => updateLessonTask(taskId, payload) : createLessonTask,
     onSuccess: async () => {
-      toast.success('Task Created Successfully');
+      toast.success(`Task ${taskId ? 'Updated' : 'Created'} Successfully`);
       await queryClient.invalidateQueries({ queryKey: ['tasks'] });
       refetch();
+      if (onClose) onClose();
     },
     onError: (e: any) => {
       toast.error(e?.message || 'Failed to create task');
@@ -108,7 +111,7 @@ export default function TaskBuilderManager({ initial, lessonId, refetch }: Props
     const payload: CreateLessonTaskPayloadType = {
       lesson_id: Number(lessonId),
       task_type: type,
-      question: extraData.question,
+      question: question,
       correct_answer: extraData.correct_answer ?? null,
       extra_data: type === 'long' ? extraData.extra_data : undefined,
       points,
@@ -121,15 +124,6 @@ export default function TaskBuilderManager({ initial, lessonId, refetch }: Props
 
   const renderBuilder = () => {
     switch (type) {
-      case 'drag_drop':
-        return <DragDropBuilder initial={extraData as DragDropExtraData} onChange={setExtraData} />;
-
-      case 'fill_blank':
-        return <FillBlankBuilder onChange={setExtraData} />;
-
-      case 'matching':
-        return <MatchingBuilder initial={extraData as MatchingExtraData} onChange={setExtraData} />;
-
       case 'long':
         return <LongAnswerBuilder initial={extraData} onChange={setExtraData} />;
 
@@ -139,15 +133,25 @@ export default function TaskBuilderManager({ initial, lessonId, refetch }: Props
       case 'mcq':
         return <McqBuilder initial={extraData} onChange={setExtraData} />;
 
+      case 'fill_blank':
+        return <FillBlankBuilder onChange={setExtraData} />;
+
       case 'true_false':
         return <TrueFalseBuilder initial={extraData} onChange={setExtraData} />;
+
+      case 'drag_drop':
+        return <DragDropBuilder initial={extraData as DragDropExtraData} onChange={setExtraData} />;
+
+      case 'matching':
+        return <MatchingBuilder initial={extraData as MatchingExtraData} onChange={setExtraData} />;
+
       default:
         return null;
     }
   };
 
   return (
-    <div className="space-y-5 p-5 border rounded bg-white shadow">
+    <div className="space-y-5 p-5 border  bg-white shadow w-full">
       {/* POINTS + ORDER */}
       <div className="grid grid-cols-4 gap-3">
         {/* TYPE */}
@@ -158,20 +162,28 @@ export default function TaskBuilderManager({ initial, lessonId, refetch }: Props
               <SelectValue placeholder="Select question type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="drag_drop">Drag & Drop</SelectItem>
-              <SelectItem value="fill_blank">Fill-in-the-Blank</SelectItem>
-              <SelectItem value="matching">Matching</SelectItem>
               <SelectItem value="long">Long Question</SelectItem>
               <SelectItem value="short">Short Question</SelectItem>
               <SelectItem value="mcq">Multiple Choice Question</SelectItem>
+              <SelectItem value="fill_blank">Fill-in-the-Blank</SelectItem>
               <SelectItem value="true_false">True False</SelectItem>
+              <SelectItem value="drag_drop">Drag & Drop</SelectItem>
+              <SelectItem value="matching">Matching</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="col-span-1">
           <Label className="font-medium mb-3">Marks</Label>
-          <Input type="number" value={points} onChange={(e) => setPoints(Number(e.target.value))} />
+          <Input value={points} onChange={(e) => setPoints(Number(e.target.value))} />
+        </div>
+
+        <div className="col-span-4">
+          <Label id="question-label" className=" font-medium mb-2">
+            Question
+          </Label>
+
+          <LessonTaskQuill value={question} onChange={setQuestion} uploadFn={uploadImage} />
         </div>
 
         {/* <div>
@@ -184,7 +196,7 @@ export default function TaskBuilderManager({ initial, lessonId, refetch }: Props
       <div className="border rounded p-4 bg-gray-50">{renderBuilder()}</div>
 
       <Button type="submit" className="w-full" onClick={onSubmit}>
-        Save Task
+        {taskId ? 'Update Task' : 'Create Task'}
       </Button>
     </div>
   );

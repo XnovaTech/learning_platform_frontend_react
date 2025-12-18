@@ -22,6 +22,7 @@ export default function EditLessonPage() {
     staleTime: 60 * 1000,
   });
 
+
   if (isLoading) {
     return (
       <div className="max-w-8xl p-4 mx-auto space-y-6">

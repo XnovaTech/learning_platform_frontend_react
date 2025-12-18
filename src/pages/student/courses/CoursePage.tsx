@@ -36,6 +36,12 @@ export default function CoursePage() {
     },
   });
 
+  const joinedClassIds = React.useMemo(() => {
+    return studentData?.enrollments?.map((e: any) => e.class_id) ?? [];
+  }, [studentData]);
+
+  const isClassJoined = (classId: number) => joinedClassIds.includes(classId);
+
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: listCategoriesWithClassAndCourse,
@@ -53,6 +59,7 @@ export default function CoursePage() {
   const handleOpen = (courseId: number) => {
     setOpenItem(true);
     setSelectedCourse(courseId);
+    
   };
 
   const handleSelectClass = (classId: number) => {
@@ -179,17 +186,28 @@ export default function CoursePage() {
                     <div className=" bg-sky-50 p-2 rounded-xl">
                       <div
                         key={data.id}
-                        onClick={() => handleSelectClass(data.id)}
-                        className={`md:basis-1/2 lg:basis-1/4 relative rounded-2xl min-w-44  mx-2 my-4 p-2 text-center font-semibold text-sm cursor-pointer border transition-all duration-300 transform hover:scale-105 hover:shadow-lg
-                                                            ${selectedClass === data.id ? 'bg-primary text-white' : 'border-primary shadow-lg bg-blue-50'}`}
+                        onClick={() => {
+                          if (!isClassJoined(data.id)) {
+                            handleSelectClass(data.id);
+                          }
+                        }}
+                        className={`md:basis-1/2 lg:basis-1/4 relative rounded-2xl min-w-44 mx-2 my-4 p-2 text-center font-semibold text-sm border transition-all duration-300
+      ${
+        isClassJoined(data.id)
+          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          : selectedClass === data.id
+          ? 'bg-primary text-white cursor-pointer'
+          : 'border-primary shadow-lg bg-blue-50 cursor-pointer hover:scale-105 hover:shadow-lg'
+      }`}
                       >
                         {moment(data.start_time, 'HH:mm:ss').format('HH:mm')} - {moment(data.end_time, 'HH:mm:ss').format('HH:mm')}
-                        {selectedClass === data.id && (
-                          <div className="absolute top-3 right-3 bg-blue-600 text-white rounded-full ">
-                            <CheckCircle2 size={14} />
+                        {isClassJoined(data.id) && (
+                          <div className="absolute top-3 right-3 text-green-600">
+                            <CheckCircle2 size={16} />
                           </div>
                         )}
                       </div>
+
                       <div className="flex gap-2 flex-wrap">
                         {data.days.map((day, index) => (
                           <span key={index} className="px-2 py-1 rounded-lg bg-white text-secondary-foreground font-semibold text-xs uppercase">

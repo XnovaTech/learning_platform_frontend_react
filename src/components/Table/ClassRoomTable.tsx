@@ -109,9 +109,12 @@ export default function ClassRoomTable({ classrooms, onEdit, onDelete, isCoureDe
                       <Button variant="destructive" size="sm" onClick={() => onDelete?.(classroom.id)}>
                         <Trash2 className="size-4" />
                       </Button>
-                      <Button className='hover:scale-100' size="sm" onClick={() => askDeleteConversation(classroom.id)}>
-                        Finish
-                      </Button>
+
+                      {classroom?.is_finish == 0 && (
+                        <Button className="hover:scale-100" size="sm" onClick={() => askDeleteConversation(classroom.id)}>
+                          Finish
+                        </Button>
+                      )}
                     </div>
                   </td>
                 )}

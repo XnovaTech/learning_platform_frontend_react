@@ -6,8 +6,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Trash2, GripVertical } from 'lucide-react';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
 
 type Props = {
   initial?: MatchingExtraData | null;
@@ -37,10 +35,10 @@ function SortableItem({ id, value, onChange, onRemove }: any) {
 export default function MatchingBuilder({ initial, onChange }: Props) {
   const [left, setLeft] = useState<string[]>(initial?.left ?? []);
   const [right, setRight] = useState<string[]>(initial?.right ?? []);
-  const [question, setQuestion] = useState<string>(initial?.question ?? '');
+
 
   useEffect(() => {
-    onChange({ question, left, right, matches: {} });
+    onChange({ left, right, matches: {} });
   }, [left, right]);
 
   const handleAddLeft = () => setLeft((s) => [...s, '']);
@@ -71,10 +69,7 @@ export default function MatchingBuilder({ initial, onChange }: Props) {
 
   return (
     <div className=" grid grid-cols-2 gap-4">
-      <div className=" col-span-2">
-        <Label className=" font-medium mb-2">Question</Label>
-        <Textarea value={question} onChange={(e) => setQuestion(e.target.value)} rows={4} placeholder="Write long answer question here..." />
-      </div>
+ 
 
       <div>
         <div className=" flex items-center justify-between mb-2">

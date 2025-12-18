@@ -1,33 +1,26 @@
 import { useState, useEffect } from 'react';
-import { Input } from '../ui/input';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Label } from '../ui/label';
 
 type Props = {
   initial?: {
-    question?: string;
     correct_answer?: string;
   };
 
-  onChange: (data: { question: string; correct_answer: string }) => void;
+  onChange: (data: { correct_answer: string }) => void;
 };
 
 export default function TrueFalseBuilder({ initial, onChange }: Props) {
-  const [question, setQuestion] = useState(initial?.question ?? '');
+
   const [correctAnswer, setCorrectAnswer] = useState(
     initial?.correct_answer ? initial.correct_answer === 'true' : true);
 
   useEffect(() => {
-    onChange({ question, correct_answer: correctAnswer ? "true" : "false" });
-  }, [question, correctAnswer]);
+    onChange({  correct_answer: correctAnswer ? "true" : "false" });
+  }, [correctAnswer]);
 
   return (
     <div className="space-y-4">
-      <div>
-        <Label className=' mb-2 font-medium'>Question</Label>
-        <Input value={question} onChange={(e) => setQuestion(e.target.value)} />
-      </div>
-
       <div>
         <Label className=' mb-2 font-medium'>Correct Answer</Label>
         <RadioGroup value={correctAnswer ? 'true' : 'false'} onValueChange={(val) => setCorrectAnswer(val === 'true')} className="flex gap-4 mt-1">

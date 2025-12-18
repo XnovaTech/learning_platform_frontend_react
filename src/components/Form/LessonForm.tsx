@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
-import { createLesson, updateLesson } from '@/services/lessonService';
+import { createLesson, updateLesson, uploadLessonDescriptionImage } from '@/services/lessonService';
+import { deleteLessonDocument, uploadLessonDocument } from '@/services/lessonDocumentService';
 import type { LessonPayloadType, LessonType } from '@/types/lesson';
+import type { LessonDocumentType } from '@/types/lessondocument';
 import { useNavigate } from 'react-router-dom';
 import { CardTitle } from '../ui/card';
+import { LessonQuill } from '../ui/lesson-quill';
+import FileUploader from '../FileUploader';
 
 interface LessonFormProps {
   editingItem?: LessonType | null;
@@ -26,9 +28,11 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
     title: null,
     description: null,
     youtube_link: null,
+    documents: [],
   };
 
   const [form, setForm] = useState<LessonPayloadType>(defaultForm);
+  const [existingDocuments, setExistingDocuments] = useState<LessonDocumentType[]>([]);
 
   useEffect(() => {
     if (!editingItem) return;
@@ -37,39 +41,68 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
       title: editingItem.title ?? '',
       description: editingItem.description,
       youtube_link: editingItem.youtube_link,
+      documents: [],
     });
+    setExistingDocuments(editingItem.documents || []);
   }, [editingItem]);
+
+  const deleteDocumentMutation = useMutation({
+    mutationFn: (id: number) => deleteLessonDocument(id),
+    onSuccess: async () => {
+      toast.success('Lesson Document deleted successfully');
+      await queryClient.invalidateQueries({ queryKey: ['lesson', editingItem?.id] });
+    },
+    onError: (e: any) => toast.error(e?.message || 'Failed to delete lesson document!'),
+  });
+
+  const handleRemoveExisting = async (docId: number) => {
+    deleteDocumentMutation.mutate(docId);
+    setExistingDocuments((prev) => prev.filter((d) => d.id !== docId));
+  };
 
   const handleCancel = () => {
     navigate(`/teacher/courses/${courseId}`);
   };
 
   const createMutation = useMutation({
-    mutationFn: (payload: LessonPayloadType) => createLesson(payload),
-    onSuccess: async () => {
-      toast.success('Lesson created successfully');
-      await queryClient.invalidateQueries({ queryKey: ['course', courseId] });
-      handleCancel();
-    },
-    onError: (e: any) => toast.error(e?.message || 'Failed to create lesson!'),
+    mutationFn: (payload: any) => createLesson(payload),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: LessonPayloadType }) => updateLesson(id, payload),
-    onSuccess: async () => {
-      toast.success('Lesson updated successfully');
-      await queryClient.invalidateQueries({ queryKey: ['course', editingItem?.course_id] });
-      handleCancel();
-    },
-    onError: (e: any) => toast.error(e?.message || 'Failed to update lesson!'),
+    mutationFn: ({ id, payload }: { id: number; payload: any }) => updateLesson(id, payload),
   });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingItem) {
-      await updateMutation.mutateAsync({ id: editingItem.id, payload: form });
-    } else {
-      await createMutation.mutateAsync(form);
+    const { documents, ...payload } = form;
+
+    try {
+      let lesson;
+      if (editingItem) {
+        lesson = await updateMutation.mutateAsync({ id: editingItem.id, payload });
+      } else {
+        lesson = await createMutation.mutateAsync(payload);
+      }
+
+      const lessonId = editingItem ? editingItem.id : lesson.id;
+      if (documents.length) {
+        await Promise.all(
+          documents.map((file) => {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('lesson_id', lessonId.toString());
+            return uploadLessonDocument(formData);
+          })
+        );
+        toast.success('Lesson documents uploaded successfully');
+      }
+
+      toast.success(editingItem ? 'Lesson updated successfully' : 'Lesson created successfully');
+
+      await queryClient.invalidateQueries({ queryKey: ['course', courseId] });
+      handleCancel();
+    } catch (error: any) {
+      toast.error(error?.message || 'Failed to save lesson and documents');
     }
   };
 
@@ -100,15 +133,17 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
         <div className="col-span-2 space-y-2">
           <Label htmlFor="description">Description</Label>
           <div className="rounded-xl border  bg-transparent border-gray-50 focus-within:ring-1 focus-within:ring-primary transition-all duration-300">
-            <ReactQuill
-              theme="snow"
-              className="rounded-xl min-h-[180px] [&_.ql-toolbar]:rounded-t-xl [&_.ql-container]:rounded-b-xl [&_.ql-container]:min-h-40"
-              value={form.description || ''}
-              onChange={(value: string) => setForm({ ...form, description: value })}
-              placeholder="Write your lesson content here..."
-            />
+            <LessonQuill form={form} setForm={setForm} uploadFn={uploadLessonDescriptionImage} />
           </div>
         </div>
+
+        <FileUploader
+          label="Documents"
+          existing={existingDocuments}
+          newFiles={form.documents}
+          onRemoveExisting={handleRemoveExisting}
+          onChangeNew={(files) => setForm({ ...form, documents: files })}
+        />
       </div>
 
       <div className="flex items-center justify-end gap-3 pt-4">

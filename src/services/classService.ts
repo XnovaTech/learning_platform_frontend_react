@@ -70,3 +70,4 @@ export const getActiveClassesByTeacher = async (): Promise<ClassRoomType[]> => {
     throw new Error(error.message);
   }
 };
+
