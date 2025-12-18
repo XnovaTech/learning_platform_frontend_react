@@ -10,6 +10,7 @@ import { Link, useParams } from 'react-router-dom';
 import TaskBuilderManager from '@/components/LessonTask/TaskManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import TaskList from '@/components/LessonTask/TaskList';
+import DocumentItem from '@/components/Files/DocumentItem';
 
 export default function LessonDetailPage() {
   const params = useParams();
@@ -19,7 +20,11 @@ export default function LessonDetailPage() {
 
   const preloadedLesson = queryClient.getQueryData<LessonType>(['lesson', lessonId]);
 
-  const { data: lesson, isLoading, refetch } = useQuery({
+  const {
+    data: lesson,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ['lesson', lessonId],
     queryFn: () => lessonDetail(lessonId),
     enabled: !preloadedLesson,
@@ -75,18 +80,29 @@ export default function LessonDetailPage() {
 
       <Card className="border-0 shadow-xl bg-white/80 p-4 backdrop-blur overflow-hidden">
         <CardTitle className="text-3xl font-semibold">{lesson?.title}</CardTitle>
-        <div
-          className={`text-muted-foreground min-h-32 text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}
-          dangerouslySetInnerHTML={{ __html: lesson?.description || '' }}
-        />
-        {lesson?.description && (
-          <Button
-            variant="link"
-            onClick={() => setIsExpanded((prev) => !prev)}
-            className="text-primary flex justify-end text-sm transition-all  p-0 font-medium hover:underline underline-offset-1 mt-1"
-          >
-            {isExpanded ? 'Show Less' : 'Read More'}
-          </Button>
+
+        {lesson?.description !== null ? (
+          <>
+            <div
+              className={`text-muted-foreground min-h-28 text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}
+              dangerouslySetInnerHTML={{ __html: lesson?.description || '' }}
+            />
+            <Button
+              variant="link"
+              onClick={() => setIsExpanded((prev) => !prev)}
+              className="text-primary flex justify-end text-sm transition-all  p-0 font-medium hover:underline underline-offset-1 mt-1"
+            >
+              {isExpanded ? 'Show Less' : 'Read More'}
+            </Button>
+          </>
+        ) : (
+          <div className="space-y-3 min-h-32 h-68   overflow-y-auto ">
+            {lesson?.documents && lesson.documents.length > 0 ? (
+              lesson.documents.map((doc) => <DocumentItem key={doc.id} doc={doc} />)
+            ) : (
+              <p className="text-center text-muted-foreground">No documents available for this lesson.</p>
+            )}
+          </div>
         )}
       </Card>
       <Card className="border-0 shadow-xl mt-0 pt-0 bg-white/80 backdrop-blur overflow-hidden">
@@ -107,7 +123,7 @@ export default function LessonDetailPage() {
           </TabsContent>
 
           <TabsContent value="createTask" className="p-6 space-y-6 mt-0">
-              <TaskBuilderManager lessonId={lesson?.id} refetch={refetch} />
+            <TaskBuilderManager lessonId={lesson?.id} refetch={refetch} />
           </TabsContent>
         </Tabs>
       </Card>
