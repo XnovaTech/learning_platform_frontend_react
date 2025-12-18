@@ -91,14 +91,14 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
             {taskList.map((task) => (
               <Card key={task.id} className=" border rounded-xl shadow-sm mb-4">
                 <CardContent>
-                  <div className="flex justify-between mb-4 font-semibold border-b pb-2">
+                  <div className="flex flex-col justify-between mb-4 font-semibold border-b pb-2">
                      <div
                       className="prose prose-slate max-w-none mt-1 leading-relaxed text-slate-800"
                       dangerouslySetInnerHTML={{
                         __html: task.question || '',
                       }}
                     />
-                    <h4>{task.points} pts</h4>
+                    <h4 className='text-blue-700 text-sm text-right'>{task.points} pts</h4>
                   </div>
 
                   <TaskRendererComponent task={task} onAnswer={handleAnswer} />
