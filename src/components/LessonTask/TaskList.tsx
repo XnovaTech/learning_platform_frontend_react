@@ -255,7 +255,7 @@ export default function TaskList({ tasks = [], refetch }: TaskListProps) {
                   </div>
                 </div>
                 {/* Options */}
-                <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                <ul className="mt-4 flex flex-col space-y-3">
                   {task.options?.map((option: any, optIndex: number) => (
                     <li
                       key={option.id}
@@ -318,7 +318,7 @@ export default function TaskList({ tasks = [], refetch }: TaskListProps) {
                 </div>
                 {/* true/false */}
 
-                <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                <ul className="mt-4 flex flex-col space-y-3">
                   {['true', 'false'].map((value, index) => {
                     const correctAnswer = task.correct_answer === 'true' ? 'true' : 'false';
 

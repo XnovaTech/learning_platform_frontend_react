@@ -6,6 +6,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useState } from 'react';
 import TaskRendererComponent from './Render/TaskRendererComponent';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import type { StudentLessonSubmitPayload } from '@/types/answer';
 
 interface LessonTaskComponentProps {
@@ -38,7 +39,7 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
   const createMutation = useMutation({
     mutationFn: submitStudentLessonTasks,
     onSuccess: async () => {
-      console.log('Submitted successfully');
+      toast.success('Answer Submitted')
       setIsSubmitting(false);
     },
     onError: (e: any) => {
@@ -84,14 +85,19 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
       <h1 className=" text-2xl font-semibold mb-2"> Lesson Tasks</h1>
       {groupTasks && Object.keys(groupTasks).length > 0 ? (
         Object.entries(groupTasks).map(([type, taskList]) => (
-          <div key={type} className="mb-8">
-            <h2 className="text-sl font-semibold mb-4 border-b pb-2 text-slate-600">{TASK_TITLE[type as TaskType]}s</h2>
+          <div key={type} className="rounded-xl border bg-slate-50 p-4 transition hover:shadow-sm mb-2">
+            <h2 className="font-semibold mb-4 border-b pb-2 text-slate-600">{TASK_TITLE[type as TaskType]}s</h2>
 
             {taskList.map((task) => (
               <Card key={task.id} className=" border rounded-xl shadow-sm mb-4">
                 <CardContent>
                   <div className="flex justify-between mb-4 font-semibold border-b pb-2">
-                    <h4>{task.question}</h4>
+                     <div
+                      className="prose prose-slate max-w-none mt-1 leading-relaxed text-slate-800"
+                      dangerouslySetInnerHTML={{
+                        __html: task.question || '',
+                      }}
+                    />
                     <h4>{task.points} pts</h4>
                   </div>
 
