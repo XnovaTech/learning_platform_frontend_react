@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getLessonByStudent } from '@/services/lessonService';
 import type { LessonType } from '@/types/lesson';
-import { Card, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import ReactPlayer from 'react-player';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
