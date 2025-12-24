@@ -18,7 +18,7 @@ export default function LessonCard({ lesson }: LessonTypeProps) {
       {lesson?.description && (
         <>
           <div
-            className={`text-muted-foreground min-h-24 text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-24'}`}
+            className={`text-muted-foreground min-h-20 text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-20'}`}
             dangerouslySetInnerHTML={{ __html: lesson?.description || '' }}
           />
           <Button

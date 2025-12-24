@@ -68,7 +68,7 @@ export function ProfileForm({ open, onOpenChange, editingItem, form, setForm, on
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="  w-full  lg:min-w-xl max-h-[90vh] max-w-3xl overflow-y-scroll p-4">
+      <DialogContent className="  min-w-auto  md:min-w-xl max-h-[90vh] md:max-w-3xl overflow-y-scroll p-4">
         <form onSubmit={onSubmit} className="space-y-4  px-4 py-1">
           <DialogTitle className="text-lg font-semibold flex items-center  mb-6 gap-2">
             <div className="h-8 w-1 bg-primary rounded-full" />

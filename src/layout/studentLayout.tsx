@@ -48,10 +48,15 @@ function MobileSidebarContent() {
                       ${active ? 'bg-primary/60 text-white  shadow-md px-3 py-5.5' : ''}`}
                 >
                   <Link to={item.href} className="flex items-center justify-between w-full">
-                    <Icon
-                      className={`h-5 w-5 shrink-0 duration-500 group-hover:text-white transition-colors ${active ? 'text-white' : 'text-gray-600'}`} />
+                    <Icon className={`h-5 w-5 shrink-0 duration-500 group-hover:text-white transition-colors ${active ? 'text-white' : 'text-gray-600'}`} />
 
-                    <span className={`ml-3 pr-5 font-medium duration-500 transition-colors group-hover:text-white ${active ? 'text-white' : 'text-gray-600'} whitespace-nowrap  transition-opacity duration-600`}>{item.title}</span>
+                    <span
+                      className={`ml-3 pr-5 font-medium duration-500 transition-colors group-hover:text-white ${
+                        active ? 'text-white' : 'text-gray-600'
+                      } whitespace-nowrap  transition-opacity duration-600`}
+                    >
+                      {item.title}
+                    </span>
                   </Link>
                 </Button>
               </div>
@@ -143,10 +148,10 @@ function HeaderBar() {
 
       {/* logo */}
       <Link to="/student" className="flex items-center gap-3 fex-shrink-0">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/70 to-primary shadow-md">
-          <img src='/logo.png' className='object-cover' />
+        <div className="hidden md:flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/70 to-primary shadow-md">
+          <img src="/logo.png" className="object-cover" />
         </div>
-        <h1 className=" font-semibold text-gray-900">The Crystal Academy</h1>
+        <h1 className="text-md md:text-base font-semibold text-gray-900">The Crystal Academy</h1>
       </Link>
 
       {/* navigation */}

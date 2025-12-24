@@ -32,7 +32,7 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
           <div className="w-full space-y-4">
             <div className="space-y-2">
               <div className="flex flex-wrap space-y-2 items-center justify-between ">
-                <h2 className="text-xl md:text-2xl font-semibold tracking-tight">{course?.title}</h2>
+                <h2 className="text-xl  md:text-2xl font-semibold tracking-tight">{course?.title}</h2>
                 {isTeacher ? (
                   <div className="flex items-center gap-2">
                     <Button asChild variant="primary" size="sm" className="gap-2">
@@ -54,7 +54,7 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
 
               <div className="relative space-y-2">
                 <div
-                  className={`text-muted-foreground min-h-32 text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}
+                  className={`text-muted-foreground min-h-28 text-sm md:text-base leading-relaxed transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-28'}`}
                   dangerouslySetInnerHTML={{ __html: course?.description || '' }}
                 />
 
@@ -70,9 +70,9 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-5">
+            <div className="flex  flex-wrap items-center gap-5">
               {course?.category?.name && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center  gap-2">
                   <span className="text-sm text-muted-foreground">Category:</span>
                   <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">{course?.category.name}</span>
                 </div>
@@ -81,11 +81,11 @@ export default function CourseCard({ course, courseId, isTeacher = false, teache
               {course?.price > 0 && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Fee:</span>
-                  <span className="px-2 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">{course.price?.toLocaleString()} MMK</span>
+                  <span className="px-2 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">{Number(course.price)?.toLocaleString()} MMK</span>
                 </div>
               )}
 
-              {course?.status !== 'undefined' && (
+              {course?.status !== 'undefined' && isTeacher && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Status:</span>
                   <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${course?.status == 1 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>

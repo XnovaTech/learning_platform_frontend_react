@@ -39,7 +39,7 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
   const createMutation = useMutation({
     mutationFn: submitStudentLessonTasks,
     onSuccess: async () => {
-      toast.success('Answer Submitted')
+      toast.success('Answer Submitted');
       setIsSubmitting(false);
     },
     onError: (e: any) => {
@@ -81,24 +81,24 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
   }
 
   return (
-    <div className=" drop-shadow-2xl backdrop-blur-lg bg-white/50 dark:bg-slate-900/80 rounded-2xl p-6 md:p-8">
-      <h1 className=" text-2xl font-semibold mb-2"> Lesson Tasks</h1>
+    <div className=" drop-shadow-2xl backdrop-blur-lg bg-white/50 dark:bg-slate-900/80 rounded-2xl p-4 md:p-8">
+      {/* <h1 className=" text-2xl font-semibold mb-2"> Lesson Tasks</h1> */}
       {groupTasks && Object.keys(groupTasks).length > 0 ? (
         Object.entries(groupTasks).map(([type, taskList]) => (
-          <div key={type} className="rounded-xl border bg-slate-50 p-4 transition hover:shadow-sm mb-2">
-            <h2 className="font-semibold mb-4 border-b pb-2 text-slate-600">{TASK_TITLE[type as TaskType]}s</h2>
+          <div key={type} className="rounded-xl  transition hover:shadow-sm my-4 p-4 border border-gray-200">
+            <h2 className="font-semibold mb-2  text-slate-700">{TASK_TITLE[type as TaskType]}s</h2>
 
             {taskList.map((task) => (
-              <Card key={task.id} className=" border rounded-xl shadow-sm mb-4">
+              <Card key={task.id} className=" border rounded-xl shadow-sm mb-5">
                 <CardContent>
                   <div className="flex flex-col justify-between mb-4 font-semibold border-b pb-2">
-                     <div
-                      className="prose prose-slate max-w-none mt-1 leading-relaxed text-slate-800"
+                    <div
+                      className="prose prose-slate truncate   tracking-tighter text-wrap max-w-80 md:max-w-none  w-full mt-1 leading-relaxed text-slate-800"
                       dangerouslySetInnerHTML={{
                         __html: task.question || '',
                       }}
                     />
-                    <h4 className='text-blue-700 text-sm text-right'>{task.points} pts</h4>
+                    <h4 className="text-blue-700 text-sm text-right">{task.points} pts</h4>
                   </div>
 
                   <TaskRendererComponent task={task} onAnswer={handleAnswer} />
@@ -108,7 +108,7 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
           </div>
         ))
       ) : (
-        <p className="text-gray-600 mt-4 font-semibold">No tasks available for this lesson.</p>
+        <p className="text-gray-600 my-4 font-semibold">No tasks available for this lesson.</p>
       )}
       <Button onClick={handleSubmit} disabled={isSubmitting}>
         {isSubmitting ? 'Submitting ...' : 'Submit'}

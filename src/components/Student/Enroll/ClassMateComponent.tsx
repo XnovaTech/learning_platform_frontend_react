@@ -39,7 +39,7 @@ export function ClassMateComponent({ classMates = [], classRoom, isTeacher = 0 }
           Classmates <span className="text-sm">({classMates.length})</span>
         </h2>
 
-        {isTeacher && classRoom?.is_finish == 1 && classMates.length > 0 && (
+        {isTeacher == 1 && classRoom?.is_finish == 1 && classMates.length > 0 && (
           <Button variant="red" size="sm" onClick={handleDownload} disabled={downloadMutation.isPending} className="rounded-lg w-[200px]  flex items-center  gap-2">
             <Download className="size-4" />
             {downloadMutation.isPending ? 'Downloading...' : 'Download Certificates'}
