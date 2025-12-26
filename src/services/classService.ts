@@ -45,9 +45,18 @@ export const deleteClassRoom = async (id: number): Promise<void> => {
   }
 };
 
+export const finishClass = async (id: number): Promise<void> => {
+  try {
+    const { data } = await api.put(`/v1/classes/${id}/finish`);
+    return data?.data;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
 export const deleteClassConversations = async (id: number): Promise<void> => {
   try {
-    await api.delete(`/v1/classes/${id}/finish`);
+    await api.delete(`/v1/classes/${id}/conversation`);
   } catch (error: any) {
     throw new Error(error.message);
   }
@@ -70,4 +79,3 @@ export const getActiveClassesByTeacher = async (): Promise<ClassRoomType[]> => {
     throw new Error(error.message);
   }
 };
-

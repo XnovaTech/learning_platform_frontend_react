@@ -1,36 +1,11 @@
 import type { ClassMateType } from '../../../types/user';
-import { Users, UsersRoundIcon, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import type { ClassRoomType } from '@/types/class';
-import { useMutation } from '@tanstack/react-query';
-import { downloadCertificates } from '@/services/userCertificateService';
+import { Users, UsersRoundIcon } from 'lucide-react';
 
 interface ClassMateProps {
   classMates: ClassMateType[] | undefined;
-  classRoom?: ClassRoomType | undefined;
-  isTeacher?: number;
 }
 
-export function ClassMateComponent({ classMates = [], classRoom, isTeacher = 0 }: ClassMateProps) {
-  const downloadMutation = useMutation({
-    mutationFn: () => downloadCertificates(classRoom?.id!, classRoom?.class_name ?? 'class'),
-    onSuccess: () => {
-      toast.success('Downloaded Certificates Successfully');
-    },
-    onError: (error: any) => {
-      toast.error(error?.message || 'Failed to download student certificates');
-    },
-  });
-
-  const handleDownload = () => {
-    if (!classRoom?.id) {
-      toast.error('Class information is missing');
-      return;
-    }
-    downloadMutation.mutate();
-  };
-
+export function ClassMateComponent({ classMates = [] }: ClassMateProps) {
   return (
     <div className="bg-white/50 backdrop-blur-lg p-6 rounded-2xl shadow-xl space-y-4">
       <div className="flex items-center justify-between mb-4">
@@ -39,12 +14,12 @@ export function ClassMateComponent({ classMates = [], classRoom, isTeacher = 0 }
           Classmates <span className="text-sm">({classMates.length})</span>
         </h2>
 
-        {isTeacher == 1 && classRoom?.is_finish == 1 && classMates.length > 0 && (
+        {/* {isTeacher == 1 && classRoom?.is_finish == 1 && classMates.length > 0 && (
           <Button variant="red" size="sm" onClick={handleDownload} disabled={downloadMutation.isPending} className="rounded-lg w-[200px]  flex items-center  gap-2">
             <Download className="size-4" />
             {downloadMutation.isPending ? 'Downloading...' : 'Download Certificates'}
           </Button>
-        )}
+        )} */}
       </div>
 
       <ul className="grid grid-cols-1 gap-5">
