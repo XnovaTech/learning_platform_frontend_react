@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Users, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle, School } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Users, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle, School, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -12,6 +12,7 @@ const navigationItems = [
   { title: 'Courses', href: '/teacher/courses', icon: BookOpen },
   { title: 'Active Classes', href: '/teacher/classes', icon: School },
   { title: 'Enrollments', href: '/teacher/enrollments', icon: ClipboardList },
+  { title: 'Exams', href: '/teacher/exams', icon: GraduationCap },
   {
     title: 'Users',
     href: '/teacher/users/teachers',
