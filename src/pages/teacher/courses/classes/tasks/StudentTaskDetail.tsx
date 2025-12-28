@@ -37,7 +37,18 @@ export default function StudentTaskDetail() {
     );
   }
 
-  console.log('task record is', answers)
+  const getParsedAnswer = (taskId: number) => {
+    const record = answers?.[taskId];
+    if (!record) return undefined;
+
+    const raw = record.answer;
+
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return raw;
+    }
+  }
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto p-4">
@@ -46,13 +57,19 @@ export default function StudentTaskDetail() {
       {tasks?.map((task) => (
         <Card key={task.id} className="p-4 shadow-lg rounded-xl">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="font-semibold">{task.question}</h2>
+             { task.task_type !== 'paragraph_drag' ?  <div
+                        className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-800"
+                        dangerouslySetInnerHTML={{
+                          __html: task.question || '',
+                        }}
+                      /> : <p>Choose the correct answers</p>}
+              
             <span className="font-medium text-gray-700">{task.points} pts</span>
           </div>
 
           <TaskRendererComponent
             task={task}
-            value={answers?.[task.id]?.answer_json ?? answers?.[task.id]?.answer_text}
+            value={getParsedAnswer(task.id)}
             readonly={true} // make readonly for teacher view
             score={answers?.[task.id]?.score}
           />

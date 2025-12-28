@@ -1,8 +1,11 @@
 import { DndContext, PointerSensor, useSensor, useSensors, useDroppable, useDraggable } from '@dnd-kit/core';
 
-import { CSS } from '@dnd-kit/utilities';
-import { useState } from 'react';
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { CSS } from "@dnd-kit/utilities";
+import { useEffect, useState } from "react";
+import type {
+  DragEndEvent,
+  DragStartEvent,
+} from "@dnd-kit/core";
 
 import type { LessonTaskType } from '@/types/task';
 import { Button } from '@/components/ui/button';
@@ -15,8 +18,13 @@ interface DragDropTaskComponentProps {
   readonly?: boolean;
 }
 
-export default function DragDropTaskComponent({ task, onAnswer, value = {}, readonly = false }: DragDropTaskComponentProps) {
-  const sensors = useSensors(useSensor(PointerSensor));
+export default function DragDropTaskComponent({
+  task,
+  onAnswer,
+  value = {},
+  readonly = false,
+}: DragDropTaskComponentProps) {
+  const sensors = readonly ? undefined : useSensors(useSensor(PointerSensor));
   const [activeId, setActiveId] = useState<string | null>(null);
   const [assigned, setAssigned] = useState<Record<string, string | null>>(value);
 
@@ -49,6 +57,12 @@ export default function DragDropTaskComponent({ task, onAnswer, value = {}, read
       return newState;
     });
   };
+
+  useEffect(() => {
+    if (value && Object.keys(value).length > 0){
+      setAssigned(value);
+    }
+  }, [value]);
 
   const reset = () => {
     if (readonly) return;

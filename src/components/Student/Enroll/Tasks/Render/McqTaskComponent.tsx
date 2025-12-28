@@ -1,37 +1,50 @@
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import type { LessonTaskType } from "@/types/task";
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import type { LessonTaskType } from '@/types/task';
+import { cn } from '@/lib/utils';
 
 interface McqTaskComponentProps {
-    task: LessonTaskType;
-    onAnswer: (taskId: number, value: any) => void;
-    value?: string;
-    readonly?: boolean;
+  task: LessonTaskType;
+  onAnswer: (taskId: number, value: any) => void;
+  value?: string;
+  readonly?: boolean;
 }
 
-export default function McqTaskComponent({task, onAnswer, value, readonly = false}: McqTaskComponentProps) {
-    return (
-        <RadioGroup
-        value={value?.toString()}
-            onValueChange={v => !readonly && onAnswer(task.id, v)}
-            className=" flex flex-col flex-wrap gap-4">
-                {task?.options?.map((opt, index) => (
-                    <Label
-                        key={opt.id}
-                        htmlFor={`mcq-${opt.id}`}
-                        className="
-                        flex items-center space-x-3 p-3 border rounded-xl w-52
-                        cursor-pointer transition-all duration-200 hover:bg-gray-100">
-                            <RadioGroupItem
-                            value={opt.id.toString()}
-                            id={`mcq-${opt.id}`} 
-                            disabled={readonly}/>
-                            <span className="text-gray-700">{index + 1}. {opt.option_text}</span>
-                    </Label>
-                
-                ))
-                }
-            </RadioGroup>
-    )
 
+
+export default function McqTaskComponent({ task, onAnswer, value, readonly = false }: McqTaskComponentProps) {
+  console.log('answer is', value)
+  return (
+    <RadioGroup value={value?.toString()} onValueChange={(v) => !readonly && onAnswer(task.id, v)} className="grid gap-3">
+      {task?.options?.map(
+        (opt, index) => {
+          const selected = value?.toString() === opt.id.toString();value
+          return (
+            <Label
+              key={opt.id}
+              htmlFor={`mcq-${opt.id}`}
+              className={cn(
+                'flex items-center gap-4 rounded-xl border px-4 py-3 text-sm transition cursor-pointer',
+                'hover:bg-slate-50',
+                selected && 'border-primary bg-primary ring-1 ring-primary',
+                readonly && 'cursor-not-allowed opacity-70'
+              )}
+            >
+              <div
+                className={cn('flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold', selected ? 'bg-primary text-white border-primary' : 'bg-slate-100 text-slate-600')}
+              >
+                {String.fromCharCode(65 + index)}
+              </div>
+
+              {/* Option Text */}
+              <span className="flex-1 text-slate-800">{opt.option_text}</span>
+
+              {/* Radio */}
+              <RadioGroupItem value={opt.id.toString()} id={`mcq-${opt.id}`} disabled={readonly} />
+            </Label>
+          );
+        }
+      )}
+    </RadioGroup>
+  );
 }

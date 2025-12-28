@@ -190,7 +190,7 @@ export default function ClassDetailPage() {
           </Card>
 
           {/* Tabs  */}
-          <Tabs defaultValue="classmates" className="w-full">
+          <Tabs defaultValue="lessons" className="w-full">
             <TabsList className=" rounded-2xl bg-white  shadow  h-11">
               <TabsTrigger value="lessons" className="gap-2 rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
                 <BookOpen className="size-4" />

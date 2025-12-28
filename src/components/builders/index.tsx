@@ -6,6 +6,7 @@ import LongAnswerBuilder from "./LongAnswerBuilder";
 import McqBuilder from "./McqBuilder";
 import TrueFalseBuilder from "./TrueFalseBuilder";
 import DragDropWithBlankBuilder from "./DragDropWithBlankBuilder";
+import ParagraphDragDropBuilder from "./ParagraphDragDropBuilder";
 
 import type { DragDropExtraData, MatchingExtraData, FillBlankExtraData, LongAnswerExtraData, DragDropWithBlankExtraData } from "@/types/task";
 
@@ -17,7 +18,8 @@ export {
     LongAnswerBuilder,
     McqBuilder,
     TrueFalseBuilder,
-    DragDropWithBlankBuilder
+    DragDropWithBlankBuilder,
+    ParagraphDragDropBuilder
 };
 
 export type BuilderData = DragDropExtraData | MatchingExtraData | FillBlankExtraData | LongAnswerExtraData | DragDropWithBlankExtraData;
