@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { enrollDetail } from '@/services/enrollService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
-import { BookOpen, Users, MessageCircle, Video } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import type { EnrollType } from '@/types/enroll';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
