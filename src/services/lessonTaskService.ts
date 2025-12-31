@@ -1,6 +1,5 @@
 import type { CreateLessonTaskPayloadType, UpdateLessonTaskPayloadType, LessonTaskType } from "@/types/task";
 import api from "./api";
-import type { StudentLessonSubmitPayload } from "@/types/answer";
 
 export const listLessonTasks = async (lessonId: number): Promise<LessonTaskType[]> => {
     try {
@@ -57,11 +56,4 @@ export const deleteTask = async (id: number): Promise<void> => {
     }
 }
 
-export const submitStudentLessonTasks = async (payload: StudentLessonSubmitPayload): Promise<void> => {
-    try {
-       const data = await api.post('/v1/student/lesson/answers', payload);
-        return data?.data;
-    } catch (error: any){
-        throw new Error(error.message);
-    }
-}
+

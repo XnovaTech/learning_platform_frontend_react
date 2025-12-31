@@ -30,6 +30,9 @@ export default function McqTaskComponent({ task, onAnswer, value, readonly = fal
                 readonly && 'cursor-not-allowed opacity-70'
               )}
             >
+                 {/* Radio */}
+              <RadioGroupItem value={opt.id.toString()} id={`mcq-${opt.id}`} disabled={readonly} />
+              
               <div
                 className={cn('flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold', selected ? 'bg-primary text-white border-primary' : 'bg-slate-100 text-slate-600')}
               >
@@ -39,8 +42,7 @@ export default function McqTaskComponent({ task, onAnswer, value, readonly = fal
               {/* Option Text */}
               <span className="flex-1 text-slate-800">{opt.option_text}</span>
 
-              {/* Radio */}
-              <RadioGroupItem value={opt.id.toString()} id={`mcq-${opt.id}`} disabled={readonly} />
+           
             </Label>
           );
         }

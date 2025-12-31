@@ -58,9 +58,9 @@ export default function ParagraphDragTaskStudent({
               disabled={readonly}
               value={answers[blankId] ?? ""}
               onChange={(e) => handleChange(blankId, e.target.value)}
-              className="mx-1 rounded border px-2 py-1"
+              className="mx-1 border px-2 py-1 rounded-xl bg-primary/60 text-slate-800"
             >
-              <option value="">---</option>
+              <option value="" className="text-center text-slate-700">--Select--</option>
               {blank.options.map((opt, i) => (
                 <option key={i} value={opt}>
                   {opt}

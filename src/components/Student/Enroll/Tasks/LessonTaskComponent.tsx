@@ -1,5 +1,5 @@
-import { getStudentLessonTasks, submitStudentLessonTasks } from '@/services/lessonTaskService';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { getStudentLessonTasks, } from '@/services/lessonTaskService';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { LessonTaskType, TaskType } from '@/types/task';
 import { Card, CardContent } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
@@ -8,7 +8,8 @@ import TaskRendererComponent from './Render/TaskRendererComponent';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import type { StudentLessonSubmitPayload } from '@/types/answer';
-import { getStudentLessonRecordDetail } from '@/services/studentLessonTaskService';
+import { deleteStudentRecords, getStudentLessonRecordDetail, submitStudentLessonTasks } from '@/services/studentLessonTaskService';
+import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
 
 interface LessonTaskComponentProps {
   lessonId?: number;
@@ -30,6 +31,8 @@ const TASK_TITLE: Record<TaskType, string> = {
 export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskComponentProps) {
   const [answers, setAnswers] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: tasks } = useQuery<LessonTaskType[]>({
     queryKey: ['student-lesson-tasks', lessonId],
@@ -62,6 +65,21 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: ({enrollId, lessonId}: {enrollId: number; lessonId: number}) => 
+        deleteStudentRecords(enrollId, lessonId),
+    onSuccess: async () => {
+      toast.success('Record Removed Successfully');
+      await queryClient.invalidateQueries({ queryKey: ['studentRecord'] });
+      setConfirmOpen(false);
+      refetch()
+    },
+    onError: (e) => {
+      toast.error(e?.message || 'Failed to delete category !');
+    },
+  });
+
+
   const handleAnswer = (taskId: number, value: any) => {
     setAnswers((prev) => ({ ...prev, [taskId]: value }));
   };
@@ -93,6 +111,11 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
     }
   };
 
+  const askDelete = () => {
+    setConfirmOpen(true);
+  };
+
+
   const groupTasks = tasks?.reduce((acc, task) => {
     if (!acc[task.task_type]) acc[task.task_type] = [];
     acc[task.task_type].push(task);
@@ -100,6 +123,14 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
   }, {} as Record<TaskType, LessonTaskType[]>);
 
   const hasSubmittedAnswers = studentAnswers && typeof studentAnswers === 'object' && Object.keys(studentAnswers).length > 0;
+
+    const totalPossibleScore = tasks?.reduce((sum, task) => sum + (task.points || 0), 0) || 0;
+
+  const totalStudentScore =
+    tasks?.reduce((sum, task) => {
+      const score = studentAnswers?.[task.id]?.score;
+      return sum + (typeof score === 'number' ? score : 0);
+    }, 0) || 0;
 
   if (isLoading) {
     return (
@@ -112,7 +143,23 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
   if (hasSubmittedAnswers) {
     return (
       <div className="space-y-6 max-w-5xl mx-auto p-4">
-        <h1 className="text-2xl font-semibold mb-4">Student Answers & Marks</h1>
+        <div className=' flex justify-between'>
+           <h1 className="text-2xl font-semibold mb-4">Student Answers & Marks</h1>
+
+
+          <div className="text-sm font-semibold text-slate-700 bg-slate-100 px-4 py-2 rounded-lg">
+            Total Score: <span className="text-green-600">{totalStudentScore}</span>
+            {' / '}
+            <span className="text-slate-800">{totalPossibleScore}</span>
+            <Button variant="ghost" className="text-red-600 bg-primary/20 hover:bg-red-50 mx-3" onClick={askDelete}>
+              Retake
+            </Button>
+          </div>
+        </div>
+       
+     
+
+
 
         {tasks?.map((task) => (
           <Card key={task.id} className="p-4 shadow-lg rounded-xl">
@@ -145,6 +192,25 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
             )}
           </Card>
         ))}
+
+         {/** Confirm Dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Retake Tasks?"
+        description="This action cannot be undone. The category will be permanently removed."
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={deleteMutation.isPending}
+        destructive
+        onCancel={() => {
+          setConfirmOpen(false);
+        }}
+        onConfirm={() => {
+          deleteMutation.mutate({enrollId: enrollId!, lessonId: lessonId!});
+        }}
+      />
+
       </div>
     );
   } else {

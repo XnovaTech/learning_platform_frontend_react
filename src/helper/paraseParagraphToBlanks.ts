@@ -1,11 +1,5 @@
 import type { ParagraphDropdownData, ParagraphBlank } from "@/types/task";
 
-/**
- * Parse paragraph text and create blanks.
- * Keeps existing blanks and their options/correct answers.
- * @param text - the raw paragraph with __ for blanks
- * @param existingBlanks - previous blanks data to preserve options/correct
- */
 export function parseParagraphToBlanks(
   text: string,
   existingBlanks: ParagraphBlank[] = []

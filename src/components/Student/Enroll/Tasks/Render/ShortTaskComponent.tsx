@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { LessonTaskType } from '@/types/task';
@@ -14,6 +15,12 @@ interface ShortTaskComponentProps {
 
 export default function ShortTaskComponent({ task, onAnswer, value = '', readonly = false, score, onScoreChange }: ShortTaskComponentProps) {
   const [text, setText] = useState('');
+
+    const [localScore, setLocalScore] = useState<number>(score ?? 0);
+
+  useEffect(() => {
+    setLocalScore(score ?? 0);
+  }, [score]);
 
   useEffect(() => {
     setText(value);
@@ -36,14 +43,13 @@ export default function ShortTaskComponent({ task, onAnswer, value = '', readonl
           className={readonly ? 'bg-slate-100 text-slate-600' : ''}
         />
       </div>
-      {readonly && onScoreChange && (
-        <div className=" flex items-center gap-4 rounded-lg border bg-slate-50 p-3">
-          <Label className='text-sm font-medium text-slate-700'>Score</Label>
-          <Input type="number" value={score ?? 0} onChange={(e) => onScoreChange(task.id, Number(e.target.value))} className="w-24 text-center" />
-
-          <span className=' text-xs text-slate-500'>
-            / {task.points} pts
-          </span>
+        {readonly && onScoreChange && (
+        <div className="pt-3 border-t space-y-2">
+          <Label className="text-sm font-medium text-slate-700">Score</Label>
+          <Input value={localScore} onChange={(e) => setLocalScore(Number(e.target.value))} className="w-28" />
+          <Button className="px-4 py-2 bg-primary text-white rounded-lg mx-2 hover:bg-primary/90" onClick={() => onScoreChange(task.id, localScore)}>
+            Submit
+          </Button>
         </div>
       )}
     </div>

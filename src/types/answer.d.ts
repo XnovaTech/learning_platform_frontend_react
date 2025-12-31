@@ -21,6 +21,12 @@ export interface StudentLessonSubmitPayload {
     answers: Record<number, string | Record<string, string>>;
 }
 
+export interface StudentMarkUpdatePayload{
+    enroll_id:number;
+    task_id: number;
+    score: number
+}
+
 export interface StudentsLessonTaskRecordType {
     enroll_id: number,
     student_id: number,
