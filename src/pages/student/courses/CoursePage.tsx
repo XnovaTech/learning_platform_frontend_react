@@ -59,7 +59,6 @@ export default function CoursePage() {
   const handleOpen = (courseId: number) => {
     setOpenItem(true);
     setSelectedCourse(courseId);
-    
   };
 
   const handleSelectClass = (classId: number) => {
@@ -165,12 +164,12 @@ export default function CoursePage() {
           if (!open) setOpenItem(false);
         }}
       >
-        <DialogContent className="max-w-md rounded-2xl bg-white backdrop-blur-sm p-6 shadow-xl">
+        <DialogContent className=" md:max-w-md rounded-2xl bg-white backdrop-blur-sm p-3 md:p-6 shadow-xl">
           <DialogTitle className="text-lg font-semibold text-gray-800 mb-4">
-            <div className=" flex justify-between mt-2 p-2 bg-primary/5 rounded-2xl">
-              {courseData?.title ? `${courseData.title}` : 'Select a class'}
+            <div className=" flex justify-between items-center mt-7 md:mt-3 p-2 bg-primary/10 rounded-2xl">
+              <p className="text-sm md:text-base">{courseData?.title ? `${courseData.title}` : 'Select a class'}</p>
               {courseData && courseData?.class_rooms.length > 0 && (
-                <p className="text-gray-800 text-xs line-clamp-2 mt-2 font-semibold ">
+                <p className="text-gray-800 text-xs line-clamp-2  font-semibold ">
                   {moment(courseData.class_rooms[0].start).format('MMM YY')} - {moment(courseData.class_rooms[0].end).format('MMM YY')}
                 </p>
               )}
@@ -180,7 +179,7 @@ export default function CoursePage() {
           <div>
             {courseData && courseData?.class_rooms?.length > 0 && (
               <>
-                <h3 className="text-sm font-semibold">Choose Your Time</h3>
+                <h3 className="text-sm font-semibold mb-2">Choose Your Time</h3>
                 <div className=" grid grid-cols-2 gap-3">
                   {courseData?.class_rooms.map((data) => (
                     <div className=" bg-sky-50 p-2 rounded-xl">
@@ -191,7 +190,7 @@ export default function CoursePage() {
                             handleSelectClass(data.id);
                           }
                         }}
-                        className={`md:basis-1/2 lg:basis-1/4 relative rounded-2xl min-w-44 mx-2 my-4 p-2 text-center font-semibold text-sm border transition-all duration-300
+                        className={`md:basis-1/2 lg:basis-1/4 relative rounded-2xl  mx-2 my-4 p-2 text-center font-semibold text-sm border transition-all duration-300
       ${
         isClassJoined(data.id)
           ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -202,15 +201,15 @@ export default function CoursePage() {
                       >
                         {moment(data.start_time, 'HH:mm:ss').format('HH:mm')} - {moment(data.end_time, 'HH:mm:ss').format('HH:mm')}
                         {isClassJoined(data.id) && (
-                          <div className="absolute top-3 right-3 text-green-600">
+                          <div className="absolute top-0 right-1 text-green-600">
                             <CheckCircle2 size={16} />
                           </div>
                         )}
                       </div>
 
-                      <div className="flex gap-2 flex-wrap">
+                      <div className="flex justify-center items-center gap-2 flex-wrap">
                         {data.days.map((day, index) => (
-                          <span key={index} className="px-2 py-1 rounded-lg bg-white text-secondary-foreground font-semibold text-xs uppercase">
+                          <span key={index} className="p-1 rounded-lg bg-white text-secondary-foreground font-semibold text-xs uppercase">
                             {day}
                           </span>
                         ))}
@@ -223,7 +222,7 @@ export default function CoursePage() {
           </div>
 
           <div className="mt-6 flex justify-end">
-            <Button variant="default" disabled={createMutation.isPending} onClick={onSubmit}>
+            <Button variant="default" disabled={createMutation.isPending || !selectedClass} onClick={onSubmit}>
               {createMutation.isPending ? <Spinner /> : 'Join'}
             </Button>
           </div>

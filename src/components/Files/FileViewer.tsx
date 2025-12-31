@@ -58,9 +58,9 @@ export function FileViewer({ isOpen, onClose, fileUrl, filename }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-4xl max-w-5xl max-h-[95vh] overflow-hidden">
+      <DialogContent className="min-w-xs md:min-w-4xl  max-w-5xl max-h-[95vh] overflow-auto">
         <DialogHeader>
-          <DialogTitle>{filename}</DialogTitle>
+          <DialogTitle className='text-left'>{filename}</DialogTitle>
         </DialogHeader>
 
         <div className="overflow-auto">{renderFileContent()}</div>

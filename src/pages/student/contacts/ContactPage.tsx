@@ -72,19 +72,18 @@ export default function StudentContactPage() {
   if (isError) return <div className="text-center text-red-500 font-medium py-10">Failed to load message. Please try again later.</div>;
 
   return (
-    <div className=" flex flex-col bg-white/60 min-h-9/12 backdrop-blur-xl rounded-2xl p-4 drop-shadow-xl">
+    <div className=" flex  flex-col bg-white/60 min-h-9/12 backdrop-blur-xl rounded-2xl p-4 drop-shadow-xl">
       <div className="pb-2">
         <h2 className="text-xl font-semibold">Contact Us</h2>
-        <p className="mt-2 text-gray-600 text-sm">If you have any questions or need assistance, feel free to reach out to us. We&apos;re here to help!</p>
+        <p className="mt-2 text-gray-600 text-sm">If you have any questions or need assistance, feel free to reach out to us.</p>
       </div>
-      <div ref={scrollRef} className="flex flex-col gap-3 max-h-96 overflow-y-auto px-2 py-2 bg-gray-50 rounded-xl ">
+      <div ref={scrollRef} className="flex flex-col gap-3  max-h-96 overflow-y-auto px-2 py-2 bg-gray-50 rounded-xl ">
         {contacts.length === 0 ? (
           <div className="flex flex-col items-center py-2 justify-center">
             <div className="rounded-full bg-primary/90 p-4 mb-4">
               <MessageCircle className="size-8 text-white" />
             </div>
             <h4 className="text-lg font-semibold text-foreground mb-1"> No messages yet</h4>
-            <p className="text-md text-muted-foreground mb-1">  feel free to send us a message!</p>
           </div>
         ) : (
           contacts.map((contact) => {
@@ -118,14 +117,8 @@ export default function StudentContactPage() {
           rows={1}
           required
         ></textarea>
-        <Button
-          type="submit"
-          size="sm"
-          disabled={createMutation.isPending}
-          className="gap-2 py-3 px-4 rounded-xl h-fit"
-        >
+        <Button type="submit" size="sm" disabled={createMutation.isPending} className="gap-2 py-3 px-4 rounded-xl h-fit">
           {createMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className=" w-5 h-5" />}
-          
         </Button>
       </form>
     </div>

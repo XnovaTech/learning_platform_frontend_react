@@ -67,6 +67,13 @@ export default function MatchingTaskComponent({ task, onAnswer, value = {}, read
     };
   }, [task, pairs]);
 
+  useEffect(() => {
+    if (value && Object.keys(value).length > 0){
+      setPairs(value);
+    }
+  }, [value])
+
+
   const handleLeftClick = (id: string) => {
     if (readonly) return;
     setSelectedLeft(id);
@@ -78,7 +85,6 @@ export default function MatchingTaskComponent({ task, onAnswer, value = {}, read
     const updated = { ...pairs, [selectedLeft]: id };
     setPairs(updated);
     onAnswer(task.id, updated);
-
     setSelectedLeft(null);
   };
 

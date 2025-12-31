@@ -94,7 +94,7 @@ export default function ClassCalendar({ classes, isTeacher }: CalendarProps) {
       <div className="bg-white rounded-2xl shadow-xl p-5">
         <div className="flex items-center justify-between mb-6">
           <Select value={`${currentMonth}`} onValueChange={(value) => setCurrentMonth(parseInt(value))}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className=" hidden md:flex w-[200px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -105,18 +105,21 @@ export default function ClassCalendar({ classes, isTeacher }: CalendarProps) {
               ))}
             </SelectContent>
           </Select>
-          <div className="flex items-center gap-3">
+
+          <div className="flex justify-between md:justify-end items-center w-full gap-3 ">
             <h2 className=" font-medium">
               {MONTH_NAMES[currentMonth].slice(0, 3)} {currentYear}
             </h2>
-            
-            <Button onClick={goToPreviousMonth} className="hover:scale-100 rounded-md" size="sm">
-              <ChevronLeft className="h-3 w-3" />
-            </Button>
 
-            <Button onClick={goToNextMonth} className="hover:scale-100 rounded-md" size="sm">
-              <ChevronRight className="h-3 w-3" />
-            </Button>
+            <div className="flex  items-center gap-3">
+              <Button onClick={goToPreviousMonth} className="hover:scale-100 rounded-md" size="sm">
+                <ChevronLeft className="h-3 w-3" />
+              </Button>
+
+              <Button onClick={goToNextMonth} className="hover:scale-100 rounded-md" size="sm">
+                <ChevronRight className="h-3 w-3" />
+              </Button>
+            </div>
           </div>
         </div>
 

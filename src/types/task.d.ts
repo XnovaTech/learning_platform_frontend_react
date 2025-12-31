@@ -5,7 +5,8 @@ export type TaskType =
 | "drag_drop"
 | "matching"
 | "fill_blank"
-| "true_false";
+| "true_false"
+| "paragraph_drag";
 
 
 
@@ -25,11 +26,17 @@ export interface DragDropExtraData {
     targets: string[];
 }
 
-type DragDropWithBlankExtraData = {
-  paragraph: string;
-  blanks: Blank[];
-  items: string[];
-};
+export type ParagraphDropdownData = {
+    paragraph: string;
+    blanks: ParagraphBlank[];
+}
+
+export type ParagraphBlank = {
+    id: string;
+    options: string[];
+    correct: string;
+}
+
 
 export interface MatchingExtraData {
     left: string[];
@@ -46,8 +53,18 @@ export interface LongAnswerExtraData {
     min_word_count?: number;
 }
 
+export interface ParagraphDropdownData {
+    paragraph: string;
+    blanks: {
+        id: string;
+        options: string[];
+        correct?: string;
+    }[];
+};
+
 export type ExtraData = 
     | DragDropExtraData
+    | ParagraphDropdownData
     | MatchingExtraData
     | FillBlankExtraData
     | LongAnswerExtraData
@@ -75,8 +92,14 @@ export interface LessonTaskType {
 
     left?: { id: string; text: string }[];
     right?: { id: string; text: string }[];
+
+    blanks?: blankType[];
 }
 
+export interface blankType {
+    id: string,
+    options: string[]
+}
 
 export interface CreateLessonTaskPayloadType {
     lesson_id: number;

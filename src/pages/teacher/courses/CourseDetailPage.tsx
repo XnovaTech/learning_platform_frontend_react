@@ -39,7 +39,6 @@ export default function CourseDetailPage() {
     queryKey: ['course', courseId],
     queryFn: () => getCourse(courseId),
     enabled: !Number.isNaN(courseId),
-    refetchOnWindowFocus: false,
   });
 
   const defaultForm: ClassRoomPayloadType = {
@@ -230,7 +229,7 @@ export default function CourseDetailPage() {
                   </Tabs>
                 </div>
 
-                <ClassRoomTable classrooms={course?.class_rooms?.filter((c) => c?.is_active == statusFilter) || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} />
+                <ClassRoomTable  classrooms={course?.class_rooms?.filter((c) => c?.is_active == statusFilter) || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} courseId={courseId} />
               </TabsContent>
 
               <TabsContent value="lessons" className="p-6 space-y-6 mt-0">

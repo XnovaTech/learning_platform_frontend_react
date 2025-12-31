@@ -14,9 +14,9 @@ interface ClassDetailsModalProps {
 export default function CalendarDetailBox({ isOpen, onClose, date, events, isTeacher = false }: ClassDetailsModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-xl md:min-w-2xl lg:min-w-3xl max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="  min-w-xs md:min-w-2xl lg:min-w-3xl max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-medium">
+          <DialogTitle className="font-medium text-left">
             {date?.toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
@@ -31,7 +31,7 @@ export default function CalendarDetailBox({ isOpen, onClose, date, events, isTea
           ) : (
             events.map((event, idx) => (
               <div key={idx} className={`border rounded-lg grid gap-3  grid-cols-1 md:grid-cols-2   p-3   bg-slate-50`}>
-                <div className={`flex col-span-1 ${isTeacher && "md:col-span-2"}    items-center gap-3 p-2 rounded-xl bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-100`}>
+                <div className={`flex col-span-1 ${isTeacher && 'md:col-span-2'}    items-center gap-3 p-2 rounded-xl bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-100`}>
                   <div className="shrink-0 w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
                     <School className="size-5 text-blue-600" />
                   </div>

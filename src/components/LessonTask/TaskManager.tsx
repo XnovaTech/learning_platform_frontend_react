@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { DragDropBuilder, FillBlankBuilder, MatchingBuilder, ShortAnswerBuilder, LongAnswerBuilder, McqBuilder, TrueFalseBuilder } from '@components/builders';
+import { DragDropBuilder, FillBlankBuilder, MatchingBuilder, ShortAnswerBuilder, LongAnswerBuilder, McqBuilder, TrueFalseBuilder, ParagraphDragDropBuilder } from '@components/builders';
 
-import type { TaskType, DragDropExtraData, MatchingExtraData, CreateLessonTaskPayloadType, UpdateLessonTaskPayloadType } from '@/types/task';
+import type { TaskType, DragDropExtraData, MatchingExtraData, CreateLessonTaskPayloadType, UpdateLessonTaskPayloadType, ParagraphDropdownData } from '@/types/task';
 
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -29,7 +29,37 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
   const [points, setPoints] = useState<number>(initial?.points ?? 1);
   const [question, setQuestion] = useState(initial?.question ?? '');
   // const [order, setOrder] = useState<number>(initial?.order ?? 1);
-  const [extraData, setExtraData] = useState<any>(initial?.extra_data ?? {});
+  const [extraData, setExtraData] = useState<any>(() => {
+    if (initial?.task_type === 'paragraph_drag') {
+      return (
+        initial.extra_data ?? {
+          paragraph: '',
+          blanks: [],
+          answers: [],
+        }
+      );
+    }
+
+    return initial?.extra_data ?? {};
+  });
+
+  useEffect(() => {
+    if (type === 'paragraph_drag') {
+      setExtraData({
+        paragraph: '',
+        blanks: [],
+        answers: [],
+      });
+    }
+
+    if (type === 'drag_drop') {
+      setExtraData({ items: [], targets: [] });
+    }
+
+    if (type === 'matching') {
+      setExtraData({ left: [], right: [] });
+    }
+  }, [type]);
 
   const createMutation = useMutation({
     mutationFn: taskId ? (payload: UpdateLessonTaskPayloadType) => updateLessonTask(taskId, payload) : createLessonTask,
@@ -102,6 +132,24 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
       return [];
     }
 
+    if (type === 'paragraph_drag') {
+      const p = extraData as ParagraphDropdownData;
+      const output: any[] = [];
+
+      p.blanks.forEach((blank) => {
+        blank.options.forEach((opt) => {
+          if (!opt || opt.trim() === '') return;
+          output.push({
+            option_text: opt,
+            pair_key: blank.id,
+            is_correct: opt === blank.correct,
+          });
+        });
+      });
+
+      return output;
+    }
+
     return [];
   };
 
@@ -111,7 +159,7 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
     const payload: CreateLessonTaskPayloadType = {
       lesson_id: Number(lessonId),
       task_type: type,
-      question: question,
+      question: question || extraData.paragraph,
       correct_answer: extraData.correct_answer ?? null,
       extra_data: type === 'long' ? extraData.extra_data : undefined,
       points,
@@ -144,7 +192,8 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
 
       case 'matching':
         return <MatchingBuilder initial={extraData as MatchingExtraData} onChange={setExtraData} />;
-
+      case 'paragraph_drag':
+        return <ParagraphDragDropBuilder initial={extraData as ParagraphDropdownData} onChange={setExtraData} />;
       default:
         return null;
     }
@@ -167,6 +216,7 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
               <SelectItem value="mcq">Multiple Choice Question</SelectItem>
               <SelectItem value="fill_blank">Fill-in-the-Blank</SelectItem>
               <SelectItem value="true_false">True False</SelectItem>
+              <SelectItem value="paragraph_drag">Paragraph Select</SelectItem>
               <SelectItem value="drag_drop">Drag & Drop</SelectItem>
               <SelectItem value="matching">Matching</SelectItem>
             </SelectContent>
@@ -179,11 +229,15 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
         </div>
 
         <div className="col-span-4">
-          <Label id="question-label" className=" font-medium mb-2">
-            Question
-          </Label>
+          {type === 'paragraph_drag' ? null : (
+            <>
+              <Label id="question-label" className=" font-medium mb-2">
+                Question
+              </Label>
 
-          <LessonTaskQuill value={question} onChange={setQuestion} uploadFn={uploadImage} />
+              <LessonTaskQuill value={question} onChange={setQuestion} uploadFn={uploadImage} />
+            </>
+          )}
         </div>
 
         {/* <div>

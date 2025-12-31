@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { enrollDetail } from '@/services/enrollService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
+import { BookOpen, Users, MessageCircle, Video } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import type { EnrollType } from '@/types/enroll';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
@@ -36,11 +37,11 @@ export default function EnrollDetailPage() {
         </Card>
       ) : (
         <>
-          <CourseCard course={enroll?.class_room?.course} teacherName={enroll?.class_room?.teacher?.first_name} days={enroll?.class_room?.days}/>
+          <CourseCard course={enroll?.class_room?.course} teacherName={enroll?.class_room?.teacher?.first_name} days={enroll?.class_room?.days} />
 
           <Tabs defaultValue="lessons" className="w-full max-w-8xl mx-auto my-6">
             {/* Tab List */}
-            <TabsList className="flex flex-wrap justify-center gap-2 md:gap-6  bg-white/50 backdrop-blur-lg drop-shadow-2xl rounded-xl p-2 h-12.5">
+            <TabsList className="flex flex-wrap justify-center gap-2 md:gap-6  bg-white/50 backdrop-blur-lg drop-shadow-2xl rounded-xl p-2 h-auto">
               <TabsTrigger value="lessons" className="px-4 py-2  font-medium rounded-xl transition-all hover:bg-primary/10 data-[state=active]:bg-ocean data-[state=active]:text-white">
                 Lessons
               </TabsTrigger>

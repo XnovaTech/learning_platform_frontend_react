@@ -2,6 +2,7 @@ import type {
   LessonTaskType,
   DragDropExtraData,
   MatchingExtraData,
+  ParagraphDropdownData,
 } from '@/types/task';
 
 export function mapTaskToBuilderInitial(task: LessonTaskType) {
@@ -56,6 +57,34 @@ export function mapTaskToBuilderInitial(task: LessonTaskType) {
       });
 
       return { items, targets } as DragDropExtraData;
+    }
+
+    case 'paragraph_drag': {
+      const blanksMap: Record<string, ParagraphDropdownData['blanks'][0]> = {};
+      task.options?.forEach((opt: any) => {
+        const blankId = opt.pair_key;
+        if (!blankId) return;
+
+        if (!blanksMap[blankId]){
+          blanksMap[blankId] = {
+            id: blankId,
+            options: [],
+            correct: '',
+          };
+        }
+
+        blanksMap[blankId].options.push(opt.option_text);
+
+        if (opt.is_correct) {
+          blanksMap[blankId].correct = opt.option_text;
+        }
+      });
+
+      return {
+        paragraph: task.question ?? '',
+        blanks: Object.values(blanksMap),
+      };
+    
     }
 
     default:

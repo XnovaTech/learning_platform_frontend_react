@@ -37,10 +37,10 @@ export default function HomePage() {
       <div className="relative mt-7">
         <div className=" bg-linear-to-b from-primary/30 via-primary/20 to-primaary/5 shadow relative backdrop-blur-md rounded-3xl drop-shadow-sm px-6 py-4 flex justify-around items-center  z-10 h-40 overflow-visible">
           <div>
-            <h1 className="text-3xl">
+            <h1 className="text-xl md:text-3xl">
               Welcome Back {studentData?.first_name} {studentData?.last_name}
             </h1>
-            <p className="mt-2 text-xl  font-semibold text-shadow-sm tracking-wider text-primary">Learn with Crystal</p>
+            <p className="mt-2 hidden md:flex text-xl  font-semibold text-shadow-sm tracking-wider text-primary">Learn with Crystal</p>
           </div>
           <div className="relative -top-10 w-60 h-60">
             <Lottie animationData={Hello} loop={true} className="h-full w-auto" />

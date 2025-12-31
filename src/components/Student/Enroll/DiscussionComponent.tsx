@@ -110,7 +110,7 @@ export function DiscussionComponent({ classId, userId }: DiscussionComponentProp
           onChange={(e) => setMessage(e.target.value)}
           className=" flex-1 resize-none p-3 text-sm rounded-lg border border-gray-300 bg-white focus:outline-sunset focus:border-transparent"
           placeholder="Type a message..."
-          rows={2}
+          rows={1}
           required
         ></textarea>
         <button

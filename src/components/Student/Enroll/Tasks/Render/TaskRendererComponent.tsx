@@ -5,6 +5,7 @@ import LongTaskComponent from "./LongTaskComponent";
 import FillBlankTaskComponent from "./FillBlankTaskComponent";
 import DragDropTaskComponent from "./DragDropTaskComponent";
 import MatchingTaskComponent from "./MatchingTaskComponent";
+import ParagraphDragTaskComponent from "./ParagraphDragTaskComponent";
 import type { LessonTaskType } from "@/types/task";
 
 interface TaskRendererComponentProps {
@@ -32,7 +33,9 @@ export default function TaskRendererComponent({task, onAnswer, value, readonly =
             return <DragDropTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly}/>;
         case 'matching':
             return <MatchingTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly}/>;
-        default:
+        case 'paragraph_drag':
+            return <ParagraphDragTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly}/>;
+            default:
             return <div>Unsupported task type</div>;
     }
 }

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
@@ -7,24 +7,52 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageCircle, Users, Calendar, Clock, BookOpen, CalendarDays, Video, User2 } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
-import { getClass } from '@/services/classService';
+import { deleteClassConversations, getClass } from '@/services/classService';
 import { DiscussionComponent } from '@/components/Student/Enroll/DiscussionComponent';
 import { useAuth } from '@/context/AuthContext';
 import { ClassMateComponent } from '@/components/Student/Enroll/ClassMateComponent';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
 import { ZoomRoomComponent } from '@/components/Student/Enroll/ZoomRoomComponent';
 import { displayTime } from '@/helper/ClassRoom';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { downloadCertificates } from '@/services/userCertificateService';
 
 export default function ClassDetailPage() {
   const { id } = useParams();
   const classId = Number(id);
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: classroom, isLoading } = useQuery<ClassRoomType>({
     queryKey: ['classes', classId],
     queryFn: () => getClass(classId),
     enabled: !Number.isNaN(classId),
   });
+
+  const deleteConversationMutation = useMutation({
+    mutationFn: (id: number) => deleteClassConversations(id),
+    onSuccess: async (_, classId) => {
+      toast.success('Deleted conversation successfully');
+      await queryClient.invalidateQueries({ queryKey: ['classes', classId] });
+    },
+    onError: (e: any) => toast.error(e?.message || 'Failed to delete conversation!'),
+  });
+
+  const downloadMutation = useMutation({
+    mutationFn: () => downloadCertificates(classroom?.id!, classroom?.class_name ?? 'class'),
+    onSuccess: () => {
+      toast.success('Downloaded Certificates Successfully');
+    },
+    onError: (e: any) => {
+      toast.error(e?.message || 'Failed to download student certificates');
+    },
+  });
+
+  const handleGenerate = () => {
+    deleteConversationMutation.mutate(classId);
+    downloadMutation.mutate();
+  };
 
   return (
     <div className="max-w-9xl p-4 mx-auto space-y-6">
@@ -87,7 +115,12 @@ export default function ClassDetailPage() {
                     </div>
 
                     <div className="flex flex-wrap items-center  gap-3 ">
-                      <div className="bg-primary/80 flex flex-row px-3 py-1 text-sm rounded-full shadow gap-3">
+                      {classroom?.is_finish == 1 && (
+                        <Button className="hover:scale-100  rounded-2xl" size="sm" variant={'red'} onClick={handleGenerate}>
+                          {downloadMutation.isPending ? 'Processing...' : 'Generate'}
+                        </Button>
+                      )}
+                      <div className="bg-primary/80 flex flex-row px-2 py-1 text-sm rounded-full shadow gap-3">
                         <User2 className=" w-7 h-7 p-2 bg-white/70 rounded-full" />
                         <p className=" font-medium text-white mt-1">Tr.{classroom?.teacher.first_name}</p>
                       </div>
@@ -157,7 +190,7 @@ export default function ClassDetailPage() {
           </Card>
 
           {/* Tabs  */}
-          <Tabs defaultValue="classmates" className="w-full">
+          <Tabs defaultValue="lessons" className="w-full">
             <TabsList className=" rounded-2xl bg-white  shadow  h-11">
               <TabsTrigger value="lessons" className="gap-2 rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
                 <BookOpen className="size-4" />
@@ -189,7 +222,7 @@ export default function ClassDetailPage() {
 
             {/* Class Mates  */}
             <TabsContent value="classmates" className="py-4 space-y-6 mt-0">
-              <ClassMateComponent classMates={classroom?.class_mates} classRoom={classroom}  isTeacher={1}  />
+              <ClassMateComponent classMates={classroom?.class_mates} />
             </TabsContent>
 
             {/* Discussion   */}

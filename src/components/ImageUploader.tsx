@@ -2,6 +2,7 @@ import React, { useRef, useState, type DragEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ImageIcon, X, Upload } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ImageUploaderProps {
   label: string;
@@ -15,6 +16,13 @@ export default function ImageUploader({ label, value, onChange }: ImageUploaderP
 
   const handleFile = (file: File) => {
     if (!file) return;
+
+    const maxSize = 1 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error('Image size must be less than 1MB');
+      return;
+    }
+
     onChange(file);
   };
 
@@ -67,12 +75,12 @@ export default function ImageUploader({ label, value, onChange }: ImageUploaderP
             setDragActive(true);
           }}
           onDragLeave={() => setDragActive(false)}
-          onDrop={handleDrop}
+        onDrop={handleDrop}
         >
           <ImageIcon className={`text-muted-foreground/50 h-12 w-12 mb-3 transition-colors ${dragActive ? 'text-primary' : 'group-hover:text-primary/70'}`} />
 
           <p className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">Drag & drop or click to upload</p>
-          <p className="text-xs text-muted-foreground mt-1">Max size: 2MB</p>
+          <p className="text-xs text-muted-foreground mt-1">Max size: 1MB</p>
         </label>
       )}
 

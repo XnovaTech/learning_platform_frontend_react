@@ -1,28 +1,21 @@
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  useDroppable,
-  useDraggable,
-} from "@dnd-kit/core";
+import { DndContext, PointerSensor, useSensor, useSensors, useDroppable, useDraggable } from '@dnd-kit/core';
 
 import { CSS } from "@dnd-kit/utilities";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   DragEndEvent,
   DragStartEvent,
 } from "@dnd-kit/core";
 
-import type { LessonTaskType } from "@/types/task";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import type { LessonTaskType } from '@/types/task';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface DragDropTaskComponentProps {
   task: LessonTaskType;
   onAnswer: (taskId: number, value: any) => void;
   value?: Record<string, string | null>;
-  readonly?: boolean
+  readonly?: boolean;
 }
 
 export default function DragDropTaskComponent({
@@ -31,7 +24,7 @@ export default function DragDropTaskComponent({
   value = {},
   readonly = false,
 }: DragDropTaskComponentProps) {
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = readonly ? undefined : useSensors(useSensor(PointerSensor));
   const [activeId, setActiveId] = useState<string | null>(null);
   const [assigned, setAssigned] = useState<Record<string, string | null>>(value);
 
@@ -65,6 +58,12 @@ export default function DragDropTaskComponent({
     });
   };
 
+  useEffect(() => {
+    if (value && Object.keys(value).length > 0){
+      setAssigned(value);
+    }
+  }, [value]);
+
   const reset = () => {
     if (readonly) return;
     setAssigned({});
@@ -72,60 +71,38 @@ export default function DragDropTaskComponent({
   };
 
   return (
-    <div className="p-4 space-y-4">
-      {
-        !readonly && (
-            <div className="flex justify-end">
-        <Button variant="outline" onClick={reset}>
-          Reset
-        </Button>
-      </div>
-        )
-      }
-      
+    <div className=" space-y-4">
+      {!readonly && (
+        <div className="flex justify-end">
+          <Button className='text-sm md:text-base' type='button' size="sm"  onClick={reset}>
+            Reset
+          </Button>
+        </div>
+      )}
 
-      <DndContext
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="space-y-6 bg-primary/5 p-6 rounded-xl">
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <div className="space-y-6 bg-primary/5 p-4 rounded-xl">
           {/* ITEMS */}
-          <div className="space-y-3 mb-3 border-b pb-4">
+          <div className="space-y-3  mb-3 border-b pb-4">
             <h3 className="font-semibold text-lg">Items</h3>
 
             <div className=" flex flex-wrap gap-3 w-full">
-                 {items
-              .filter(
-                (item) => !Object.values(assigned).includes(item.id.toString())
-              )
-              .map((item) => (
-                <DraggableItem
-                  key={item.id}
-                  id={item.id.toString()}
-                  text={item.text}
-                  readOnly = {readonly}
-                />
-              ))}
+              {items
+                .filter((item) => !Object.values(assigned).includes(item.id.toString()))
+                .map((item) => (
+                  <DraggableItem key={item.id} id={item.id.toString()} text={item.text} readOnly={readonly} />
+                ))}
             </div>
-         
           </div>
 
           {/* DROP TARGETS */}
           <div className="space-y-6">
             <h3 className="font-semibold text-lg">Targets</h3>
 
-              <div className=" flex flex-wrap gap-3">
-            {targets.map((target) => (
-              <DropZone
-                key={target.id}
-                id={target.id.toString()}
-                text={target.text}
-                assignedItem={assigned[target.id]}
-                items={items}
-                readOnly={readonly}
-              />
-            ))}
+            <div className=" flex   flex-wrap gap-3">
+              {targets.map((target) => (
+                <DropZone key={target.id} id={target.id.toString()} text={target.text} assignedItem={assigned[target.id]} items={items} readOnly={readonly} />
+              ))}
             </div>
           </div>
         </div>
@@ -138,7 +115,7 @@ export default function DragDropTaskComponent({
 /* --------------------------
    DRAGGABLE ITEM
 --------------------------- */
-function DraggableItem({ id, text , readOnly}: { id: string; text: string, readOnly?: boolean }) {
+function DraggableItem({ id, text, readOnly }: { id: string; text: string; readOnly?: boolean }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
   });
@@ -152,11 +129,7 @@ function DraggableItem({ id, text , readOnly}: { id: string; text: string, readO
       ref={setNodeRef}
       style={style}
       {...(!readOnly ? { ...listeners, ...attributes } : {})}
-      className={cn(
-        "p-3 rounded-xl border bg-blue-100 shadow-sm transition",
-        !readOnly && "cursor-grab active:cursor-grabbing",
-        readOnly && "opacity-70 cursor-not-allowed"
-      )}
+      className={cn('p-3 rounded-xl border bg-blue-100 shadow-sm transition', !readOnly && 'cursor-grab active:cursor-grabbing', readOnly && 'opacity-70 cursor-not-allowed')}
     >
       {text}
     </div>
@@ -166,19 +139,7 @@ function DraggableItem({ id, text , readOnly}: { id: string; text: string, readO
 /* --------------------------
    DROP ZONE
 --------------------------- */
-function DropZone({
-  id,
-  text,
-  assignedItem,
-  items,
-  readOnly
-}: {
-  id: string;
-  text: string;
-  assignedItem: string | null | undefined;
-  items: any[];
-  readOnly?: boolean
-}) {
+function DropZone({ id, text, assignedItem, items, readOnly }: { id: string; text: string; assignedItem: string | null | undefined; items: any[]; readOnly?: boolean }) {
   const { isOver, setNodeRef } = useDroppable({
     id,
   });
@@ -189,23 +150,15 @@ function DropZone({
     <div
       ref={setNodeRef}
       className={cn(
-        "p-4 min-h-20 border-2 border-dashed rounded-xl transition",
-        isOver && !readOnly ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50",
-        matchedItem && "border-green-500 bg-green-50",
-        readOnly && "cursor-not-allowed"
+        'p-4 w-full md:w-fit min-h-20 border-2 border-dashed rounded-xl transition',
+        isOver && !readOnly ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50',
+        matchedItem && 'border-green-500 bg-green-50',
+        readOnly && 'cursor-not-allowed'
       )}
     >
-      <div className="text-gray-600 text-sm">{text}</div>
+      <div className="text-gray-600  text-sm">{text}</div>
 
-      <div className="mt-2">
-        {matchedItem ? (
-          <div className="p-2 bg-green-100 border rounded shadow-sm">
-            {matchedItem.text}
-          </div>
-        ) : (
-          <div className="text-gray-400 italic text-sm">Drop here…</div>
-        )}
-      </div>
+      <div className="mt-2">{matchedItem ? <div className="p-2 bg-green-100 border rounded shadow-sm">{matchedItem.text}</div> : <div className="text-gray-400 italic text-sm">Drop here…</div>}</div>
     </div>
   );
 }

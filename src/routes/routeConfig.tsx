@@ -42,6 +42,7 @@ const LessonDetailPage = lazy(() => import('@/pages/teacher/courses/lessons/Less
 const CreateLessonPage = lazy(() => import('@/pages/teacher/courses/lessons/CreateLessonPage'));
 const EditLessonPage = lazy(() => import('@/pages/teacher/courses/lessons/EditLessonPage'));
 const EnrollmentsPage = lazy(() => import('@/pages/teacher/enrollments/EnrollmentsPage'));
+const ExamPage = lazy(() => import('@/pages/teacher/exams/ExamPage'));
 const StudentsPage = lazy(() => import('@/pages/teacher/users/StudentsPage'));
 const TeachersPage = lazy(() => import('@/pages/teacher/users/TeachersPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
@@ -120,6 +121,7 @@ export const routes = [
       { path: 'courses/lessons/:lessonId/edit', element: lazyLoad(EditLessonPage) },
       { path: 'courses/:id', element: lazyLoad(CourseDetailPage) },
       { path: 'enrollments', element: lazyLoad(EnrollmentsPage) },
+      { path: 'exams', element: lazyLoad(ExamPage) },
       { path: 'users/students', element: lazyLoad(StudentsPage) },
       { path: 'users/teachers', element: lazyLoad(TeachersPage) },
       { path: 'profile', element: lazyLoad(ProfilePage) },

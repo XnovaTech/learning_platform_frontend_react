@@ -32,7 +32,7 @@ export default function LessonDetailPage() {
   }
 
   return (
-    <div className=" max-w-8xl mx-auto px-4 py-5 space-y-10">
+    <div className=" w-full mx-auto max-w-8xl py-5 space-y-10">
       {/* Breadcrumbs */}
       <Breadcrumb>
         <BreadcrumbList>
@@ -57,8 +57,7 @@ export default function LessonDetailPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-        <LessonCard lesson={lesson} />
-
+      <LessonCard lesson={lesson} />
 
       <Tabs defaultValue="youtube" className="w-full max-w-8xl mx-auto my-4">
         <TabsList className="flex flex-wrap justify-center gap-2 md:gap-6  bg-white/50 backdrop-blur-lg drop-shadow-2xl rounded-xl p-2 h-12.5">
@@ -72,7 +71,7 @@ export default function LessonDetailPage() {
         </TabsList>
 
         <TabsContent value="youtube" className="w-full mt-6">
-          <div className=" drop-shadow-2xl backdrop-blur-lg bg-white/50 dark:bg-slate-900/80 rounded-2xl p-6 md:p-8">
+          <div className=" drop-shadow-2xl backdrop-blur-lg bg-white/50 dark:bg-slate-900/80 rounded-2xl p-2 md:p-8">
             {lesson?.youtube_link ? (
               <div className=" aspect-video rounded-xl overflow-hidden drop-shadow-md border border-gray-200 dark:border-gray-700">
                 <ReactPlayer
@@ -87,6 +86,7 @@ export default function LessonDetailPage() {
                       playerVars: {
                         rel: 0,
                         showinfo: 0,
+                        height: '100%',
                         modestbranding: 1,
                         disablekb: 1,
                         fs: 0,
