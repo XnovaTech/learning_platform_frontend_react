@@ -8,7 +8,7 @@ import TrueFalseBuilder from "./TrueFalseBuilder";
 import DragDropWithBlankBuilder from "./DragDropWithBlankBuilder";
 import ParagraphDragDropBuilder from "./ParagraphDragDropBuilder";
 
-import type { DragDropExtraData, MatchingExtraData, FillBlankExtraData, LongAnswerExtraData, DragDropWithBlankExtraData } from "@/types/task";
+import type { DragDropExtraData, MatchingExtraData, FillBlankExtraData, LongAnswerExtraData } from "@/types/task";
 
 export {
     MatchingBuilder,
@@ -22,4 +22,4 @@ export {
     ParagraphDragDropBuilder
 };
 
-export type BuilderData = DragDropExtraData | MatchingExtraData | FillBlankExtraData | LongAnswerExtraData | DragDropWithBlankExtraData;
+export type BuilderData = DragDropExtraData | MatchingExtraData | FillBlankExtraData | LongAnswerExtraData ;
