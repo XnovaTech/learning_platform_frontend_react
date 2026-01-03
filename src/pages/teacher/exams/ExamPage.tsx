@@ -3,7 +3,8 @@ import { uploadExamFile } from '../../../services/testService';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
-import PdfEditor from '@/components/Files/PdfEditor';
+import PdfEditor from '@/components/Pdf/PdfEditor';
+
 
 export default function ExamPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -40,9 +41,9 @@ export default function ExamPage() {
       </div>
 
       {pdfUrl && (
-        <div className="space-y-4 mt-8">
-          <h3 className="text-lg font-medium text-gray-900">PDF Review </h3>
+        <div className="mt-5">
           <PdfEditor pdfUrl={pdfUrl} />
+
         </div>
       )}
     </div>
