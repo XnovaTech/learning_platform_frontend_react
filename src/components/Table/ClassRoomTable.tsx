@@ -3,12 +3,12 @@ import { Edit, Trash2, Users } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { Link } from 'react-router-dom';
-import { displayTime } from '@/helper/ClassRoom';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ConfirmDialog } from '../ui/dialog-context-menu';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { finishClass } from '@/services/classService';
+import { displayTime } from '@/utils/format';
 
 interface ClassRoomTableProps {
   classrooms: ClassRoomType[];

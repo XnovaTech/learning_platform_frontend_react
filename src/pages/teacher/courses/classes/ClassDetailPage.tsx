@@ -13,10 +13,10 @@ import { useAuth } from '@/context/AuthContext';
 import { ClassMateComponent } from '@/components/Student/Enroll/ClassMateComponent';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
 import { ZoomRoomComponent } from '@/components/Student/Enroll/ZoomRoomComponent';
-import { displayTime } from '@/helper/ClassRoom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { downloadCertificates } from '@/services/userCertificateService';
+import { displayTime } from '@/utils/format';
 
 export default function ClassDetailPage() {
   const { id } = useParams();

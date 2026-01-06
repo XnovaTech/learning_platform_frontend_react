@@ -91,96 +91,94 @@ export default function ClassCalendar({ classes, isTeacher }: CalendarProps) {
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-xl p-5">
-        <div className="flex items-center justify-between mb-6">
-          <Select value={`${currentMonth}`} onValueChange={(value) => setCurrentMonth(parseInt(value))}>
-            <SelectTrigger className=" hidden md:flex w-[200px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {MONTH_NAMES.map((month, index) => (
-                <SelectItem key={index} value={`${index}`}>
-                  {month}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      <div className="flex items-center justify-between mb-6">
+        <Select value={`${currentMonth}`} onValueChange={(value) => setCurrentMonth(parseInt(value))}>
+          <SelectTrigger className=" hidden md:flex w-[200px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {MONTH_NAMES.map((month, index) => (
+              <SelectItem key={index} value={`${index}`}>
+                {month}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-          <div className="flex justify-between md:justify-end items-center w-full gap-3 ">
-            <h2 className=" font-medium">
-              {MONTH_NAMES[currentMonth].slice(0, 3)} {currentYear}
-            </h2>
+        <div className="flex justify-between md:justify-end items-center w-full gap-3 ">
+          <h2 className=" font-medium">
+            {MONTH_NAMES[currentMonth].slice(0, 3)} {currentYear}
+          </h2>
 
-            <div className="flex  items-center gap-3">
-              <Button onClick={goToPreviousMonth} className="hover:scale-100 rounded-md" size="sm">
-                <ChevronLeft className="h-3 w-3" />
-              </Button>
+          <div className="flex  items-center gap-3">
+            <Button onClick={goToPreviousMonth} className="hover:scale-100 rounded-md" size="sm">
+              <ChevronLeft className="h-3 w-3" />
+            </Button>
 
-              <Button onClick={goToNextMonth} className="hover:scale-100 rounded-md" size="sm">
-                <ChevronRight className="h-3 w-3" />
-              </Button>
-            </div>
+            <Button onClick={goToNextMonth} className="hover:scale-100 rounded-md" size="sm">
+              <ChevronRight className="h-3 w-3" />
+            </Button>
           </div>
         </div>
+      </div>
 
-        {/* Week */}
-        <div className="grid grid-cols-7 gap-2 border-b border-b-gray-300 mb-2">
-          {DAYS_OF_WEEK.map((day) => (
-            <div key={day} className="text-center font-semibold  text-slate-700  text-sm py-2">
-              {day}
-            </div>
-          ))}
-        </div>
+      {/* Week */}
+      <div className="grid grid-cols-7 gap-2 border-b border-b-gray-300 mb-2">
+        {DAYS_OF_WEEK.map((day) => (
+          <div key={day} className="text-center font-semibold  text-slate-700  text-sm py-2">
+            {day}
+          </div>
+        ))}
+      </div>
 
-        {/* date  */}
-        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-2">
-          {calendarDays.map((date, index) => {
-            if (!date) {
-              return <div key={`empty-${index}`} className="min-h-26" />;
-            }
+      {/* date  */}
+      <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-2">
+        {calendarDays.map((date, index) => {
+          if (!date) {
+            return <div key={`empty-${index}`} className="min-h-26" />;
+          }
 
-            const events = getEventsForDate(date);
-            const isTodayDate = isToday(date);
+          const events = getEventsForDate(date);
+          const isTodayDate = isToday(date);
 
-            return (
-              <div
-                key={index}
-                onClick={() => handleDateClick(date)}
-                className={`
+          return (
+            <div
+              key={index}
+              onClick={() => handleDateClick(date)}
+              className={`
                   relative min-h-28 border border-gray-300 rounded-lg p-2 cursor-pointer
                   transition-all hover:border-primary hover:shadow-md
                   ${events.length > 0 ? 'bg-primary/5 border-primary/20' : 'bg-white'}
                   ${isTodayDate ? 'ring-2 ring-primary' : ''}
                 `}
-              >
-                <span
-                  className={`
+            >
+              <span
+                className={`
                     text-sm font-semibold
                     ${isTodayDate ? 'bg-primary text-white rounded-sm px-2 py-1' : 'text-slate-700'}
                   `}
-                >
-                  {date.getDate()}
-                </span>
+              >
+                {date.getDate()}
+              </span>
 
-                {events.length > 0 && (
-                  <div className="mt-1 space-y-1">
-                    {events?.slice(0, 2)?.map((event, idx) => (
-                      <div key={idx} className="text-xs bg-primary/90 text-white rounded-sm px-1.5 py-0.5 truncate font-medium hover:bg-primary/100 transition-colors">
-                        {event?.course?.category?.name || ''} - {event.class_name}
-                      </div>
-                    ))}
+              {events.length > 0 && (
+                <div className="mt-1 space-y-1">
+                  {events?.slice(0, 2)?.map((event, idx) => (
+                    <div key={idx} className="text-xs bg-primary/90 text-white rounded-sm px-1.5 py-0.5 truncate font-medium hover:bg-primary/100 transition-colors">
+                      {event?.course?.category?.name || ''} - {event.class_name}
+                    </div>
+                  ))}
 
-                    {events?.length > 2 && (
-                      <Button type="button" variant="ghost" size="sm" className="w-full h-auto p-1 text-xs text-primary hover:bg-primary/10 font-medium">
-                        more +
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                  {events?.length > 2 && (
+                    <Button type="button" variant="ghost" size="sm" className="w-full h-auto p-1 text-xs text-primary hover:bg-primary/10 font-medium">
+                      more +
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* detail */}

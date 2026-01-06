@@ -1,7 +1,6 @@
-export type OverviewItem = {
-  id: number;
-  title: string;
-  value: number;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  color: string;
-};
+
+export interface DashboardOverview {
+  total_courses: number;
+  total_students: number;
+  total_active_classes: number;
+}

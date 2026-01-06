@@ -4,9 +4,9 @@ import Hello from '../../../../public/lottie/Hello.json';
 import { Card, CardContent } from '@/components/ui/card';
 import { BookAIcon, BookAlert, LayoutDashboard, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import ClassCalendar from '@/components/Calendar/ClassCalendar';
 import { useQuery } from '@tanstack/react-query';
 import { getEnrollActiveClassByStudent } from '@/services/enrollService';
+import DashboardCalendar from '@/components/Dashboard/DashboardCalendar';
 
 export default function HomePage() {
   const { studentData, isLoading, isError } = useStudentData();
@@ -91,15 +91,7 @@ export default function HomePage() {
       </div>
 
       {/* calendar */}
-      <div className="min-h-[60vh] overflow-hidden mt-6">
-        {calendarLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="w-6 h-6 text-primary animate-spin" />
-          </div>
-        ) : (
-          <ClassCalendar classes={classes} isTeacher={false} />
-        )}
-      </div>
+      <DashboardCalendar classes={classes} isLoading={calendarLoading} isTeacher={false} />
     </>
   );
 }
