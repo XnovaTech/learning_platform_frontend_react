@@ -35,3 +35,25 @@ export interface StudentsLessonTaskRecordType {
     total_points: number,
     lesson_point: number
 }
+
+//student course exams
+export interface StudentExamSubmitPayload {
+    enroll_id: number;
+    exam_id: number;
+    answers: Record<number, string | Record<string, string>>;
+}
+
+export interface StudentExamMarkUpdatePayload {
+    enroll_id: number;
+    exam_id: number;
+    score: number
+}
+
+export interface StudentCourseExamTaskRecordType {
+    enroll_id: number,
+    student_id: number,
+    first_name: string,
+    last_name: string,
+    total_points: number,
+    exam_total_points: number
+}

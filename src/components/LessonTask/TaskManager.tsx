@@ -44,6 +44,29 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
   });
 
   useEffect(() => {
+    if (!initial) return;
+
+    setType(initial.task_type);
+    setPoints(initial.points ?? 1);
+    setQuestion(initial.question ?? '');
+
+    if (initial.task_type === 'paragraph_drag') {
+    setExtraData(
+      initial.extra_data ?? {
+        paragraph: '',
+        blanks: [],
+        answers: [],
+      }
+    );
+  } else {
+    setExtraData(initial.extra_data ?? {});
+  }
+  }, [initial]);
+
+  useEffect(() => {
+      // prevent overwrite when editing
+  if (initial && initial.task_type === type) return;
+
     if (type === 'paragraph_drag') {
       setExtraData({
         paragraph: '',
@@ -159,7 +182,8 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
     const payload: CreateLessonTaskPayloadType = {
       lesson_id: Number(lessonId),
       task_type: type,
-      question: question || extraData.paragraph,
+      // question: question || extraData.paragraph,
+      question: type === 'paragraph_drag' ? extraData.paragraph : question,
       correct_answer: extraData.correct_answer ?? null,
       extra_data: type === 'long' ? extraData.extra_data : undefined,
       points,

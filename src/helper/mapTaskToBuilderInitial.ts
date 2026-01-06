@@ -3,9 +3,10 @@ import type {
   DragDropExtraData,
   MatchingExtraData,
   ParagraphDropdownData,
+  CourseExamType,
 } from '@/types/task';
 
-export function mapTaskToBuilderInitial(task: LessonTaskType) {
+export function mapTaskToBuilderInitial(task: LessonTaskType | CourseExamType ) {
   switch (task.task_type) {
     case 'mcq':
       return {

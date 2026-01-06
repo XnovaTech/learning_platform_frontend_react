@@ -1,0 +1,46 @@
+import type { StudentExamSubmitPayload, StudentExamMarkUpdatePayload, StudentCourseExamTaskRecordType } from "@/types/answer";
+import api from "./api";
+
+export const listStudentCourseExamRecords = async (enrollId: number): Promise<StudentCourseExamTaskRecordType[]> => {
+    try {
+        const {data} = await api.get(`/v1/students/course/exams/records/${enrollId}`);
+        return data?.data;
+    } catch (error: any){
+        throw new Error(error.message)
+    }
+}
+
+export const getStudentCourseExamDetail = async (enrollId: number) => {
+    try {
+        const {data} = await api.get(`/v1/student/course/exam/detail/${enrollId}`);
+        return data?.data;
+    } catch (error: any){
+        throw new Error(error.message)
+    }
+}
+
+export const submitStudentCourseExams = async (payload: StudentExamSubmitPayload): Promise<void> => {
+    try {
+        const data = await api.post('/v1/student/exam/answers', payload);
+        return data?.data;
+    } catch (error: any){
+        throw new Error(error.message);
+    }
+}
+
+export const updateStudentExamMark = async (payload: StudentExamMarkUpdatePayload): Promise<void> => {
+    try {
+        const data = await api.post('/v1/student/exam/update-score', payload);
+        return data?.data;
+    } catch (error:any){
+        throw new Error(error.message);
+    }
+}
+
+export const deleteStudentExamRecords = async (enrollId: number): Promise<void> => {
+    try {
+        await api.delete(`/v1/student/exam/record-delete/${enrollId}`)
+    } catch (error: any){
+        throw new Error(error.message);
+    }
+}

@@ -32,7 +32,7 @@ export const uploadImage = async (payload: FormData) => {
 
 export const createLessonTask = async (payload: CreateLessonTaskPayloadType): Promise<LessonTaskType> => {
     try {
-        const {data} = await api.post('v1/lesson/tasks', payload);
+        const {data} = await api.post('/v1/lesson/tasks', payload);
         return data?.data;
     } catch (error: any){
         throw new Error(error.message);
@@ -41,7 +41,7 @@ export const createLessonTask = async (payload: CreateLessonTaskPayloadType): Pr
 
 export const updateLessonTask = async (id: number, payload: UpdateLessonTaskPayloadType): Promise<LessonTaskType> => {
     try {
-        const {data} = await api.put(`v1/lesson/tasks/${id}`, payload);
+        const {data} = await api.put(`/v1/lesson/tasks/${id}`, payload);
         return data?.data;
     } catch (error: any){
         throw new Error(error.message);

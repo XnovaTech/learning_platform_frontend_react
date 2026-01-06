@@ -15,10 +15,11 @@ import { Plus } from 'lucide-react';
 import { ClassroomForm } from '@/components/Form/ClassroomForm';
 import { deleteLesson, lessonDetail } from '@/services/lessonService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Users } from 'lucide-react';
+import { BookOpen, Users, BookOpenCheck } from 'lucide-react';
 import ClassRoomTable from '@/components/Table/ClassRoomTable';
 import LessonTable from '@/components/Table/LessonTable';
 import CourseCard from '@/components/Card/CourseCard';
+import CourseExamList from '@/components/CourseExam/CourseExamList';
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -35,7 +36,7 @@ export default function CourseDetailPage() {
   const [deletingLessonId, setDeletingLessonId] = useState<number | null>(null);
   const statusTabValue = statusFilter === 1 ? 'active' : 'inactive';
 
-  const { data: course, isLoading } = useQuery<CourseType>({
+  const { data: course, isLoading, refetch } = useQuery<CourseType>({
     queryKey: ['course', courseId],
     queryFn: () => getCourse(courseId),
     enabled: !Number.isNaN(courseId),
@@ -185,6 +186,10 @@ export default function CourseDetailPage() {
                     <BookOpen className="size-4" />
                     <span className="font-medium">Lessons</span>
                   </TabsTrigger>
+                  <TabsTrigger value="exams" className="gap-2 rounded-xl transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
+                    <BookOpenCheck className="size-4" />
+                    <span className="font-medium">Exams</span>
+                  </TabsTrigger>
                 </TabsList>
 
                 {activeTab === 'classrooms' && (
@@ -247,6 +252,21 @@ export default function CourseDetailPage() {
                 </div>
 
                 <LessonTable lessons={course?.lessons || []} onEdit={editLesson} onDelete={askDeleteLesson} />
+              </TabsContent>
+
+              <TabsContent value="exams" className="p-6 space-y-6 mt-0">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-foreground">Course Exams</h3>
+                    <p className="text-sm text-muted-foreground mt-1">Manage course exams</p>
+                  </div>
+                    <Button type="button" className="gap-2 shadow-sm w-full sm:w-auto" asChild>
+                    <Link to={`/teacher/courses/exam/${courseId}`}>
+                      <Plus className="size-4" /> Create Exam
+                    </Link>
+                  </Button>
+                  </div>
+                  <CourseExamList exams={course?.exams || []} refetch={refetch} />
               </TabsContent>
             </Tabs>
           </Card>
