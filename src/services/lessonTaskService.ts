@@ -6,7 +6,7 @@ export const listLessonTasks = async (lessonId: number): Promise<LessonTaskType[
         const {data} = await api.get(`/v1/lesson/tasks/by-lesson/${lessonId}`);
         return data?.data;
     } catch (error: any){
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 }
 
@@ -15,7 +15,7 @@ export const getStudentLessonTasks = async (lessonId: number): Promise<LessonTas
         const {data} = await api.get(`/v1/lesson/tasks/by-student/${lessonId}`);
         return data?.data;
     } catch (error: any){
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 }
 
@@ -35,7 +35,7 @@ export const createLessonTask = async (payload: CreateLessonTaskPayloadType): Pr
         const {data} = await api.post('/v1/lesson/tasks', payload);
         return data?.data;
     } catch (error: any){
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 };
 
@@ -44,7 +44,7 @@ export const updateLessonTask = async (id: number, payload: UpdateLessonTaskPayl
         const {data} = await api.put(`/v1/lesson/tasks/${id}`, payload);
         return data?.data;
     } catch (error: any){
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 };
 
@@ -52,7 +52,7 @@ export const deleteTask = async (id: number): Promise<void> => {
     try {
         await api.delete(`/v1/lesson/tasks/${id}`);
     } catch (error: any){
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 }
 

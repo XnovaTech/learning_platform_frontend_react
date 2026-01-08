@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { createClassRoom, updateClassRoom } from '@/services/classService';
 import { listTeachers } from '@/services/userService';
-// import { getCourse } from '@/services/courseService';
 import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import { X } from 'lucide-react';
 import { DAY_OPTIONS } from '@/constants/days';

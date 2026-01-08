@@ -1,3 +1,4 @@
+import type { ClassRoomExamType } from './classexam';
 import { CourseType } from './course';
 import { LessonType } from './lesson';
 import { ClassMateType, UserType } from './user';
@@ -9,6 +10,7 @@ export interface ClassRoomType {
   teacher: UserType;
   course: CourseType;
   class_mates?: ClassMateType[];
+  exams?: ClassRoomExamType[];
   lessons?: LessonType[];
   class_name: string | null;
   start: string;

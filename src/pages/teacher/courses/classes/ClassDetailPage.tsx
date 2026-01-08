@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageCircle, Users, Calendar, Clock, BookOpen, CalendarDays, Video, User2 } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Clock, BookOpen, CalendarDays, Video, User2, BookOpenCheck } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { deleteClassConversations, getClass } from '@/services/classService';
@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { downloadCertificates } from '@/services/userCertificateService';
 import { displayTime } from '@/utils/format';
+import ClassExamsList from '@/components/Exams/ClassExamsList';
 
 export default function ClassDetailPage() {
   const { id } = useParams();
@@ -29,6 +30,8 @@ export default function ClassDetailPage() {
     queryFn: () => getClass(classId),
     enabled: !Number.isNaN(classId),
   });
+
+
 
   const deleteConversationMutation = useMutation({
     mutationFn: (id: number) => deleteClassConversations(id),
@@ -54,6 +57,7 @@ export default function ClassDetailPage() {
     downloadMutation.mutate();
   };
 
+ 
   return (
     <div className="max-w-9xl p-4 mx-auto space-y-6">
       {/* Breadcrumbs */}
@@ -213,6 +217,11 @@ export default function ClassDetailPage() {
                 <Video className="size-4" />
                 <span className="font-medium">Join Zoom</span>
               </TabsTrigger>
+
+              <TabsTrigger value="exams" className="gap-2   rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
+                <BookOpenCheck className="size-4" />
+                <span className="font-medium">Exams</span>
+              </TabsTrigger>
             </TabsList>
 
             {/* Lesssons */}
@@ -230,8 +239,14 @@ export default function ClassDetailPage() {
               <DiscussionComponent classId={classroom?.id as number} userId={user?.id} />
             </TabsContent>
 
+            {/* Zoom   */}
             <TabsContent value="zoom" className="py-4 space-y-6 mt-0">
               <ZoomRoomComponent zoomLink={classroom?.zoom_link} />
+            </TabsContent>
+
+            {/* Exam   */}
+            <TabsContent value="exams" className="py-4 space-y-6 mt-0">
+              <ClassExamsList exams={classroom?.exams || []} classId={classId} />
             </TabsContent>
           </Tabs>
         </div>

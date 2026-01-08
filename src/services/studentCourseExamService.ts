@@ -6,7 +6,7 @@ export const listStudentCourseExamRecords = async (enrollId: number): Promise<St
         const {data} = await api.get(`/v1/students/course/exams/records/${enrollId}`);
         return data?.data;
     } catch (error: any){
-        throw new Error(error.message)
+        throw new Error(error.response.data.message || error.message);
     }
 }
 
@@ -15,7 +15,7 @@ export const getStudentCourseExamDetail = async (enrollId: number) => {
         const {data} = await api.get(`/v1/student/course/exam/detail/${enrollId}`);
         return data?.data;
     } catch (error: any){
-        throw new Error(error.message)
+        throw new Error(error.response.data.message || error.message);
     }
 }
 
@@ -24,7 +24,7 @@ export const submitStudentCourseExams = async (payload: StudentExamSubmitPayload
         const data = await api.post('/v1/student/exam/answers', payload);
         return data?.data;
     } catch (error: any){
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);;
     }
 }
 
@@ -33,7 +33,7 @@ export const updateStudentExamMark = async (payload: StudentExamMarkUpdatePayloa
         const data = await api.post('/v1/student/exam/update-score', payload);
         return data?.data;
     } catch (error:any){
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);;
     }
 }
 
@@ -41,6 +41,6 @@ export const deleteStudentExamRecords = async (enrollId: number): Promise<void> 
     try {
         await api.delete(`/v1/student/exam/record-delete/${enrollId}`)
     } catch (error: any){
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);;
     }
 }

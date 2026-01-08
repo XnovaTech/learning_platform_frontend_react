@@ -19,7 +19,7 @@ import { BookOpen, Users, BookOpenCheck } from 'lucide-react';
 import ClassRoomTable from '@/components/Table/ClassRoomTable';
 import LessonTable from '@/components/Table/LessonTable';
 import CourseCard from '@/components/Card/CourseCard';
-import CourseExamList from '@/components/CourseExam/CourseExamList';
+import CourseExamList from '@/components/Exams/CourseExamList';
 
 export default function CourseDetailPage() {
   const params = useParams();

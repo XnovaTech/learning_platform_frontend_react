@@ -6,7 +6,7 @@ export const getStudentCertificates = async (): Promise<UserCertificate[]> => {
     const { data } = await api.get(`/v1/student/certificates`);
     return data?.data ?? [];
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -28,7 +28,7 @@ export const downloadCertificate = async (certificateId: number,className:string
 
     return blob;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
