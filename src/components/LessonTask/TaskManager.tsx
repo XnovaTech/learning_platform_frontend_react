@@ -182,7 +182,7 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
     const payload: CreateLessonTaskPayloadType = {
       lesson_id: Number(lessonId),
       task_type: type,
-      // question: question || extraData.paragraph,
+      //question: question || extraData.paragraph,
       question: type === 'paragraph_drag' ? extraData.paragraph : question,
       correct_answer: extraData.correct_answer ?? null,
       extra_data: type === 'long' ? extraData.extra_data : undefined,
@@ -206,7 +206,7 @@ export default function TaskBuilderManager({ initial, lessonId, refetch, taskId,
         return <McqBuilder initial={extraData} onChange={setExtraData} />;
 
       case 'fill_blank':
-        return <FillBlankBuilder onChange={setExtraData} />;
+        return <FillBlankBuilder initial={extraData} onChange={setExtraData} />;
 
       case 'true_false':
         return <TrueFalseBuilder initial={extraData} onChange={setExtraData} />;

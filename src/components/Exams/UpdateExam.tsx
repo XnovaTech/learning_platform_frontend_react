@@ -168,7 +168,7 @@ export default function UpdateExam({initial, examId, onClose, refetch}: Props){
                 return <McqBuilder initial={extraData} onChange={setExtraData} />;
         
               case 'fill_blank':
-                return <FillBlankBuilder onChange={setExtraData} />;
+                return <FillBlankBuilder initial={extraData} onChange={setExtraData} />;
         
               case 'true_false':
                 return <TrueFalseBuilder initial={extraData} onChange={setExtraData} />;
@@ -192,7 +192,8 @@ export default function UpdateExam({initial, examId, onClose, refetch}: Props){
           exam_type: selectedExamType,
           exam_section: selectedExamSection,
           task_type: type,
-          question: question || extraData.paragraph,
+          //question: question || extraData.paragraph,
+          question: type === 'paragraph_drag' ? extraData.paragraph : question,
           correct_answer: extraData.correct_answer ?? null,
           extra_data: type === 'long' ? extraData.extra_data : undefined,
           points,
