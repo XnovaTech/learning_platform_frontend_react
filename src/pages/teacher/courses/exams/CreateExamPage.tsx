@@ -11,7 +11,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCourseExam, updateCourseExam, uploadImage } from '@/services/courseExamService';
 import { toast } from 'sonner';
 import { LessonTaskQuill } from '@/components/ui/lesson-task-quill';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Home, BookOpen, BookOpenCheck } from 'lucide-react';
 
 type Props = {
     initial?: CreateCourseExamPayloadType | null;
@@ -205,7 +207,46 @@ export default function CreateExamPage({initial, examId}: Props){
     };
 
     return (
-         <div className="space-y-5 p-5 border  bg-white shadow w-full">
+        <div className="max-w-8xl p-4 mx-auto space-y-6">
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link className="text-base md:text-md gap-2" to="/teacher/dashboard">
+                                <Home className="size-4" />
+                                Home
+                            </Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link className="text-base md:text-md gap-2" to="/teacher/courses">
+                                <BookOpen className="size-4" />
+                                Courses
+                            </Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link className="text-base md:text-md gap-2" to={`/teacher/courses/${courseId}`}>
+                                <BookOpen className="size-4" />
+                                Course Detail
+                            </Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage className="text-base md:text-md gap-2 text-primary">
+                            <BookOpenCheck className="size-4" />
+                            Create Exam
+                        </BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+
+            <div className="space-y-5 p-5 border  bg-white shadow w-full">
               {/* POINTS + ORDER */}
               <div className="grid grid-cols-4 gap-3">
                 {/* TYPE */}
@@ -287,5 +328,6 @@ export default function CreateExamPage({initial, examId}: Props){
                   Create Exam
               </Button>
             </div>
+        </div>
     )
 }

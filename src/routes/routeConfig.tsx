@@ -25,6 +25,7 @@ const StudentEnrollPage = lazy(() => import('@/pages/student/enrolls/EnrollPage'
 const StudentEnrollDetailPage = lazy(() => import('@/pages/student/enrolls/EnrollDetailPage'));
 const StudentEnrollLessonPage = lazy(() => import('@/pages/student/enrolls/lessons/LessonDetailPage'));
 const StudentExamPage = lazy(() => import('@/pages/student/exams/ExamPage'));
+const StudentExamDetailPage = lazy(() => import('@/pages/student/exams/ExamDetailPage'));
 const ContactPage = lazy(() => import('@/pages/student/contacts/ContactPage'));
 
 //teacher
@@ -98,6 +99,7 @@ export const routes = [
       { path: 'enrolls/:enrollId', element: lazyLoad(StudentEnrollDetailPage) },
       { path: 'enrolls/:enrollId/lessons/:lessonId', element: lazyLoad(StudentEnrollLessonPage) },
       { path: 'exams', element: lazyLoad(StudentExamPage) },
+      { path: 'enrolls/:enrollId/exams/:examId', element: lazyLoad(StudentExamDetailPage) },
       { path: 'profile', element: lazyLoad(ProfilePage) },
     ],
   },

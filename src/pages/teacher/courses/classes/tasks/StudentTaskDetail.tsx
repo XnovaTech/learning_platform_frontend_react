@@ -12,18 +12,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useState } from "react";
+import { TASK_TITLE } from "@/mocks/tasks";
 
-/* ---------- Task Group Titles ---------- */
-const TASK_TITLE: Record<TaskType, string> = {
-  mcq: "Multiple Choice Question",
-  short: "Short Answer",
-  long: "Long Answer",
-  drag_drop: "Drag & Drop",
-  matching: "Matching",
-  fill_blank: "Fill in the Blanks",
-  true_false: "True or False",
-  paragraph_drag: "Paragraph Reading",
-};
+
 
 export default function StudentTaskDetail() {
   const { lessonId, enrollId } = useParams();

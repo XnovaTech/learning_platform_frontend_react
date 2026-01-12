@@ -12,7 +12,7 @@ interface DashboardCalendarProps {
 
 export default function DashboardCalendar({ classes, isLoading, isTeacher = false }: DashboardCalendarProps) {
   return (
-    <Card className="min-h-[60vh] overflow-hidden bg-white rounded-2xl shadow-xl p-5">
+    <Card className="min-h-[60vh] overflow-hidden bg-white rounded-2xl shadow-xl p-5 mt-4">
       {isLoading ? (
         <div className="flex items-center justify-center m-auto py-14">
           <Spinner className="text-primary size-7 md:size-8" />

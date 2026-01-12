@@ -193,7 +193,7 @@ export default function StudentLayout() {
 
   return (
     <StudentDataProvider>
-      <div className="min-h-screen bg-primary/10 flex">
+      <div className="min-h-screen bg-primary/7 flex">
         <div className="flex-1 flex flex-col min-w-0">
           <HeaderBar />
 

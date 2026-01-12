@@ -70,7 +70,10 @@ export function DiscussionComponent({ classId, userId }: DiscussionComponentProp
 
   return (
     <div className="flex flex-col bg-white/50 backdrop-blur-xl rounded-2xl p-4 shadow-sm border border-gray-100">
-      <h2 className="text-xl font-semibold pb-3 text-gray-800">Discuss Room</h2>
+      <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+        <MessageCircle size={22} />
+        Discuss Room
+      </h2>
 
       <div ref={scrollRef} className="flex flex-col gap-3 max-h-96 overflow-y-auto px-2 py-3 bg-gray-50 rounded-xl">
         {discussions.length === 0 ? (

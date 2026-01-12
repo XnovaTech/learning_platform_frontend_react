@@ -226,8 +226,8 @@ function HeaderBar({ collapsed, setCollapsed }: { collapsed: boolean; setCollaps
 export default function TeacherLayout() {
   const [collapsed, setCollapsed] = useState(false);
   return (
-    <div className="min-h-screen bg-primary/10 flex">
-      <aside className={`hidden md:flex  flex-col bg-primary/10  border-r border-gray-200 shadow-xl shadow-gray-200/50 transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}>
+    <div className="min-h-screen bg-primary/7 flex">
+      <aside className={`hidden md:flex  flex-col bg-primary/7  border-r border-gray-200 shadow-xl shadow-gray-200/50 transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}>
         <SidebarContent collapsed={collapsed} />
       </aside>
 

@@ -48,7 +48,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-5 ">
         <Link to="/student/enrolls">
           <Card className="group cursor-pointer bg-linear-to-br form-jade/10 to-jade/40 border-jade/20  hover:shadow-lg transition-all duration-300 ease-out hover:-translate-y-1">
             <CardContent className="flex items-center justify-between">

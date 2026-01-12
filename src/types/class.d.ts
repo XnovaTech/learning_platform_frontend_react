@@ -15,12 +15,13 @@ export interface ClassRoomType {
   class_name: string | null;
   start: string;
   end: string;
-  start_time: time | null;
-  end_time: time | null;
+  start_time:time | string | null;
+  end_time: time | string | null;
   is_active: boolean | number;
   is_finish: boolean | number;
   zoom_link: string;
   days: string[];
+  has_course_exams?: boolean;
 }
 
 export interface ClassRoomPayloadType {

@@ -10,7 +10,7 @@ interface ClassExamsTableProps {
   classId: number;
 }
 
-export default function ClassExamsList({ exams, classId }: ClassExamsTableProps) {
+export default function TeacherClassExamsList({ exams, classId }: ClassExamsTableProps) {
   const [examFormOpen, setExamFormOpen] = useState(false);
   const [editingExam, setEditingExam] = useState<ClassRoomExamType | null>(null);
   const defaultExamForm: ClassRoomExamPayloadType = {

@@ -45,13 +45,17 @@ export function LessonsComponent({ lessons = [], enrollId, isTeacher = 0, classr
 
     return (
       <>
-      <Button variant="default" onClick={() => handleLockToggle(lesson.id, isLocked)} className="cursor-pointer hover:bg-white/50 text-orange-800 bg-white font-semibold gap-2 text-sm rounded-2xl mr-2">
-        {label} <Icon size={16} />
-      </Button>
+        <Button
+          variant="default"
+          onClick={() => handleLockToggle(lesson.id, isLocked)}
+          className="cursor-pointer hover:bg-white/50 text-orange-800 bg-white font-semibold gap-2 text-sm rounded-2xl mr-2"
+        >
+          {label} <Icon size={16} />
+        </Button>
 
-      <Link to={`/teacher/courses/classes/${classroomId}/lessons/${lesson.id}/records`}>
-      <Button variant="default">Task Records</Button>
-      </Link>
+        <Link to={`/teacher/courses/classes/${classroomId}/lessons/${lesson.id}/records`}>
+          <Button variant="default">Task Records</Button>
+        </Link>
       </>
     );
   };
@@ -75,9 +79,9 @@ export function LessonsComponent({ lessons = [], enrollId, isTeacher = 0, classr
   };
 
   return (
-    <div className="bg-white/50 backdrop-blur-lg p-6 rounded-2xl shadow-xl space-y-4">
+    <div className="bg-white/50 backdrop-blur-lg p-4 md:p-6 rounded-2xl shadow-xl space-y-4">
       <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-        <BookOpen className="text-primary" size={22} />
+        <BookOpen  size={22} />
         Lessons
       </h2>
 
@@ -98,10 +102,7 @@ export function LessonsComponent({ lessons = [], enrollId, isTeacher = 0, classr
                 <div className="flex gap-4">
                   <p className="text-gray-600 flex-1 group-hover:text-primary transition-colors">{lesson.title}</p>
 
-                  <div className="flex justify-end">
-                    {isTeacher === 1 ? teacherPov(lesson) : studentPov(lesson)}
-                   
-                  </div>
+                  <div className="flex justify-end">{isTeacher === 1 ? teacherPov(lesson) : studentPov(lesson)}</div>
                 </div>
               </div>
 

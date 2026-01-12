@@ -11,11 +11,11 @@ import { getCourse } from '@/services/courseService';
 import { deleteClassRoom } from '@/services/classService';
 import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import type { CourseType } from '@/types/course';
-import { Plus } from 'lucide-react';
+import { Plus, Home, BookOpen, Book } from 'lucide-react';
 import { ClassroomForm } from '@/components/Form/ClassroomForm';
 import { deleteLesson, lessonDetail } from '@/services/lessonService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Users, BookOpenCheck } from 'lucide-react';
+import { Users, BookOpenCheck } from 'lucide-react';
 import ClassRoomTable from '@/components/Table/ClassRoomTable';
 import LessonTable from '@/components/Table/LessonTable';
 import CourseCard from '@/components/Card/CourseCard';
@@ -36,7 +36,11 @@ export default function CourseDetailPage() {
   const [deletingLessonId, setDeletingLessonId] = useState<number | null>(null);
   const statusTabValue = statusFilter === 1 ? 'active' : 'inactive';
 
-  const { data: course, isLoading, refetch } = useQuery<CourseType>({
+  const {
+    data: course,
+    isLoading,
+    refetch,
+  } = useQuery<CourseType>({
     queryKey: ['course', courseId],
     queryFn: () => getCourse(courseId),
     enabled: !Number.isNaN(courseId),
@@ -141,7 +145,8 @@ export default function CourseDetailPage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/dashboard">
+              <Link className="text-base md:text-md gap-2" to="/teacher/dashboard">
+                <Home className="size-4" />
                 Dashboard
               </Link>
             </BreadcrumbLink>
@@ -149,14 +154,18 @@ export default function CourseDetailPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/courses" prefetch="intent">
+              <Link className="text-base md:text-md gap-2" to="/teacher/courses" prefetch="intent">
+                <BookOpen className="size-4" />
                 Courses
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">{course?.title ?? 'Detail'}</BreadcrumbPage>
+            <BreadcrumbPage className="text-base md:text-md gap-2 text-primary">
+              <Book className="size-4" />
+              {course?.title ?? 'Detail'}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -234,7 +243,7 @@ export default function CourseDetailPage() {
                   </Tabs>
                 </div>
 
-                <ClassRoomTable  classrooms={course?.class_rooms?.filter((c) => c?.is_active == statusFilter) || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} courseId={courseId} />
+                <ClassRoomTable classrooms={course?.class_rooms?.filter((c) => c?.is_active == statusFilter) || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} courseId={courseId} />
               </TabsContent>
 
               <TabsContent value="lessons" className="p-6 space-y-6 mt-0">
@@ -260,13 +269,13 @@ export default function CourseDetailPage() {
                     <h3 className="text-xl font-semibold text-foreground">Course Exams</h3>
                     <p className="text-sm text-muted-foreground mt-1">Manage course exams</p>
                   </div>
-                    <Button type="button" className="gap-2 shadow-sm w-full sm:w-auto" asChild>
+                  <Button type="button" className="gap-2 shadow-sm w-full sm:w-auto" asChild>
                     <Link to={`/teacher/courses/exam/${courseId}`}>
                       <Plus className="size-4" /> Create Exam
                     </Link>
                   </Button>
-                  </div>
-                  <CourseExamList exams={course?.exams || []} refetch={refetch} />
+                </div>
+                <CourseExamList exams={course?.exams || []} refetch={refetch} />
               </TabsContent>
             </Tabs>
           </Card>

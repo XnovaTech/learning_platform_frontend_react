@@ -24,7 +24,7 @@ export const submitStudentCourseExams = async (payload: StudentExamSubmitPayload
         const data = await api.post('/v1/student/exam/answers', payload);
         return data?.data;
     } catch (error: any){
-        throw new Error(error.response.data.message || error.message);;
+        throw new Error(error.response.data.message || error.message);
     }
 }
 

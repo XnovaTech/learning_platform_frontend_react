@@ -10,23 +10,14 @@ import { toast } from 'sonner';
 import type { StudentLessonSubmitPayload } from '@/types/answer';
 import { deleteStudentRecords, getStudentLessonRecordDetail, submitStudentLessonTasks } from '@/services/studentLessonTaskService';
 import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
+import { TASK_TITLE } from '@/mocks/tasks';
 
 interface LessonTaskComponentProps {
   lessonId?: number;
   enrollId?: number;
 }
 
-const TASK_TITLE: Record<TaskType, string> = {
-  mcq: 'Multiple Choice Question',
-  short: 'Short Answer',
-  long: 'Long Answer',
-  drag_drop: 'Drag and Drop',
-  matching: 'Matching',
-  fill_blank: 'Fill in the Blanks',
-  true_false: 'True or False',
-  paragraph_drag: 'Paragraph Reading'
 
-};
 
 export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskComponentProps) {
   const [answers, setAnswers] = useState({});

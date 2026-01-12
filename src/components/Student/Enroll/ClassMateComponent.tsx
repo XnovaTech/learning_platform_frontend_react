@@ -10,7 +10,7 @@ export function ClassMateComponent({ classMates = [] }: ClassMateProps) {
     <div className="bg-white/50 backdrop-blur-lg p-6 rounded-2xl shadow-xl space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-          <UsersRoundIcon className="text-sky-800" size={22} />
+          <UsersRoundIcon  size={22} />
           Classmates <span className="text-sm">({classMates.length})</span>
         </h2>
 
