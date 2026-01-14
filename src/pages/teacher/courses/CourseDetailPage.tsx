@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardTitle, CardContent } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
@@ -11,15 +11,14 @@ import { getCourse } from '@/services/courseService';
 import { deleteClassRoom } from '@/services/classService';
 import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import type { CourseType } from '@/types/course';
-import { Plus, Home, BookOpen, Book } from 'lucide-react';
 import { ClassroomForm } from '@/components/Form/ClassroomForm';
 import { deleteLesson, lessonDetail } from '@/services/lessonService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, BookOpenCheck } from 'lucide-react';
+import { Plus, Home, BookOpen, Book, Users, BookOpenCheck, Clock, Trophy } from 'lucide-react';
 import ClassRoomTable from '@/components/Table/ClassRoomTable';
 import LessonTable from '@/components/Table/LessonTable';
 import CourseCard from '@/components/Card/CourseCard';
-import CourseExamList from '@/components/Exams/CourseExamList';
+// import CourseExamList from '@/components/Exams/CourseExamList';
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -36,11 +35,7 @@ export default function CourseDetailPage() {
   const [deletingLessonId, setDeletingLessonId] = useState<number | null>(null);
   const statusTabValue = statusFilter === 1 ? 'active' : 'inactive';
 
-  const {
-    data: course,
-    isLoading,
-    refetch,
-  } = useQuery<CourseType>({
+  const { data: course, isLoading } = useQuery<CourseType>({
     queryKey: ['course', courseId],
     queryFn: () => getCourse(courseId),
     enabled: !Number.isNaN(courseId),
@@ -61,6 +56,20 @@ export default function CourseDetailPage() {
   };
 
   const [form, setForm] = useState<ClassRoomPayloadType>(defaultForm);
+  const examTypeData = [
+    {
+      type: 'Midterm',
+      icon: Clock,
+      description: 'Mid-course assessment to evaluate student progress',
+      color: 'bg-cyan-50 border-cyan-100 hover:bg-cyan-100 text-blue-700'
+    },
+    {
+      type: 'Final',
+      icon: Trophy,
+      description: 'Comprehensive end-of-course examination',
+      color: 'bg-amber-50 border-amber-100 hover:bg-amber-100 text-amber-700'
+    }
+  ];
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteClassRoom(id),
@@ -274,8 +283,24 @@ export default function CourseDetailPage() {
                       <Plus className="size-4" /> Create Exam
                     </Link>
                   </Button>
-                </div>
-                <CourseExamList exams={course?.exams || []} refetch={refetch} />
+                  </div>
+
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                    {
+                      examTypeData.map((item) => (
+                        <Link key={item.type} to={`/teacher/courses/exam/${courseId}/${item.type}`}>
+                          <Card className={`transition-all duration-300 cursor-pointer ${item.color} border-2 h-48 p-6 hover:shadow-sm hover:scale-105`}>
+                            <CardContent className="flex flex-col items-center text-center space-y-4">
+                              <item.icon className="size-12" />
+                              <CardTitle className="text-xl font-bold">{item.type}</CardTitle>
+                              <p className="text-sm opacity-80">{item.description}</p>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      ))
+                    }
+                  </div>
+                 
               </TabsContent>
             </Tabs>
           </Card>

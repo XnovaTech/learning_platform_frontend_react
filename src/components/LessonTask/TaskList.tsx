@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { ConfirmDialog } from '../ui/dialog-context-menu';
 import TaskBuilderManager from './TaskManager';
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 import { mapTaskToBuilderInitial } from '@/helper/mapTaskToBuilderInitial';
 import LongQuestionRender from '../Teacher/TaskRender/LongQuestionRender';
 import ShortQuestionRender from '../Teacher/TaskRender/ShortQuestionRender';
@@ -126,8 +126,8 @@ export default function TaskList({ tasks = [], refetch }: TaskListProps) {
     )}
 
       {/* Edit Dialog*/}
-      <Dialog open={editOpen} onOpenChange={setEditOpen} modal={false}>
-        <DialogTrigger />
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+     
         <DialogContent className="w-[85vw] max-w-none max-h-[95vh] overflow-y-auto p-6" onCloseAutoFocus={(e) => e.preventDefault()} onOpenAutoFocus={(e) => e.preventDefault()}>
           {editingTask && (
             <>

@@ -3,10 +3,19 @@ import api from "./api";
 
 export const ListCourseExam = async (courseId: number): Promise<CourseExamType[]> => {
     try {
-        const {data} = await api.get(`/v1/course/exams/by-lesson/${courseId}`);
+        const {data} = await api.get(`/v1/course/exams/by-course/${courseId}`);
         return data?.data;
     } catch(error: any){
         throw new Error(error.response.data.message || error.message);
+    }
+}
+
+export const ListCourseExamWithType = async (courseId: number, examType: string) => {
+    try {
+        const {data} = await api.get(`/v1/course/exams/course-type/${courseId}/${examType}`);
+        return data?.data;
+    } catch(error: any){
+         throw new Error(error.response.data.message || error.message);
     }
 }
 

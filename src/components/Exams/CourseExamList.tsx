@@ -51,7 +51,7 @@ export default function CourseExamList({ exams, refetch }: Props) {
   };
 
   const examsByExamType = exams.reduce<Record<string, CourseExamType[]>>((acc, exam) => {
-    const key = exam.exam_type || 'unknown';
+    const key = exam.exam_section || 'unknown';
 
     if (!acc[key]) acc[key] = [];
     acc[key].push(exam);
@@ -82,7 +82,7 @@ export default function CourseExamList({ exams, refetch }: Props) {
 
         return (
           <TabsContent key={examType} value={examType} className="space-y-8">
-            <h2 className="text-2xl font-bold text-slate-900 border-b pb-3">{examType.toUpperCase()}</h2>
+           
 
             {/** ------------  Long Questions -------------- */}
             {longTasks.length > 0 && (
@@ -128,7 +128,7 @@ export default function CourseExamList({ exams, refetch }: Props) {
       </Tabs>
 
       {/* Edit Dialog*/}
-      <Dialog open={editOpen} onOpenChange={setEditOpen} modal={false}>
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogTrigger />
         <DialogContent className="w-[85vw] max-w-none max-h-[95vh] overflow-y-auto p-6" onCloseAutoFocus={(e) => e.preventDefault()} onOpenAutoFocus={(e) => e.preventDefault()}>
           {editingTask && (
