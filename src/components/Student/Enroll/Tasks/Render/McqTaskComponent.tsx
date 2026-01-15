@@ -1,10 +1,10 @@
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type { LessonTaskType } from '@/types/task';
+import type { LessonTaskType, CourseExamType } from '@/types/task';
 import { cn } from '@/lib/utils';
 
 interface McqTaskComponentProps {
-  task: LessonTaskType;
+  task: LessonTaskType | CourseExamType;
   onAnswer: (taskId: number, value: any) => void;
   value?: string;
   readonly?: boolean;
@@ -13,12 +13,11 @@ interface McqTaskComponentProps {
 
 
 export default function McqTaskComponent({ task, onAnswer, value, readonly = false }: McqTaskComponentProps) {
-  console.log('answer is', value)
   return (
     <RadioGroup value={value?.toString()} onValueChange={(v) => !readonly && onAnswer(task.id, v)} className="grid gap-3">
       {task?.options?.map(
         (opt, index) => {
-          const selected = value?.toString() === opt.id.toString();value
+          const selected = value?.toString() === opt.id.toString();
           return (
             <Label
               key={opt.id}
@@ -26,7 +25,7 @@ export default function McqTaskComponent({ task, onAnswer, value, readonly = fal
               className={cn(
                 'flex items-center gap-4 rounded-xl border px-4 py-3 text-sm transition cursor-pointer',
                 'hover:bg-slate-50',
-                selected && 'border-primary bg-primary ring-1 ring-primary',
+                selected && 'border-primary bg-primary/15 hover:bg-primary/20 ring-1 ring-primary/50',
                 readonly && 'cursor-not-allowed opacity-70'
               )}
             >

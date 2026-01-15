@@ -1,8 +1,9 @@
 import { Card } from '@/components/ui/card';
 import type { CourseExamType } from '@/types/task';
 import type { StudentExamAnswersType } from '@/types/answer';
-import { CheckCircle, XCircle, TrendingUp, Award, AlertCircle } from 'lucide-react';
+import { CheckCircle, XCircle, TrendingUp, AlertCircle } from 'lucide-react';
 import { getPerformanceMessage } from '@/mocks/exam';
+import TaskRendererComponent from '../Student/Enroll/Tasks/Render/TaskRendererComponent';
 
 interface ExamResultProps {
   studentAnswers?: StudentExamAnswersType;
@@ -22,12 +23,28 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: React.Reac
   );
 }
 
-export default function ExamResult({ studentAnswers, courseExams, totalPossibleScore }: ExamResultProps) {
+export default function ExamAnswerResult({ studentAnswers, courseExams, totalPossibleScore }: ExamResultProps) {
   const totalScore = Object.values(studentAnswers || {}).reduce((sum, ans) => sum + ans.score, 0);
   const percentage = totalPossibleScore > 0 ? Math.round((totalScore / totalPossibleScore) * 100) : 0;
   const correctAnswers = Object.values(studentAnswers || {}).filter((ans) => ans.is_correct === 1).length;
   const totalQuestions = courseExams.length;
   const performanceMessage = getPerformanceMessage(percentage);
+
+  const getParsedAnswer = (taskId: number) => {
+    const record = studentAnswers?.[taskId];
+    if (!record) return undefined;
+    const raw = record.answer;
+
+    if (typeof raw === 'string') {
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return raw;
+      }
+    }
+
+    return raw;
+  };
 
   return (
     <div className="min-h-screen px-4">
@@ -80,10 +97,7 @@ export default function ExamResult({ studentAnswers, courseExams, totalPossibleS
 
                     {/* Answer Section */}
                     <div className="bg-white rounded-lg p-3 space-y-2 border border-slate-200">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-slate-600">Your Answer:</span>
-                        <span className={`font-medium text-sm ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>{answer?.answer || 'Not answered'}</span>
-                      </div>
+                      <TaskRendererComponent task={exam} value={getParsedAnswer(exam.id)} readonly={true} score={studentAnswers?.[exam.id]?.score} />
 
                       <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                         <div className="flex items-center gap-2">

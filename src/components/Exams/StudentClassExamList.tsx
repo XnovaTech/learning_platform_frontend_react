@@ -40,14 +40,14 @@ export default function StudentClassExamList({ exams, enrollId }: Props) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6  ">
         {exams.map((exam) => {
           const status = getExamStatus(exam.start_date, exam.end_date);
 
           return (
             <div
               key={exam.id}
-              className="relative h-full rounded-xl border border-gray-200 dark:border-slate-800 bg-gradient-to-br from-white to-gray-50   p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-primary"
+              className="relative h-full border border-primary/10    bg-primary/2 rounded-xl  overflow-hidden   p-5 shadow-sm transition-all duration-300 transform hover:shadow-lg hover:-translate-y-1 "
             >
               <span className={`absolute top-4 right-4 text-xs font-semibold px-3 py-1 rounded-full ${status.color}`}>{status.label}</span>
 

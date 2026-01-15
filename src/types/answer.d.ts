@@ -29,13 +29,14 @@ export interface StudentsLessonTaskRecordType {
   lesson_point: number;
 }
 
-export interface StudentExamAnswerDetail {
+export interface StudentAnswer {
   answer: string | number;
   is_correct: number | null;
   score: number;
 }
 
-export type StudentExamAnswersType = Record<number, StudentExamAnswerDetail>;
+export type StudentExamAnswersType = Record<number, StudentAnswer>;
+export type StudentLessonType = Record<number, StudentAnswer>;
 
 //student course exams
 export interface StudentExamSubmitPayload {

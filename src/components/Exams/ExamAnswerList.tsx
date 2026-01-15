@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { BookOpenCheck, Clock, Award, CheckCircle2, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save, SquareChartGantt } from 'lucide-react';
+import { BookOpenCheck, Clock, Award, CheckCircle2, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save } from 'lucide-react';
 import TaskRendererComponent from '@/components/Student/Enroll/Tasks/Render/TaskRendererComponent';
 import { TASK_TITLE } from '@/mocks/tasks';
 import type { TaskType, CourseExamType } from '@/types/task';
@@ -112,10 +112,7 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
                   Ends {formatDate(data?.end_date)}
                 </span>
 
-                <span className="flex items-center gap-1.5">
-                  <Award className="size-4 text-primary" />
-                  {totalPossibleScore} pts
-                </span>
+            
               </div>
             </div>
 
@@ -193,7 +190,7 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
 
                     {/* Answer Area */}
                     <div className="p-5 bg-white  ">
-                      <TaskRendererComponent task={exam as any} onAnswer={handleAnswer} value={answers[exam.id]} />
+                      <TaskRendererComponent task={exam} onAnswer={handleAnswer} value={answers[exam.id]} />
                     </div>
                   </CardContent>
                 </Card>

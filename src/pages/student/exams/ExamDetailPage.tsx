@@ -1,15 +1,15 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getClassExamDetails } from '@/services/classExamService';
-import { Card } from '@/components/ui/card';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Spinner } from '@/components/ui/spinner';
 import { Home, BookOpen, Users, BookOpenCheck } from 'lucide-react';
 import type { ClassRoomExamType } from '@/types/classexam';
 import { useState } from 'react';
-import ExamResult from '@/components/Exams/ExamResult';
+import ExamAnswerResult from '@/components/Exams/ExamAnswerResult';
 import ExamAnswerList from '@/components/Exams/ExamAnswerList';
 import { getStudentCourseExamDetail } from '@/services/studentCourseExamService';
+import type { CourseExamType, TaskType } from '@/types/task';
 
 export default function ExamDetailPage() {
   const [answers, setAnswers] = useState({});
@@ -35,7 +35,7 @@ export default function ExamDetailPage() {
     if (!acc[section]) acc[section] = [];
     acc[section].push(exam);
     return acc;
-  }, {} as Record<string, typeof courseExams>);
+  }, {} as Record<TaskType, CourseExamType[]>);
 
   const handleAnswer = (taskId: number, value: any) => {
     setAnswers((prev) => ({ ...prev, [taskId]: value }));
@@ -91,30 +91,26 @@ export default function ExamDetailPage() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      {isLoading ? (
-        <Card className="border-0 shadow-xl bg-white/80 backdrop-blur h-[60vh] p-6">
+      <div className="bg-white/50 backdrop-blur-lg p-4 md:p-6 rounded-2xl shadow-xl space-y-6">
+        {isLoading ? (
           <div className="flex items-center m-auto justify-center py-14">
             <Spinner className="text-primary size-7 md:size-8" />
           </div>
-        </Card>
-      ) : (
-        <div className="bg-white/50 backdrop-blur-lg p-4 md:p-6 rounded-2xl shadow-xl space-y-6">
-          {hasSubmittedAnswers ? (
-            <ExamResult studentAnswers={studentAnswers} courseExams={courseExams} totalPossibleScore={totalPossibleScore} />
-          ) : (
-            <ExamAnswerList
-              groupExams={groupExams}
-              answers={answers}
-              handleAnswer={handleAnswer}
-              enrollId={enrollId}
-              data={data}
-              totalQuestions={totalQuestions}
-              totalPossibleScore={totalPossibleScore}
-              refetch={refetch}
-            />
-          )}
-        </div>
-      )}
+        ) : hasSubmittedAnswers ? (
+          <ExamAnswerResult studentAnswers={studentAnswers} courseExams={courseExams} totalPossibleScore={totalPossibleScore} />
+        ) : (
+          <ExamAnswerList
+            groupExams={groupExams}
+            answers={answers}
+            handleAnswer={handleAnswer}
+            enrollId={enrollId}
+            data={data}
+            totalQuestions={totalQuestions}
+            totalPossibleScore={totalPossibleScore}
+            refetch={refetch}
+          />
+        )}
+      </div>
     </div>
   );
 }

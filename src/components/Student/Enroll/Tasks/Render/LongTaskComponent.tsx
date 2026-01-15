@@ -2,11 +2,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { LessonTaskType, LongAnswerExtraData } from '@/types/task';
+import type { CourseExamType, LessonTaskType, LongAnswerExtraData } from '@/types/task';
 import { useEffect, useState } from 'react';
 
 interface LongTaskComponentProps {
-  task: LessonTaskType;
+  task: LessonTaskType | CourseExamType;
   onAnswer: (taskId: number, value: any) => void;
   value?: string;
   readonly?: boolean;
@@ -33,7 +33,6 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
   return (
     <div className="space-y-3">
       <div className="space-y-2">
-        <Label className="text-sm font-medium text-slate-700">Student Answer:</Label>
 
         <Textarea
           className={`min-h-40 resize-y ${readonly ? 'bg-slate-100 text-slate-600' : ''}`}
