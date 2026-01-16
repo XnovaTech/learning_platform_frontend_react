@@ -61,14 +61,14 @@ export default function CourseDetailPage() {
       type: 'Midterm',
       icon: Clock,
       description: 'Mid-course assessment to evaluate student progress',
-      color: 'bg-cyan-50 border-cyan-100 hover:bg-cyan-100 text-blue-700'
+      color: 'bg-cyan-50 border-cyan-100 hover:bg-cyan-100 text-blue-700',
     },
     {
       type: 'Final',
       icon: Trophy,
       description: 'Comprehensive end-of-course examination',
-      color: 'bg-amber-50 border-amber-100 hover:bg-amber-100 text-amber-700'
-    }
+      color: 'bg-amber-50 border-amber-100 hover:bg-amber-100 text-amber-700',
+    },
   ];
 
   const deleteMutation = useMutation({
@@ -171,7 +171,7 @@ export default function CourseDetailPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md gap-2 text-primary">
+            <BreadcrumbPage className="text-base md:text-md gap-2">
               <Book className="size-4" />
               {course?.title ?? 'Detail'}
             </BreadcrumbPage>
@@ -273,34 +273,21 @@ export default function CourseDetailPage() {
               </TabsContent>
 
               <TabsContent value="exams" className="p-6 space-y-6 mt-0">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h3 className="text-xl font-semibold text-foreground">Course Exams</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Manage course exams</p>
-                  </div>
-                  <Button type="button" className="gap-2 shadow-sm w-full sm:w-auto" asChild>
-                    <Link to={`/teacher/courses/exam/${courseId}`}>
-                      <Plus className="size-4" /> Create Exam
-                    </Link>
-                  </Button>
-                  </div>
+                <h3 className="text-xl font-semibold text-foreground">Course Exams</h3>
 
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {
-                      examTypeData.map((item) => (
-                        <Link key={item.type} to={`/teacher/courses/exam/${courseId}/${item.type}`}>
-                          <Card className={`transition-all duration-300 cursor-pointer ${item.color} border-2 h-48 p-6 hover:shadow-sm hover:scale-105`}>
-                            <CardContent className="flex flex-col items-center text-center space-y-4">
-                              <item.icon className="size-12" />
-                              <CardTitle className="text-xl font-bold">{item.type}</CardTitle>
-                              <p className="text-sm opacity-80">{item.description}</p>
-                            </CardContent>
-                          </Card>
-                        </Link>
-                      ))
-                    }
-                  </div>
-                 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {examTypeData.map((item) => (
+                    <Link key={item.type} to={`/teacher/courses/exam/${courseId}/${item.type}`}>
+                      <Card className={`transition-all duration-300 cursor-pointer ${item.color} border-2 h-48 p-6 hover:shadow-sm hover:scale-105`}>
+                        <CardContent className="flex flex-col items-center text-center space-y-4">
+                          <item.icon className="size-12" />
+                          <CardTitle className="text-xl font-bold">{item.type}</CardTitle>
+                          <p className="text-sm opacity-80">{item.description}</p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
               </TabsContent>
             </Tabs>
           </Card>

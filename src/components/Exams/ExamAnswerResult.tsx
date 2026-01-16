@@ -2,8 +2,8 @@ import { Card } from '@/components/ui/card';
 import type { CourseExamType } from '@/types/task';
 import type { StudentExamAnswersType } from '@/types/answer';
 import { CheckCircle, XCircle, TrendingUp, AlertCircle } from 'lucide-react';
-import { getPerformanceMessage } from '@/mocks/exam';
 import TaskRendererComponent from '../Student/Enroll/Tasks/Render/TaskRendererComponent';
+import { getPerformanceMessage } from '@/mocks/tasks';
 
 interface ExamResultProps {
   studentAnswers?: StudentExamAnswersType;

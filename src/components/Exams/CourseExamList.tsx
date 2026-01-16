@@ -18,9 +18,10 @@ import ExamParagraphRender from '../Teacher/ExamRender/ExamParagraphRender';
 type Props = {
   exams: CourseExamType[];
   refetch: () => void;
+  examType: string;
 };
 
-export default function CourseExamList({ exams, refetch }: Props) {
+export default function CourseExamList({ exams, refetch, examType }: Props) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [editingTask, setEditingTask] = useState<CourseExamType | null>(null);
@@ -62,69 +63,57 @@ export default function CourseExamList({ exams, refetch }: Props) {
   return (
     <div className="space-y-8">
       <Tabs defaultValue={Object.keys(examsByExamType)[0]} className="w-full">
-        <TabsList className="rounded-2xl bg-white shadow h-11 mb-4">
-          {Object.keys(examsByExamType).map((examType) => (
-            <TabsTrigger key={examType} value={examType} className="gap-2 rounded-xl px-6 transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              {examType.toUpperCase()}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      
-      {Object.entries(examsByExamType).map(([examType, examList]) => {
-        const mcqTasks = examList.filter((exam) => exam.task_type === 'mcq');
-        const tfTasks = examList.filter((exam) => exam.task_type === 'true_false');
-        const shortTasks = examList.filter((exam) => exam.task_type === 'short');
-        const longTasks = examList.filter((exam) => exam.task_type === 'long');
-        const blankTasks = examList.filter((exam) => exam.task_type === 'fill_blank');
-        const matchingTasks = examList.filter((exam) => exam.task_type === 'matching');
-        const dragTasks = examList.filter((exam) => exam.task_type === 'drag_drop');
-        const paragraphDragTasks = examList.filter((exam) => exam.task_type === 'paragraph_drag');
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-xl font-semibold text-foreground">{examType} Exam Questions</h3>
+            <p className="text-sm text-muted-foreground mt-1">Manage {examType.toLowerCase()} exam questions </p>
+          </div>
+          <TabsList className="rounded-2xl bg-white shadow h-10">
+            {Object.keys(examsByExamType).map((examTypeKey) => (
+              <TabsTrigger key={examTypeKey} value={examTypeKey} className="gap-2 rounded-xl px-5 transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                {examTypeKey.toUpperCase()}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
-        return (
-          <TabsContent key={examType} value={examType} className="space-y-8">
-           
+        {Object.entries(examsByExamType).map(([examType, examList]) => {
+          const mcqTasks = examList.filter((exam) => exam.task_type === 'mcq');
+          const tfTasks = examList.filter((exam) => exam.task_type === 'true_false');
+          const shortTasks = examList.filter((exam) => exam.task_type === 'short');
+          const longTasks = examList.filter((exam) => exam.task_type === 'long');
+          const blankTasks = examList.filter((exam) => exam.task_type === 'fill_blank');
+          const matchingTasks = examList.filter((exam) => exam.task_type === 'matching');
+          const dragTasks = examList.filter((exam) => exam.task_type === 'drag_drop');
+          const paragraphDragTasks = examList.filter((exam) => exam.task_type === 'paragraph_drag');
 
-            {/** ------------  Long Questions -------------- */}
-            {longTasks.length > 0 && (
-              <ExamLongRender type="Long Questions" tasks={longTasks} onEdit={openEditDialog} onDelete={askDelete} />
-            )}
+          return (
+            <TabsContent key={examType} value={examType} className="space-y-8">
+              {/** ------------  Long Questions -------------- */}
+              {longTasks.length > 0 && <ExamLongRender type="Long Questions" tasks={longTasks} onEdit={openEditDialog} onDelete={askDelete} />}
 
-            {/* ---------------- SHORT QUESTIONS ---------------- */}
-            {shortTasks.length > 0 && (
-              <ExamShortRender type="Short Questions" tasks={shortTasks} onEdit={openEditDialog} onDelete={askDelete} />
-            )}
+              {/* ---------------- SHORT QUESTIONS ---------------- */}
+              {shortTasks.length > 0 && <ExamShortRender type="Short Questions" tasks={shortTasks} onEdit={openEditDialog} onDelete={askDelete} />}
 
-            {/** -------------  Fill in The Questions ------------- */}
-            {blankTasks.length > 0 && (
-              <ExamShortRender type="Fill in the Blanks Questions" tasks={blankTasks} onEdit={openEditDialog} onDelete={askDelete} />
-            )}
+              {/** -------------  Fill in The Questions ------------- */}
+              {blankTasks.length > 0 && <ExamShortRender type="Fill in the Blanks Questions" tasks={blankTasks} onEdit={openEditDialog} onDelete={askDelete} />}
 
-            {/* ---------------- MCQ ---------------- */}
-            {mcqTasks.length > 0 && (
-              <ExamMCQRender type="Multiple Choice Questions" tasks={mcqTasks} onEdit={openEditDialog} onDelete={askDelete} />
-            )}
+              {/* ---------------- MCQ ---------------- */}
+              {mcqTasks.length > 0 && <ExamMCQRender type="Multiple Choice Questions" tasks={mcqTasks} onEdit={openEditDialog} onDelete={askDelete} />}
 
-            {/* ---------------- TRUE / FALSE ---------------- */}
-            {tfTasks.length > 0 && (
-              <ExamMCQRender type="True / False Questions" tasks={tfTasks} onEdit={openEditDialog} onDelete={askDelete} />
-            )}
+              {/* ---------------- TRUE / FALSE ---------------- */}
+              {tfTasks.length > 0 && <ExamMCQRender type="True / False Questions" tasks={tfTasks} onEdit={openEditDialog} onDelete={askDelete} />}
 
-            {/* ---------------- DRAG & DROP QUESTIONS ---------------- */}
-            {dragTasks.length > 0 && (
-              <ExamDragDropRender type="Drag & Drop Questions" tasks={dragTasks} onEdit={openEditDialog} onDelete={askDelete} />
-            )}
+              {/* ---------------- DRAG & DROP QUESTIONS ---------------- */}
+              {dragTasks.length > 0 && <ExamDragDropRender type="Drag & Drop Questions" tasks={dragTasks} onEdit={openEditDialog} onDelete={askDelete} />}
 
-            {/* ---------------- MATCHING QUESTIONS ---------------- */}
-            {matchingTasks.length > 0 && (
-              <ExamMatchingRender type="Matching Questions" tasks={matchingTasks} onEdit={openEditDialog} onDelete={askDelete} />
-            )}
-            {/* ---------------- PARAGRAPH DRAG ---------------- */}
-            {paragraphDragTasks.length > 0 && (
-              <ExamParagraphRender type="Paragraph (Dropdown Blanks)" tasks={paragraphDragTasks} onEdit={openEditDialog} onDelete={askDelete} />
-            )}
-          </TabsContent>
-        );
-      })}
+              {/* ---------------- MATCHING QUESTIONS ---------------- */}
+              {matchingTasks.length > 0 && <ExamMatchingRender type="Matching Questions" tasks={matchingTasks} onEdit={openEditDialog} onDelete={askDelete} />}
+              {/* ---------------- PARAGRAPH DRAG ---------------- */}
+              {paragraphDragTasks.length > 0 && <ExamParagraphRender type="Paragraph (Dropdown Blanks)" tasks={paragraphDragTasks} onEdit={openEditDialog} onDelete={askDelete} />}
+            </TabsContent>
+          );
+        })}
       </Tabs>
 
       {/* Edit Dialog*/}

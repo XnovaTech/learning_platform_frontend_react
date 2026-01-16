@@ -41,14 +41,13 @@ export default function ShortTaskComponent({ task, onAnswer, value = '', readonl
         className={readonly ? 'bg-slate-100 text-slate-600' : ''}
       />
 
-
       {readonly && onScoreChange && (
-        <div className="pt-3 border-t space-y-2">
-          <Label className="text-sm font-medium text-slate-700">Score</Label>
-          <Input value={localScore} onChange={(e) => setLocalScore(Number(e.target.value))} className="w-28" />
-          <Button className="px-4 py-2 bg-primary text-white rounded-lg mx-2 hover:bg-primary/90" onClick={() => onScoreChange(task.id, localScore)}>
-            Submit
-          </Button>
+        <div className="space-y-2 flex  items-center gap-3">
+          <Label className="text-base font-medium text-slate-700 mt-2">Score:</Label>
+          <div className="flex items-center gap-2">
+            <Input  type="number"  max={task.points || 100} value={localScore} onChange={(e) => setLocalScore(Number(e.target.value))} className="w-30" />
+            <Button className='rounded-lg' onClick={() => onScoreChange(task.id, localScore)}>Update Score</Button>
+          </div>
         </div>
       )}
     </div>

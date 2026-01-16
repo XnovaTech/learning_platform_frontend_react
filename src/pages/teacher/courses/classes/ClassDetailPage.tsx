@@ -31,8 +31,6 @@ export default function ClassDetailPage() {
     enabled: !Number.isNaN(classId),
   });
 
-
-
   const deleteConversationMutation = useMutation({
     mutationFn: (id: number) => deleteClassConversations(id),
     onSuccess: async (_, classId) => {
@@ -57,7 +55,6 @@ export default function ClassDetailPage() {
     downloadMutation.mutate();
   };
 
- 
   return (
     <div className="max-w-9xl p-4 mx-auto space-y-6">
       {/* Breadcrumbs */}
@@ -234,7 +231,7 @@ export default function ClassDetailPage() {
 
             {/* Lesssons */}
             <TabsContent value="lessons" className="py-4 space-y-6 mt-0">
-              <LessonsComponent lessons={classroom?.lessons} isTeacher={1} classroomId={classroom?.id} />
+              <LessonsComponent lessons={classroom?.lessons} isTeacher={1} classroomId={classroom?.id} courseId={Number(classroom?.course?.id)} />
             </TabsContent>
 
             {/* Class Mates  */}

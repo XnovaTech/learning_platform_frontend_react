@@ -52,7 +52,7 @@ export default function TeacherClassExamsList({ exams, classId }: ClassExamsTabl
           Exams
         </h2>
 
-        <Button type="button" size="sm" className="gap-2  shadow-sm w-full sm:w-auto"  onClick={openCreateExam}>
+        <Button type="button" size="sm" className="gap-2  shadow-sm w-full sm:w-auto" onClick={openCreateExam}>
           <Plus className="size-4" /> Create Exam
         </Button>
       </div>

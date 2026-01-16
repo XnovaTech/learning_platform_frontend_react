@@ -2,28 +2,28 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { getPerformanceLabel, getScoreBarColor, getScoreColor } from '@/mocks/tasks';
-import { listStudentsLessonTaskRecords } from '@/services/studentLessonTaskService';
+import { listStudentCourseExamRecords } from '@/services/studentCourseExamService';
 import { getClass } from '@/services/classService';
 import { useQuery } from '@tanstack/react-query';
 import { BookOpen, ChevronRight, Book, Users } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 
-export default function LessonTaskRecords() {
-  const { lessonId, classId } = useParams();
-  const lessonID = Number(lessonId);
+export default function StudentsExamRecords() {
+  const { classId, enrollId } = useParams();
   const classRoomID = Number(classId);
-
-  const { data: records, isLoading } = useQuery({
-    queryKey: ['lesson-task-records', classRoomID, lessonID],
-    queryFn: () => listStudentsLessonTaskRecords(classRoomID, lessonID),
-    enabled: !!lessonID && !!classRoomID,
-  });
+  const enrollmentID = Number(enrollId);
 
   const { data: classroom } = useQuery({
     queryKey: ['classes', classRoomID],
     queryFn: () => getClass(classRoomID),
     enabled: !!classRoomID,
+  });
+
+  const { data: records, isLoading } = useQuery({
+    queryKey: ['student-exam-records', classroom?.course?.id, enrollmentID],
+    queryFn: () => listStudentCourseExamRecords(classroom!.course!.id, enrollmentID),
+    enabled: !!enrollmentID && !!classroom?.course?.id,
   });
 
   return (
@@ -60,14 +60,14 @@ export default function LessonTaskRecords() {
           <BreadcrumbItem>
             <BreadcrumbPage className="text-base md:text-md gap-2">
               <BookOpen className="size-4" />
-              Lesson Task Records
+              Student Exam Records
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
       <Card className="shadow p-5 bg-white/40 border-0 backdrop-blur overflow-hidden">
-        <h1 className="text-2xl font-semibold  tracking-tight bg-gradient-to-r mb-0 from-slate-900 to-slate-700 bg-clip-text text-transparent">Lesson Task Records</h1>
+        <h1 className="text-2xl font-semibold  tracking-tight bg-gradient-to-r mb-0 from-slate-900 to-slate-700 bg-clip-text text-transparent">Student Exam Records</h1>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
@@ -76,10 +76,10 @@ export default function LessonTaskRecords() {
         ) : records && records.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {records.map((record, index) => {
-              const percentage = record.lesson_point === 0 ? 0 : Math.round((record.total_points / record.lesson_point) * 100);
+              const percentage = record.exam_total_points === 0 ? 0 : Math.round((record.total_points / record.exam_total_points) * 100);
 
               return (
-                <Card key={record.enroll_id} className="group rounded-2xl border-0 shadow bg-white/80  backdrop-blur hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                <Card key={index} className="group rounded-2xl border-0 shadow bg-white/80  backdrop-blur hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                   <CardContent className="px-4 md:px-5 py-2">
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-2">
@@ -89,8 +89,8 @@ export default function LessonTaskRecords() {
                             <h3 className="text-sm capitalize sm:text-base font-semibold text-slate-900 truncate">
                               {record.first_name} {record.last_name}
                             </h3>
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border mt-0.5 ${getScoreColor(record.total_points, record.lesson_point)}`}>
-                              {getPerformanceLabel(record.total_points, record.lesson_point)}
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border mt-0.5 ${getScoreColor(record.total_points, record.exam_total_points)}`}>
+                              {getPerformanceLabel(record.total_points, record.exam_total_points)}
                             </span>
                           </div>
                         </div>
@@ -98,7 +98,7 @@ export default function LessonTaskRecords() {
                         <div className="text-right shrink-0">
                           <div className="text-lg sm:text-xl font-bold text-slate-900">
                             {record.total_points}
-                            <span className="text-xs text-slate-400 font-normal"> / {record.lesson_point}</span>
+                            <span className="text-xs text-slate-400 font-normal"> / {record.exam_total_points}</span>
                           </div>
                           <div className="text-xs font-semibold text-slate-600">{percentage}%</div>
                         </div>
@@ -106,11 +106,11 @@ export default function LessonTaskRecords() {
 
                       {/* Progress  */}
                       <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                        <div className={`h-full rounded-full transition-all duration-500 ${getScoreBarColor(record.total_points, record.lesson_point)}`} style={{ width: `${percentage}%` }} />
+                        <div className={`h-full rounded-full transition-all duration-500 ${getScoreBarColor(record.total_points, record.exam_total_points)}`} style={{ width: `${percentage}%` }} />
                       </div>
 
                       {/* Detail */}
-                      <Link to={`/teacher/courses/classes/${record.enroll_id}/lesson/${lessonID}/records/detail`}>
+                      <Link to={`/teacher/courses/classes/${record.enroll_id}/exam/detail`}>
                         <Button className="w-full text-center mx-auto  transition group/btn h-9">
                           <span className="font-medium text-xs sm:text-sm">View Details</span>
                           <ChevronRight className="size-3.5 group-hover/btn:translate-x-1 transition-transform" />
@@ -127,8 +127,8 @@ export default function LessonTaskRecords() {
             <div className="rounded-full bg-primary/90 p-4 mb-4">
               <BookOpen className="size-8 text-white" />
             </div>
-            <h4 className="text-lg font-semibold">No Lessons Task Records yet </h4>
-            <p className="text-sm sm:text-base text-slate-600 text-center max-w-md mb-5 sm:mb-6">Students haven't taken the lesson tasks yet.</p>
+            <h4 className="text-lg font-semibold">No Exam Records yet </h4>
+            <p className="text-sm sm:text-base text-slate-600 text-center max-w-md mb-5 sm:mb-6">Students haven't taken the exams yet.</p>
           </div>
         )}
       </Card>

@@ -47,7 +47,7 @@ export default function StudentClassExamList({ exams, enrollId }: Props) {
           return (
             <div
               key={exam.id}
-              className="relative h-full border border-primary/10    bg-primary/2 rounded-xl  overflow-hidden   p-5 shadow-sm transition-all duration-300 transform hover:shadow-lg hover:-translate-y-1 "
+              className="relative h-full border     bg-white hover:border-primary/30 hover:shadow-md overflow-hidden   p-5 shadow-sm transition-all duration-300 transform rounded-2xl hover:-translate-y-1 "
             >
               <span className={`absolute top-4 right-4 text-xs font-semibold px-3 py-1 rounded-full ${status.color}`}>{status.label}</span>
 

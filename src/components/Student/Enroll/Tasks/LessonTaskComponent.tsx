@@ -26,7 +26,7 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ['studentRecord', enrollId],
+    queryKey: ['studentRecord', enrollId, lessonId],
     queryFn: () => getStudentLessonRecordDetail(Number(enrollId), Number(lessonId)),
     enabled: !!lessonId && !!enrollId,
   });
@@ -45,15 +45,16 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
   const totalPossibleScore = tasks?.reduce((sum, task) => sum + (task.points || 0), 0) || 0;
   const totalQuestions = tasks?.length || 0;
 
-
   return (
     <div className="bg-white/50 backdrop-blur-lg p-4 md:p-6 rounded-2xl shadow-xl space-y-5">
       {isLoading ? (
-          <div className="flex items-center m-auto justify-center py-14">
-            <Spinner className="text-primary size-7 md:size-8" />
-          </div>
+        <div className="flex items-center m-auto justify-center py-14">
+          <Spinner className="text-primary size-7 md:size-8" />
+        </div>
       ) : hasSubmittedAnswers ? (
-        <LessonAnswerResult studentAnswers={studentAnswers} tasks={tasks || []} totalPossibleScore={totalPossibleScore} enrollId={enrollId!} lessonId={lessonId!} refetch={refetch} />
+        <div className="px-4">
+          <LessonAnswerResult studentAnswers={studentAnswers} tasks={tasks || []} totalPossibleScore={totalPossibleScore} enrollId={enrollId!} lessonId={lessonId!} refetch={refetch} />
+        </div>
       ) : (
         <LessonAnswerList
           groupTasks={groupTasks || {}}
