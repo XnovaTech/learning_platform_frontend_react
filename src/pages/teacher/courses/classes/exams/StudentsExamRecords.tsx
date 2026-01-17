@@ -5,14 +5,15 @@ import { getPerformanceLabel, getScoreBarColor, getScoreColor } from '@/mocks/ta
 import { listStudentCourseExamRecords } from '@/services/studentCourseExamService';
 import { getClass } from '@/services/classService';
 import { useQuery } from '@tanstack/react-query';
-import { BookOpen, ChevronRight, Book, Users } from 'lucide-react';
+import { BookOpen, ChevronRight, Book, School } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 
 export default function StudentsExamRecords() {
-  const { classId, enrollId } = useParams();
+  const { classId, courseId, examId } = useParams();
   const classRoomID = Number(classId);
-  const enrollmentID = Number(enrollId);
+  const courseID = Number(courseId);
+  const examID = Number(examId);
 
   const { data: classroom } = useQuery({
     queryKey: ['classes', classRoomID],
@@ -21,9 +22,9 @@ export default function StudentsExamRecords() {
   });
 
   const { data: records, isLoading } = useQuery({
-    queryKey: ['student-exam-records', classroom?.course?.id, enrollmentID],
-    queryFn: () => listStudentCourseExamRecords(classroom!.course!.id, enrollmentID),
-    enabled: !!enrollmentID && !!classroom?.course?.id,
+    queryKey: ['student-exam-records', courseID, classRoomID],
+    queryFn: () => listStudentCourseExamRecords(courseID, classRoomID),
+    enabled: !!courseID && !!classRoomID,
   });
 
   return (
@@ -51,7 +52,7 @@ export default function StudentsExamRecords() {
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link className="text-base md:text-md gap-2" to={`/teacher/courses/classes/${classRoomID}`}>
-                <Users className="size-4" />
+                <School className="size-4" />
                 {classroom?.class_name || 'Class'}
               </Link>
             </BreadcrumbLink>
@@ -110,7 +111,7 @@ export default function StudentsExamRecords() {
                       </div>
 
                       {/* Detail */}
-                      <Link to={`/teacher/courses/classes/${record.enroll_id}/exam/detail`}>
+                      <Link to={`/teacher/courses/classes/${record.enroll_id}/exams/${examID}/records/detail`}>
                         <Button className="w-full text-center mx-auto  transition group/btn h-9">
                           <span className="font-medium text-xs sm:text-sm">View Details</span>
                           <ChevronRight className="size-3.5 group-hover/btn:translate-x-1 transition-transform" />

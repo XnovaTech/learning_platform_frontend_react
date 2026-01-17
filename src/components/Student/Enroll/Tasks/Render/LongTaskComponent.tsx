@@ -24,7 +24,7 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
   }, [score]);
 
   useEffect(() => {
-    setText(value || '');
+    setText(String(value || ''));
   }, [value]);
 
   const wordCount = text.trim().split(/\s+/).filter(Boolean).length;

@@ -13,7 +13,7 @@ import { ZoomRoomComponent } from '@/components/Student/Enroll/ZoomRoomComponent
 import { useStudentData } from '@/context/StudentDataContext';
 import { useParams, Link } from 'react-router-dom';
 import CourseCard from '@/components/Card/CourseCard';
-import StudentClassExamList from '@/components/Exams/StudentClassExamList';
+import ExamCard from '@/components/Card/ExamCard';
 
 export default function EnrollDetailPage() {
   const { enrollId } = useParams();
@@ -117,7 +117,7 @@ export default function EnrollDetailPage() {
             </TabsContent>
 
             <TabsContent value="exams" className="mt-3 w-full">
-              <StudentClassExamList exams={enroll?.class_room?.exams || []} enrollId={enroll?.id} />
+              <ExamCard exams={enroll?.class_room.exams || []} enrollId={enroll?.id} />
             </TabsContent>
           </Tabs>
         </div>

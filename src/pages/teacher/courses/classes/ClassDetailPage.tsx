@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { downloadCertificates } from '@/services/userCertificateService';
 import { displayTime } from '@/utils/format';
-import TeacherClassExamsList from '@/components/Exams/TeacherClassExamsList';
+import ExamCard from '@/components/Card/ExamCard';
 
 export default function ClassDetailPage() {
   const { id } = useParams();
@@ -252,7 +252,7 @@ export default function ClassDetailPage() {
             {/* Exam   */}
             {classroom?.has_course_exams && (
               <TabsContent value="exams" className="py-4 space-y-6 mt-0">
-                <TeacherClassExamsList exams={classroom?.exams || []} classId={classId} />
+                <ExamCard exams={classroom?.exams || []} classId={classId} courseId={classroom?.course?.id} isTeacher={true} />
               </TabsContent>
             )}
           </Tabs>

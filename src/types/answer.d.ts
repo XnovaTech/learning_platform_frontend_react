@@ -48,6 +48,7 @@ export interface StudentExamSubmitPayload {
 
 export interface StudentExamMarkUpdatePayload {
   enroll_id: number;
+  exam_id: number;
   score: number;
 }
 
