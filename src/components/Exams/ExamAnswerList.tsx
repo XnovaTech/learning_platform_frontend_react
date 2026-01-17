@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { BookOpenCheck, Clock, Award, CheckCircle2, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save } from 'lucide-react';
+import { BookOpenCheck, Clock, CheckCircle2, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save } from 'lucide-react';
 import TaskRendererComponent from '@/components/Student/Enroll/Tasks/Render/TaskRendererComponent';
 import { TASK_TITLE } from '@/mocks/tasks';
 import type { TaskType, CourseExamType } from '@/types/task';
@@ -212,7 +212,7 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
                   Save Draft
                 </Button>
 
-                <Button className="  rounded-lg py-5" onClick={() => submitMutation.mutate({ enroll_id: Number(enrollId), answers })} disabled={submitMutation.isPending}>
+                <Button className="  rounded-lg py-5" onClick={() => submitMutation.mutate({ enroll_id: Number(enrollId), exam_type: data?.exam_type, answers })} disabled={submitMutation.isPending}>
                   {submitMutation.isPending ? (
                     'Submitting'
                   ) : (

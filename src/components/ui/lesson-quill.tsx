@@ -32,11 +32,11 @@ export function LessonQuill({ setForm, form, uploadFn }: QuillHelperProps) {
 
       const range = editor?.getSelection();
 
-      console.log('response data is', res.url);
+      // console.log('response data is', res.url);
       editor.insertEmbed(range.index, 'image', res.url);
       editor.setSelection(range.index + 1);
 
-      console.log('data is', editor.root.innerHTML);
+      // console.log('data is', editor.root.innerHTML);
     };
   };
 

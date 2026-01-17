@@ -1,5 +1,14 @@
-import type { StudentExamSubmitPayload, StudentExamMarkUpdatePayload, StudentCourseExamTaskRecordType, StudentExamAnswersType } from "@/types/answer";
+import type { StudentExamSubmitPayload, StudentExamMarkUpdatePayload, StudentCourseExamTaskRecordType, StudentExamAnswersType, UpcomingExamForStudentType } from "@/types/answer";
 import api from "./api";
+
+export const getUpcomingExamForStudent = async (studentId: number): Promise <UpcomingExamForStudentType[]> => {
+   try {
+        const {data} = await api.get(`/v1/student/upcoming/exams/${studentId}`);
+        return data?.data;
+    } catch (error: any){
+        throw new Error(error.response.data.message || error.message);
+    } 
+}
 
 export const listStudentCourseExamRecords = async (courseId: number, enrollId: number): Promise<StudentCourseExamTaskRecordType[]> => {
     try {
@@ -10,9 +19,9 @@ export const listStudentCourseExamRecords = async (courseId: number, enrollId: n
     }
 }
 
-export const getStudentCourseExamDetail = async (enrollId: number) : Promise<StudentExamAnswersType> => {
+export const getStudentCourseExamDetail = async (enrollId: number, examType: string) : Promise<StudentExamAnswersType> => {
     try {
-        const {data} = await api.get(`/v1/student/exam/answers/detail/${enrollId}`);
+        const {data} = await api.get(`/v1/student/exam/answers/detail/${enrollId}/${examType}`);
         return data?.data;
     } catch (error: any){
         throw new Error(error.response.data.message || error.message);

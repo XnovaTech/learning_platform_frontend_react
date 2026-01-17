@@ -21,13 +21,15 @@ export default function ExamDetailPage() {
     enabled: !!examId,
   });
 
+  const examType = data?.exam_type;
+
   const { data: studentAnswers, refetch } = useQuery({
-    queryKey: ['studentRecord', enrollId],
-    queryFn: () => getStudentCourseExamDetail(Number(enrollId)),
-    enabled: !!enrollId,
+    queryKey: ['studentRecord', enrollId, examType],
+    queryFn: () => getStudentCourseExamDetail(Number(enrollId), examType!),
+    enabled: !!enrollId && !!examType,
   });
 
-  const courseExams = data?.class_room?.course?.exams || [];
+  const courseExams = data?.exams || [];
 
   // group exams by section
   const groupExams = courseExams?.reduce((acc: Record<string, typeof courseExams>, exam) => {
@@ -44,6 +46,7 @@ export default function ExamDetailPage() {
   const hasSubmittedAnswers = studentAnswers && Object.keys(studentAnswers).length > 0;
   const totalPossibleScore = courseExams.reduce((sum, exam) => sum + (exam.points || 0), 0) || 0;
   const totalQuestions = courseExams.length;
+
 
   return (
     <div className="">
@@ -73,7 +76,7 @@ export default function ExamDetailPage() {
 
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base gap-2" to={`/student/enrolls/${data?.class_room?.id}`}>
+              <Link className="text-base gap-2" to={`/student/enrolls/${enrollId}`}>
                 <Users className="size-4" />
                 {data?.class_room?.class_name || 'ClassRoom'}
               </Link>

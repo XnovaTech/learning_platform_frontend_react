@@ -8,6 +8,7 @@ export interface ClassRoomExamType {
   start_date: string | null;
   end_date: string | null;
   class_room?: ClassRoomType;
+  exams?:CourseExamType[];
 }
 
 export interface ClassRoomExamPayloadType {
