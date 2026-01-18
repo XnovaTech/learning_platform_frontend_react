@@ -122,6 +122,7 @@ export default function ExamAnswerResult({ studentAnswers, courseExams, totalPos
                         readonly={true}
                         score={studentAnswers?.[exam.id]?.score}
                         onScoreChange={isTeacher ? onScoreChange : undefined}
+                        isTeacher={isTeacher}
                       />
 
                       <div className="flex items-center justify-between pt-2 border-t border-slate-100">

@@ -2,15 +2,7 @@ import { useState, useCallback } from 'react';
 import pdfjsLib from '@/utils/pdfjs';
 import type { Annotation, ToolType } from '@/types/pdf';
 import { TOOLS } from '@/mocks/toolbar';
-import {
-  DEFAULT_SCALE,
-  MIN_SCALE,
-  MAX_SCALE,
-  SCALE_STEP,
-  DEFAULT_COLOR,
-  DEFAULT_STROKE_WIDTH,
-  DEFAULT_FONT_SIZE,
-} from '@/mocks/toolbar';
+import { DEFAULT_SCALE, MIN_SCALE, MAX_SCALE, SCALE_STEP, DEFAULT_COLOR, DEFAULT_STROKE_WIDTH, DEFAULT_FONT_SIZE } from '@/mocks/toolbar';
 
 export function usePdfEditor() {
   const [pdfDoc, setPdfDoc] = useState<any>(null);
@@ -27,7 +19,7 @@ export function usePdfEditor() {
 
   const loadPdf = useCallback(async (url: string) => {
     try {
-      const pdf = await pdfjsLib.getDocument(url).promise;
+      const pdf = await pdfjsLib.getDocument({ url: url, withCredentials: true }).promise;
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
     } catch (error) {
@@ -45,7 +37,7 @@ export function usePdfEditor() {
       setHistory(newHistory);
       setHistoryIndex(newHistory.length - 1);
     },
-    [annotations, history, historyIndex]
+    [annotations, history, historyIndex],
   );
 
   const updateAnnotations = useCallback((newAnnotations: Annotation[]) => {
@@ -91,7 +83,7 @@ export function usePdfEditor() {
   }, [totalPages]);
 
   const handleAnnotationRemove = useCallback((annotationId: string) => {
-    setAnnotations(prev => prev.filter(a => a.id !== annotationId));
+    setAnnotations((prev) => prev.filter((a) => a.id !== annotationId));
   }, []);
 
   return {

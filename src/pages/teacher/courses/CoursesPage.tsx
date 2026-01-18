@@ -82,7 +82,6 @@ export default function CoursesPage() {
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium text-center">Classrooms</th>
                   <th className="px-4 py-3 font-medium text-center">Lessons</th>
-                  <th className="px-4 py-3 font-medium text-right  ">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -101,7 +100,11 @@ export default function CoursesPage() {
                 ) : (
                   data.courses?.map((course) => (
                     <tr key={course.id} className="border-t group hover:bg-muted transition-colors">
-                      <td className="px-4 py-3 font-medium ">{course?.title}</td>
+                      <td className="px-4 py-3 font-medium text-primary hover:text-primary/80 hover:underline hover:underline-offset-3 transition-colors duration-300 ">
+                        <Link to={`/teacher/courses/${course?.id}`}>
+                          {course?.title}
+                        </Link>
+                      </td>
                       {/* <td className="px-4 py-3  line-clamp-1 text-muted-foreground max-w-[35ch] lg:max-w-[42ch] truncate  " dangerouslySetInnerHTML={{ __html: course?.description || '' }}></td> */}
                       <td className="px-4 py-3  ">{course?.category?.name ?? '-'}</td>
 
@@ -116,7 +119,7 @@ export default function CoursesPage() {
 
                       <td className="px-4 py-3 text-center">
                         {course?.class_rooms?.length ? (
-                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-xl text-sm font-medium">
                             <School className="size-4" />
                             {course.class_rooms.length}
                           </div>
@@ -126,7 +129,7 @@ export default function CoursesPage() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         {course?.lessons?.length ? (
-                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 text-red-700 rounded-xl text-sm font-medium">
                             <BookOpen className="size-4" />
                             {course.lessons.length}
                           </div>
@@ -135,15 +138,6 @@ export default function CoursesPage() {
                         )}
                       </td>
 
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button size="sm" asChild variant="primary" className="gap-2 py-4">
-                            <Link to={`/teacher/courses/${course?.id}`}>
-                              <span className=" text-xs ">View</span>
-                            </Link>
-                          </Button>
-                        </div>
-                      </td>
                     </tr>
                   ))
                 )}

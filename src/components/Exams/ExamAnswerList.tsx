@@ -7,7 +7,7 @@ import type { TaskType, CourseExamType } from '@/types/task';
 import { formatDate } from '@/utils/format';
 import { useMutation } from '@tanstack/react-query';
 import type { ClassRoomExamType } from '@/types/classexam';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { submitStudentCourseExams } from '@/services/studentCourseExamService';
 
@@ -27,12 +27,13 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
 
   const sections = Object.keys(groupExams);
   const currentSection = sections[currentSectionIndex];
+  const draftLoaded = useRef(false);
   const currentSectionExams = groupExams[currentSection] || [];
 
   const draftKey = `exam-draft-${enrollId}`;
 
   useEffect(() => {
-    if (enrollId) {
+    if (enrollId && !draftLoaded.current) {
       const savedDraft = localStorage.getItem(draftKey);
       if (savedDraft) {
         try {
@@ -42,11 +43,12 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
           });
           toast.info('Draft loaded successfully');
         } catch (err: any) {
-          toast.error('Failed to load draft:', err);
+          toast.error('Failed to load draft');
         }
       }
+      draftLoaded.current = true;
     }
-  }, [enrollId]);
+  }, [enrollId, handleAnswer, draftKey]);
 
   const saveDraft = (isDraft = false) => {
     if (enrollId && Object.keys(answers).length > 0) {

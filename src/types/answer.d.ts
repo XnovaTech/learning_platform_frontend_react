@@ -4,7 +4,20 @@ export type FillBlankAnswer = string;
 export type MatchingAnswer = Record<string, string>;
 export type DragDropAnswer = Record<string, string>;
 export type ShortAnswer = string;
-export type LongAnswer = string;
+
+export interface LongAnswerDocument {
+  id: number;
+  exam_answer_id: number;
+  link: string;
+  filename: string;
+}
+
+export interface LongAnswerContent {
+  text: string;
+  documents: LongAnswerDocument[];
+}
+
+export type LongAnswer = string | LongAnswerContent;
 
 export type StudentTaskAnswerValue = McqAnswer | TrueFalseAnswer | FillBlankAnswer | MatchingAnswer | DragDropAnswer | ShortAnswer | LongAnswer;
 
