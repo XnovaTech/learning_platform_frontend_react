@@ -36,7 +36,7 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: React.Reac
 
 export default function LessonAnswerResult({ studentAnswers, tasks, totalPossibleScore, enrollId, lessonId, refetch, isTeacher = false, onScoreChange }: LessonResultProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const totalScore = Object.values(studentAnswers || {}).reduce((sum, ans) => sum + ans.score, 0);
+  const totalScore = Object.values(studentAnswers || {}).reduce((sum, ans) => Number(sum) + Number(ans.score), 0);
   const percentage = totalPossibleScore > 0 ? Math.round((totalScore / totalPossibleScore) * 100) : 0;
   const totalQuestions = tasks.length;
 
@@ -81,7 +81,7 @@ export default function LessonAnswerResult({ studentAnswers, tasks, totalPossibl
       <div className=" mx-auto space-y-5">
         {!isTeacher && (
           <div className="text-center ">
-            <div className="inline-flex items-center gap-1 px-5 py-2 rounded-full bg-gradient-to-r from-primary/5 to-primary/12 text-primary font-semibold shadow-sm">
+            <div className="inline-flex items-center gap-1 px-5 py-2 rounded-full bg-linear-to-r from-primary/5 to-primary/12 text-primary font-semibold shadow-sm">
               <Star className="size-4 text-yellow-500" />
               Lesson Completed !
               <Star className="size-4 text-yellow-500" />

@@ -26,7 +26,7 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: React.Reac
 }
 
 export default function ExamAnswerResult({ studentAnswers, courseExams, totalPossibleScore, isTeacher = false, onScoreChange }: ExamResultProps) {
-  const totalScore = Object.values(studentAnswers || {}).reduce((sum, ans) => sum + ans.score, 0);
+  const totalScore = Object.values(studentAnswers || {}).reduce((sum, ans) => Number(sum) + Number(ans.score), 0);
   const percentage = totalPossibleScore > 0 ? Math.round((totalScore / totalPossibleScore) * 100) : 0;
   const correctAnswers = Object.values(studentAnswers || {}).filter((ans) => ans.is_correct && ans.score > 0).length;
   const totalQuestions = courseExams.length;

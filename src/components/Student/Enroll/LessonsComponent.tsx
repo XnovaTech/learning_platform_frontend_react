@@ -106,16 +106,16 @@ export function LessonsComponent({ lessons = [], enrollId, isTeacher = 0, classr
               return (
                 <div
                   key={lesson.id}
-                  className={`group flex cursor-pointer flex-wrap gap-2 flex-row  items-center justify-between p-4 rounded-2xl border  hover:-translate-y-1 transform duration-300  shadow-sm transition-all duration-200 
+                  className={`group flex cursor-pointer flex-wrap gap-2 flex-row  items-center justify-between p-4 rounded-2xl border  hover:-translate-y-1 transform duration-300  shadow-sm transition-all 
                   ${isLocked && isTeacher === 0 ? 'bg-gray-50 opacity-75' : 'bg-white hover:border-primary/30 hover:shadow-md'}`}
                 >
                   <div className="flex flex-1  items-center gap-3 w-auto mb-4 md:mb-0">
                     <div className="flex flex-col items-center justify-center h-10 w-10 rounded-xl bg-primary/5 text-primary border border-primary/10">
-                      <span className="text-base lg:text-md font-black leading-none">{index + 1}</span>
+                      <span className="text-base lg:text-md font-semibold leading-none">{index + 1}</span>
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-bold text-slate-700 truncate group-hover:text-primary transition-colors">{lesson.title}</h3>
+                      <h3 className="text-lg font-semibold text-slate-700 truncate group-hover:text-primary transition-colors">{lesson.title}</h3>
                     </div>
                   </div>
 
@@ -130,7 +130,7 @@ export function LessonsComponent({ lessons = [], enrollId, isTeacher = 0, classr
           <div className="mt-7 text-center">
             <p className="text-gray-600 text-sm font-semibold flex items-center justify-center gap-2">
               <Sparkles className="text-primary" size={16} />
-              Every lesson is a new adventure <Sparkles className="text-primary" size={16} />           {' '}
+              Every lesson is a new adventure <Sparkles className="text-primary" size={16} />
             </p>
           </div>
         )}
