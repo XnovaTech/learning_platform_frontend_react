@@ -8,7 +8,8 @@ import TodaySummaryCard from '@/components/Dashboard/TodaySummaryCard';
 import UpcomingClassesCard from '@/components/Dashboard/UpcomingClassesCard';
 import QuickActionsCard from '@/components/Dashboard/QuickActionsCard';
 import DashboardCalendar from '@/components/Dashboard/DashboardCalendar';
-import { getTodayClasses, getUpcomingClasses } from '@/helper/classroom';
+import { getTodayClasses,getUpcomingClasses } from '@/helper/ClassRoom';
+
 
 type DashboardHeaderProps = {
   title: string;
