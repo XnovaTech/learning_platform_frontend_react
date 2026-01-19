@@ -32,6 +32,8 @@ export default function DragDropTaskComponent({ task, onAnswer, value = {}, read
     setActiveId(event.active.id.toString());
   };
 
+  console.log(activeId);
+
   const handleDragEnd = (event: DragEndEvent) => {
     if (readonly) return;
 
