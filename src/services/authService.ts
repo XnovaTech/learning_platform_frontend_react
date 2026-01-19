@@ -5,19 +5,27 @@ export const loginUser = async (email: string, password: string) => {
   try {
     const response = await api.post('/auth/login', { email, password });
     return response.data;
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
 export const registerUser = async (payload: PayloadUser) => {
-  const response = await api.post('/auth/register', payload);
-  return response.data;
+  try {
+    const response = await api.post('/auth/register', payload);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.message || error.message);
+  }
 };
 
 export const getUserProfile = async (token: string) => {
-  const response = await api.get('/auth/user', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response?.data?.data.user;
+  try {
+    const response = await api.get('/auth/user', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response?.data?.data.user;
+  } catch (error: any) {
+    throw new Error(error.response.data.message || error.message);
+  }
 };

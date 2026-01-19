@@ -23,7 +23,7 @@ export function ZoomRoomComponent({ zoomLink }: ZoomRoomCompponentProps) {
         </>
       ) : (
         <div className="flex flex-col items-center justify-center">
-          <div className="rounded-full bg-primary/90 p-3 mb-4">
+          <div className="rounded-full bg-primary/90 p-4 mb-4">
             <Video className="size-8 text-white" />
           </div>
           <h4 className="text-lg font-semibold text-foreground mb-1">Not Found Zoom Link</h4>

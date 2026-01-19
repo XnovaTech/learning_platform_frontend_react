@@ -1,8 +1,7 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, SearchIcon, BookOpen } from 'lucide-react';
+import { Plus, SearchIcon, BookOpen, School, EyeIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -77,17 +76,18 @@ export default function CoursesPage() {
               <thead className="bg-muted/50">
                 <tr className="text-left">
                   <th className="px-4 py-3 font-medium">Title</th>
-                  <th className="px-4 py-3 font-medium">Description</th>
+                  {/* <th className="px-4 py-3 font-medium">Description</th> */}
                   <th className="px-4 py-3 font-medium">Category</th>
                   <th className="px-4 py-3 font-medium">Fee</th>
                   <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium text-right  ">Actions</th>
+                  <th className="px-4 py-3 font-medium text-center">Classrooms</th>
+                  <th className="px-4 py-3 font-medium text-center">Lessons</th>
                 </tr>
               </thead>
               <tbody>
                 {!data || data.courses.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-14 px-4 text-center">
+                    <td colSpan={7} className="py-14 px-4 text-center">
                       <div className="flex flex-col items-center justify-center">
                         <div className="rounded-full bg-primary/90 p-4 mb-4">
                           <BookOpen className="size-8 text-white" />
@@ -100,8 +100,12 @@ export default function CoursesPage() {
                 ) : (
                   data.courses?.map((course) => (
                     <tr key={course.id} className="border-t group hover:bg-muted transition-colors">
-                      <td className="px-4 py-3 font-medium ">{course?.title}</td>
-                      <td className="px-4 py-3  line-clamp-1 text-muted-foreground max-w-[35ch] lg:max-w-[42ch] truncate  " dangerouslySetInnerHTML={{ __html: course?.description || '' }}></td>
+                      <td className="px-4 py-3 font-medium text-primary hover:text-primary/80 hover:underline hover:underline-offset-3 transition-colors duration-300 ">
+                        <Link to={`/teacher/courses/${course?.id}`}>
+                          {course?.title}
+                        </Link>
+                      </td>
+                      {/* <td className="px-4 py-3  line-clamp-1 text-muted-foreground max-w-[35ch] lg:max-w-[42ch] truncate  " dangerouslySetInnerHTML={{ __html: course?.description || '' }}></td> */}
                       <td className="px-4 py-3  ">{course?.category?.name ?? '-'}</td>
 
                       <td className="px-4 py-3  ">{course?.price?.toLocaleString() ?? '-'}</td>
@@ -113,15 +117,27 @@ export default function CoursesPage() {
                         </span>
                       </td>
 
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button size="sm" asChild variant="primary" className="gap-2 py-4">
-                            <Link to={`/teacher/courses/${course?.id}`}>
-                              <span className=" text-xs ">View</span>
-                            </Link>
-                          </Button>
-                        </div>
+                      <td className="px-4 py-3 text-center">
+                        {course?.class_rooms?.length ? (
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-xl text-sm font-medium">
+                            <School className="size-4" />
+                            {course.class_rooms.length}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        {course?.lessons?.length ? (
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 text-red-700 rounded-xl text-sm font-medium">
+                            <BookOpen className="size-4" />
+                            {course.lessons.length}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </td>
+
                     </tr>
                   ))
                 )}

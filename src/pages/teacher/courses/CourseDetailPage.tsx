@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardTitle, CardContent } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { ConfirmDialog } from '@/components/ui/dialog-context-menu';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
@@ -11,14 +11,14 @@ import { getCourse } from '@/services/courseService';
 import { deleteClassRoom } from '@/services/classService';
 import type { ClassRoomPayloadType, ClassRoomType } from '@/types/class';
 import type { CourseType } from '@/types/course';
-import { Plus } from 'lucide-react';
 import { ClassroomForm } from '@/components/Form/ClassroomForm';
 import { deleteLesson, lessonDetail } from '@/services/lessonService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Users } from 'lucide-react';
+import { Plus, Home, BookOpen, Book, Users, BookOpenCheck, Clock, Trophy } from 'lucide-react';
 import ClassRoomTable from '@/components/Table/ClassRoomTable';
 import LessonTable from '@/components/Table/LessonTable';
 import CourseCard from '@/components/Card/CourseCard';
+// import CourseExamList from '@/components/Exams/CourseExamList';
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -56,6 +56,20 @@ export default function CourseDetailPage() {
   };
 
   const [form, setForm] = useState<ClassRoomPayloadType>(defaultForm);
+  const examTypeData = [
+    {
+      type: 'Midterm',
+      icon: Clock,
+      description: 'Mid-course assessment to evaluate student progress',
+      color: 'bg-cyan-50 border-cyan-100 hover:bg-cyan-100 text-blue-700',
+    },
+    {
+      type: 'Final',
+      icon: Trophy,
+      description: 'Comprehensive end-of-course examination',
+      color: 'bg-amber-50 border-amber-100 hover:bg-amber-100 text-amber-700',
+    },
+  ];
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteClassRoom(id),
@@ -140,7 +154,8 @@ export default function CourseDetailPage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/dashboard">
+              <Link className="text-base md:text-md gap-2" to="/teacher/dashboard">
+                <Home className="size-4" />
                 Dashboard
               </Link>
             </BreadcrumbLink>
@@ -148,14 +163,18 @@ export default function CourseDetailPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/courses" prefetch="intent">
+              <Link className="text-base md:text-md gap-2" to="/teacher/courses" prefetch="intent">
+                <BookOpen className="size-4" />
                 Courses
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">{course?.title ?? 'Detail'}</BreadcrumbPage>
+            <BreadcrumbPage className="text-base md:text-md gap-2">
+              <Book className="size-4" />
+              {course?.title ?? 'Detail'}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -184,6 +203,10 @@ export default function CourseDetailPage() {
                   <TabsTrigger value="lessons" className="gap-2 rounded-xl transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
                     <BookOpen className="size-4" />
                     <span className="font-medium">Lessons</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="exams" className="gap-2 rounded-xl transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
+                    <BookOpenCheck className="size-4" />
+                    <span className="font-medium">Exams</span>
                   </TabsTrigger>
                 </TabsList>
 
@@ -229,7 +252,7 @@ export default function CourseDetailPage() {
                   </Tabs>
                 </div>
 
-                <ClassRoomTable  classrooms={course?.class_rooms?.filter((c) => c?.is_active == statusFilter) || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} courseId={courseId} />
+                <ClassRoomTable classrooms={course?.class_rooms?.filter((c) => c?.is_active == statusFilter) || []} onEdit={openEdit} onDelete={askDelete} isCoureDetail={true} courseId={courseId} />
               </TabsContent>
 
               <TabsContent value="lessons" className="p-6 space-y-6 mt-0">
@@ -247,6 +270,24 @@ export default function CourseDetailPage() {
                 </div>
 
                 <LessonTable lessons={course?.lessons || []} onEdit={editLesson} onDelete={askDeleteLesson} />
+              </TabsContent>
+
+              <TabsContent value="exams" className="p-6 space-y-6 mt-0">
+                <h3 className="text-xl font-semibold text-foreground">Course Exams</h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {examTypeData.map((item) => (
+                    <Link key={item.type} to={`/teacher/courses/exam/${courseId}/${item.type}`}>
+                      <Card className={`transition-all duration-300 cursor-pointer ${item.color} border-2 h-48 p-6 hover:shadow-sm hover:scale-105`}>
+                        <CardContent className="flex flex-col items-center text-center space-y-4">
+                          <item.icon className="size-12" />
+                          <CardTitle className="text-xl font-bold">{item.type}</CardTitle>
+                          <p className="text-sm opacity-80">{item.description}</p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
               </TabsContent>
             </Tabs>
           </Card>

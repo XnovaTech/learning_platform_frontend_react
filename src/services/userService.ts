@@ -6,7 +6,7 @@ export const listTeachers = async (): Promise<any[]> => {
     const { data } = await api.get(`/v1/teachers`);
     return data?.data ?? [];
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -15,7 +15,7 @@ export const listStudents = async (): Promise<any[]> => {
     const { data } = await api.get(`/v1/students`);
     return data?.data ?? [];
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -24,7 +24,7 @@ export const listUsers = async (form?: Partial<PayloadUser>): Promise<any> => {
     const { data } = await api.get('/v1/users', { params: form });
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -33,7 +33,7 @@ export const updateUser = async (id: number, payload: PayloadUser): Promise<any>
     const { data } = await api.put(`/v1/users/${id}`, payload);
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -47,7 +47,7 @@ export const updateProfile = async (id: number, payload: UpdateUserRequest): Pro
     const { data } = await api.put(`/v1/users/${id}`, payload);
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -55,6 +55,6 @@ export const deleteUser = async (id: number): Promise<void> => {
   try {
     await api.delete(`/v1/users/${id}`);
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };

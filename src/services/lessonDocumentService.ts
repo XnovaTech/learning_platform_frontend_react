@@ -9,7 +9,7 @@ export const uploadLessonDocument = async (payload: FormData): Promise<LessonDoc
     });
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -17,6 +17,6 @@ export const deleteLessonDocument = async (documentId: number): Promise<void> =>
   try {
     await api.delete(`/v1/lesson-documents/${documentId}`);
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };

@@ -1,20 +1,15 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 // import { Label } from "@/components/ui/label";
-import type { LessonTaskType } from "@/types/task";
+import type { CourseExamType, LessonTaskType } from '@/types/task';
 
 interface Props {
-  task: LessonTaskType;
+  task: LessonTaskType | CourseExamType;
   onAnswer: (taskId: number, value: Record<string, string>) => void;
   readonly?: boolean;
   value?: Record<string, string>;
 }
 
-export default function ParagraphDragTaskStudent({
-  task,
-  onAnswer,
-  readonly = false,
-  value = {},
-}: Props) {
+export default function ParagraphDragTaskStudent({ task, onAnswer, readonly = false, value = {} }: Props) {
   const blanks = task.blanks ?? [];
   const [answers, setAnswers] = useState<Record<string, string>>(value);
 
@@ -56,11 +51,13 @@ export default function ParagraphDragTaskStudent({
             <select
               key={index}
               disabled={readonly}
-              value={answers[blankId] ?? ""}
+              value={answers[blankId] ?? ''}
               onChange={(e) => handleChange(blankId, e.target.value)}
               className="mx-1 border px-2 py-1 rounded-xl bg-primary/60 text-slate-800"
             >
-              <option value="" className="text-center text-slate-700">--Select--</option>
+              <option value="" className="text-center text-slate-700">
+                --Select--
+              </option>
               {blank.options.map((opt, i) => (
                 <option key={i} value={opt}>
                   {opt}

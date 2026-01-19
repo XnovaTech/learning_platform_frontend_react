@@ -6,7 +6,7 @@ export const getDiscussionsByClass = async (classId: number): Promise<Discussion
         const { data } = await api.get(`/v1/discussions/class/${classId}`);
         return data?.data;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 };
 
@@ -15,6 +15,6 @@ export const createDiscussion = async (payload: DiscussionPayloadType): Promise<
         const { data } = await api.post('/v1/discussions', payload);
         return data?.data;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 };

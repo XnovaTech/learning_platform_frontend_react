@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Users, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle, School, GraduationCap } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Users, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle, School } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -12,7 +12,6 @@ const navigationItems = [
   { title: 'Courses', href: '/teacher/courses', icon: BookOpen },
   { title: 'Active Classes', href: '/teacher/classes', icon: School },
   { title: 'Enrollments', href: '/teacher/enrollments', icon: ClipboardList },
-  { title: 'Exams', href: '/teacher/exams', icon: GraduationCap },
   {
     title: 'Users',
     href: '/teacher/users/teachers',
@@ -226,8 +225,8 @@ function HeaderBar({ collapsed, setCollapsed }: { collapsed: boolean; setCollaps
 export default function TeacherLayout() {
   const [collapsed, setCollapsed] = useState(false);
   return (
-    <div className="min-h-screen bg-primary/10 flex">
-      <aside className={`hidden md:flex  flex-col bg-primary/10  border-r border-gray-200 shadow-xl shadow-gray-200/50 transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}>
+    <div className="min-h-screen bg-primary/7 flex">
+      <aside className={`hidden md:flex  flex-col bg-primary/7  border-r border-gray-200 shadow-xl shadow-gray-200/50 transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}>
         <SidebarContent collapsed={collapsed} />
       </aside>
 

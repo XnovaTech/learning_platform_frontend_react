@@ -6,7 +6,7 @@ export const getContactByStudent = async (studentId: number): Promise<ContactTyp
         const { data } = await api.get(`/v1/contacts/student/${studentId}`);
         return data?.data;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 }
 
@@ -15,7 +15,7 @@ export const getAllContacts = async (search?: string): Promise<GroupContactType[
         const { data } = await api.get('/v1/contacts', { params: { search } });
         return data?.data;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 }
 
@@ -24,7 +24,7 @@ export const createContact = async (payload: ContactPayloadType): Promise<Contac
         const { data } = await api.post('/v1/contacts', payload);
         return data?.data;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 }
 
@@ -33,6 +33,6 @@ export const updateContact = async (id: number, payload: ContactPayloadType): Pr
         const { data } = await api.put(`/v1/contacts/${id}`, payload);
         return data?.data;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error(error.response.data.message || error.message);
     }
 }

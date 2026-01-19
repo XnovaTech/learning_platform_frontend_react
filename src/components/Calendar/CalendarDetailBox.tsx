@@ -1,7 +1,7 @@
 import { Clock, ExternalLink, School, User2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { ClassRoomType } from '@/types/class';
-import { displayTime } from '@/helper/ClassRoom';
+import { displayTime } from '@/utils/format';
 
 interface ClassDetailsModalProps {
   isOpen: boolean;

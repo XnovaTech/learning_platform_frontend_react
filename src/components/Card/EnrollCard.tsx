@@ -31,7 +31,7 @@ export default function EnrollCard({ enrolls, isActive }: CardProps) {
             )}
           </div>
           <div className=" p-4 space-y-2">
-            <div className=" flex justify-between">
+            <div className=" flex flex-wrap gap-3 justify-between">
               <h3 className="font-semibold tracking-wide">
                 {enroll.class_room.course.category.name} ({enroll.class_room.course.title})
               </h3>

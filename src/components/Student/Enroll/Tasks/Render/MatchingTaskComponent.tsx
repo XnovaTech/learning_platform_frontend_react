@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import type { LessonTaskType } from '@/types/task';
+import type { LessonTaskType, CourseExamType } from '@/types/task';
 
 interface MatchingTaskComponentProps {
-  task: LessonTaskType;
+  task: LessonTaskType | CourseExamType;
   onAnswer: (taskId: number, value: any) => void;
   value?: Record<string, string>;
   readonly?: boolean;
@@ -68,11 +68,10 @@ export default function MatchingTaskComponent({ task, onAnswer, value = {}, read
   }, [task, pairs]);
 
   useEffect(() => {
-    if (value && Object.keys(value).length > 0){
+    if (value && Object.keys(value).length > 0) {
       setPairs(value);
     }
-  }, [value])
-
+  }, [value]);
 
   const handleLeftClick = (id: string) => {
     if (readonly) return;
@@ -89,7 +88,7 @@ export default function MatchingTaskComponent({ task, onAnswer, value = {}, read
   };
 
   return (
-    <div ref={containerRef} className="relative p-6 bg-white rounded-lg shadow">
+    <div ref={containerRef} className="relative p-4 bg-stone-50 rounded-lg shadow">
       {/* SVG Lines */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none">
         {Object.entries(pairs).map(([leftId, rightId]) => {
@@ -113,7 +112,7 @@ export default function MatchingTaskComponent({ task, onAnswer, value = {}, read
                 data-id={item.id}
                 className={`
             left-item p-3 border rounded-lg transition
-            ${isSelected ? 'bg-primary/40 text-slate-800' : 'bg-white'}
+            ${isSelected ? 'bg-primary/10 border-primary  text-primary' : 'bg-white'}
             ${readonly ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}
           `}
                 onClick={() => handleLeftClick(item.id.toString())}

@@ -3,6 +3,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { lessonDetail } from '@/services/lessonService';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
+import { Home, BookOpen, Book } from 'lucide-react';
 import TaskBuilderManager from '@/components/LessonTask/TaskManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import TaskList from '@/components/LessonTask/TaskList';
@@ -43,7 +44,8 @@ export default function LessonDetailPage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/dashboard">
+              <Link className="text-base md:text-md gap-2" to="/teacher/dashboard">
+                <Home className="size-4" />
                 Dashboard
               </Link>
             </BreadcrumbLink>
@@ -51,7 +53,8 @@ export default function LessonDetailPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/courses" prefetch="intent">
+              <Link className="text-base md:text-md gap-2" to="/teacher/courses" prefetch="intent">
+                <BookOpen className="size-4" />
                 Courses
               </Link>
             </BreadcrumbLink>
@@ -59,14 +62,18 @@ export default function LessonDetailPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to={`/teacher/courses/${lesson?.course_id}`} prefetch="intent">
+              <Link className="text-base md:text-md gap-2" to={`/teacher/courses/${lesson?.course_id}`} prefetch="intent">
+                <Book className="size-4" />
                 Course Detail
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">{lesson?.title ?? 'Detail'}</BreadcrumbPage>
+            <BreadcrumbPage className="text-base md:text-md gap-2">
+              <BookOpen className="size-4" />
+              {lesson?.title ?? 'Detail'}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

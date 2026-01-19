@@ -3,6 +3,7 @@ import { UserType } from './user';
 import { ClassRoomType } from './class';
 import { CategoryType } from './category';
 import { LessonType } from './lesson';
+import type { CourseExamType } from './task';
 
 export interface CourseType {
   id: number;
@@ -17,6 +18,7 @@ export interface CourseType {
   class_rooms: ClassRoomType[];
   category: CategoryType;
   lessons: LessonType[];
+  exams: CourseExamType[];
 }
 
 export interface CourseListResponse {

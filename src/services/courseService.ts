@@ -6,7 +6,7 @@ export const listCourses = async (form?: Partial<CourseFormType>): Promise<Cours
     const { data } = await api.get('/v1/courses', { params: form });
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -15,7 +15,7 @@ export const getCourseWithClass = async (): Promise<CourseType[]> => {
     const { data } = await api.get('/v1/course/classes');
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -24,7 +24,7 @@ export const createCourse = async (payload: CourseFormType): Promise<CourseType>
     const { data } = await api.post('/v1/courses', payload);
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -38,7 +38,7 @@ export const updateCourse = async (id: number, payload: CourseFormType): Promise
     const { data } = await api.put(`/v1/courses/${id}`, payload);
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -46,7 +46,7 @@ export const deleteCourse = async (id: number): Promise<void> => {
   try {
     await api.delete(`/v1/courses/${id}`);
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -55,7 +55,7 @@ export const getCourse = async (id: number): Promise<CourseType> => {
     const { data } = await api.get(`/v1/courses/${id}`);
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
 };
 
@@ -64,6 +64,6 @@ export const getCoursewithClassesAndLessonName = async (id: number): Promise<Cou
     const { data } = await api.get(`/v1/course/all/detail/${id}`);
     return data?.data;
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message || error.message);
   }
-}
+};

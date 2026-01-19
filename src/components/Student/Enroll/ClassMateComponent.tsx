@@ -10,7 +10,7 @@ export function ClassMateComponent({ classMates = [] }: ClassMateProps) {
     <div className="bg-white/50 backdrop-blur-lg p-6 rounded-2xl shadow-xl space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-          <UsersRoundIcon className="text-sky-800" size={22} />
+          <UsersRoundIcon size={22} />
           Classmates <span className="text-sm">({classMates.length})</span>
         </h2>
 
@@ -32,13 +32,20 @@ export function ClassMateComponent({ classMates = [] }: ClassMateProps) {
           </div>
         ) : (
           classMates.map((mate) => (
-            <li key={mate.id} className="group flex items-center gap-4 bg-sky-200/40 border border-gray-100 rounded-2xl shadow-sm p-4 hover:shadow-md transition-all duration-300">
-              <div className="h-12 w-12 rounded-full bg-sky-200 flex items-center justify-center text-sky-800 font-semibold text-lg">{mate.first_name?.[0]?.toUpperCase() || 'U'}</div>
-              <div>
-                <p className="text-gray-800 font-semibold group-hover:text-sky-800 transition-colors">
+            <li
+              key={mate.id}
+              className="group flex items-center gap-4 bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-2xl shadow-lg p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 animate-fade-in"
+            >
+              <div className="relative">
+                <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:shadow-xl transition-all duration-300">
+                  {mate.first_name?.[0]?.toUpperCase() || 'U'}
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-gray-800 font-semibold text-lg group-hover:text-primary transition-colors duration-300">
                   {mate.first_name} {mate.last_name}
                 </p>
-                <p className="text-gray-600 text-sm">{mate.email}</p>
+                <p className="text-gray-600 text-sm flex items-center gap-2">{mate.email}</p>
               </div>
             </li>
           ))

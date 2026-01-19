@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageCircle, Users, Calendar, Clock, BookOpen, CalendarDays, Video, User2 } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Clock, BookOpen, CalendarDays, Video, User2, BookOpenCheck, Home, Book } from 'lucide-react';
 import moment from 'moment';
 import type { ClassRoomType } from '@/types/class';
 import { deleteClassConversations, getClass } from '@/services/classService';
@@ -13,10 +13,11 @@ import { useAuth } from '@/context/AuthContext';
 import { ClassMateComponent } from '@/components/Student/Enroll/ClassMateComponent';
 import { LessonsComponent } from '@/components/Student/Enroll/LessonsComponent';
 import { ZoomRoomComponent } from '@/components/Student/Enroll/ZoomRoomComponent';
-import { displayTime } from '@/helper/ClassRoom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { downloadCertificates } from '@/services/userCertificateService';
+import { displayTime } from '@/utils/format';
+import ExamCard from '@/components/Card/ExamCard';
 
 export default function ClassDetailPage() {
   const { id } = useParams();
@@ -61,7 +62,8 @@ export default function ClassDetailPage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/dashboard">
+              <Link className="text-base md:text-md gap-2" to="/teacher/dashboard">
+                <Home className="size-4" />
                 Dashboard
               </Link>
             </BreadcrumbLink>
@@ -69,7 +71,8 @@ export default function ClassDetailPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/courses">
+              <Link className="text-base md:text-md gap-2" to="/teacher/courses">
+                <BookOpen className="size-4" />
                 Courses
               </Link>
             </BreadcrumbLink>
@@ -78,14 +81,18 @@ export default function ClassDetailPage() {
 
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to={`/teacher/courses/${classroom?.course?.id}`}>
+              <Link className="text-base md:text-md gap-2" to={`/teacher/courses/${classroom?.course?.id}`}>
+                <Book className="size-4" />
                 {classroom?.course?.title || 'Course'}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">{classroom?.class_name || 'Class Detail'}</BreadcrumbPage>
+            <BreadcrumbPage className="text-base md:text-md gap-2">
+              <Users className="size-4" />
+              {classroom?.class_name || 'Class Detail'}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -213,11 +220,18 @@ export default function ClassDetailPage() {
                 <Video className="size-4" />
                 <span className="font-medium">Join Zoom</span>
               </TabsTrigger>
+
+              {classroom?.has_course_exams && (
+                <TabsTrigger value="exams" className="gap-2   rounded-xl transition-all  duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
+                  <BookOpenCheck className="size-4" />
+                  <span className="font-medium">Exams</span>
+                </TabsTrigger>
+              )}
             </TabsList>
 
             {/* Lesssons */}
             <TabsContent value="lessons" className="py-4 space-y-6 mt-0">
-              <LessonsComponent lessons={classroom?.lessons} isTeacher={1} classroomId={classroom?.id} />
+              <LessonsComponent lessons={classroom?.lessons} isTeacher={1} classroomId={classroom?.id} courseId={Number(classroom?.course?.id)} />
             </TabsContent>
 
             {/* Class Mates  */}
@@ -230,9 +244,17 @@ export default function ClassDetailPage() {
               <DiscussionComponent classId={classroom?.id as number} userId={user?.id} />
             </TabsContent>
 
+            {/* Zoom   */}
             <TabsContent value="zoom" className="py-4 space-y-6 mt-0">
               <ZoomRoomComponent zoomLink={classroom?.zoom_link} />
             </TabsContent>
+
+            {/* Exam   */}
+            {classroom?.has_course_exams && (
+              <TabsContent value="exams" className="py-4 space-y-6 mt-0">
+                <ExamCard exams={classroom?.exams || []} classId={classId} courseId={classroom?.course?.id} isTeacher={true} />
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       )}

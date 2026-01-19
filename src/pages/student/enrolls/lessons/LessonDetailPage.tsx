@@ -9,6 +9,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LessonTaskComponent from '@/components/Student/Enroll/Tasks/LessonTaskComponent';
 import LessonCard from '@/components/Card/LessonCard';
+import { BookOpenCheck, Video, Users, BookOpen, Home } from 'lucide-react';
 
 export default function LessonDetailPage() {
   // const { enrollId, lessonId } = use(params);
@@ -36,24 +37,29 @@ export default function LessonDetailPage() {
       {/* Breadcrumbs */}
       <Breadcrumb>
         <BreadcrumbList>
-          {/* <BreadcrumbItem>
-                        <BreadcrumbLink asChild>
-                            <Link className="text-base md:text-xs" href="/student/enrolls">
-                                My Courses
-                            </Link>
-                        </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator /> */}
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to={`/student/enrolls/${enrollID}`}>
+              <Link className="text-base md:text-md gap-2" to="/student/home">
+                <Home className="size-4" />
+                Home
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link className="text-base md:text-md gap-2" to={`/student/enrolls/${enrollID}`}>
+                <Users className="size-4" />
                 ClassRoom
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">{lesson?.title ?? 'Detail'}</BreadcrumbPage>
+            <BreadcrumbPage className="text-base md:text-md gap-2">
+              <BookOpen className="size-4" />
+              {lesson?.title ?? 'Detail'}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -61,17 +67,19 @@ export default function LessonDetailPage() {
 
       <Tabs defaultValue="youtube" className="w-full max-w-8xl mx-auto my-4">
         <TabsList className="flex flex-wrap justify-center gap-2 md:gap-6  bg-white/50 backdrop-blur-lg drop-shadow-2xl rounded-xl p-2 h-12.5">
-          <TabsTrigger value="youtube" className="px-4 py-2  font-medium rounded-xl transition-all hover:bg-primary-100 data-[state=active]:bg-ocean data-[state=active]:text-white">
+          <TabsTrigger value="youtube" className="px-4 py-2 gap-2  font-medium rounded-xl transition-all hover:bg-primary-100 data-[state=active]:bg-ocean data-[state=active]:text-white">
+            <Video className="size-4" />
             Lesson Video
           </TabsTrigger>
 
-          <TabsTrigger value="tasks" className="px-4 py-2  font-medium rounded-xl transition-all hover:bg-primary-100 data-[state=active]:bg-sky-600 data-[state=active]:text-white">
+          <TabsTrigger value="tasks" className="px-4 py-2  gap-2 font-medium rounded-xl transition-all hover:bg-primary-100 data-[state=active]:bg-sky-600 data-[state=active]:text-white">
+            <BookOpenCheck className="size-4" />
             Tasks
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="youtube" className="w-full mt-6">
-          <div className=" drop-shadow-2xl backdrop-blur-lg bg-white/50 dark:bg-slate-900/80 rounded-2xl p-2 md:p-8">
+          <div className=" bg-white/50 backdrop-blur-lg rounded-2xl shadow-xl space-y-4 p-2 md:p-8">
             {lesson?.youtube_link ? (
               <div className=" aspect-video rounded-xl overflow-hidden drop-shadow-md border border-gray-200 dark:border-gray-700">
                 <ReactPlayer
