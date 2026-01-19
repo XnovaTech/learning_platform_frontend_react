@@ -21,7 +21,7 @@ interface LongTaskComponentProps {
   isTeacher?: boolean;
 }
 
-export default function LongTaskComponent({ task, onAnswer, value = '', readonly = false, score, onScoreChange, isTeacher = false }: LongTaskComponentProps) {
+export default function LongTaskComponent({ task, onAnswer, value = '', readonly = false, score, onScoreChange }: LongTaskComponentProps) {
   const minWords = (task?.extra_data as LongAnswerExtraData)?.min_word_count || 50;
   const [text, setText] = useState('');
   const [documents, setDocuments] = useState<ExamAnswerDocumentType[]>([]);
