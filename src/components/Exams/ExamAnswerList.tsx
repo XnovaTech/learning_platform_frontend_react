@@ -113,8 +113,6 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
                   <Clock className="size-4 text-primary" />
                   Ends {formatDate(data?.end_date)}
                 </span>
-
-            
               </div>
             </div>
 
@@ -148,11 +146,11 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
 
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/20 text-primary font-semibold">{currentSectionIndex + 1}</div>
-                <h2 className="text-xl font-semibold text-slate-900">{currentSection}</h2>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/20 text-primary font-semibold">{currentSectionIndex + 1}</div>
+                <h2 className="text-md font-semibold text-slate-900">{currentSection}</h2>
               </div>
 
-              <p className="text-sm text-slate-500 text-right">{currentSectionExams.length} Questions</p>
+              {currentSectionExams.length > 1 && <p className="text-sm text-slate-500 text-right">{currentSectionExams.length} Questions</p>}
             </div>
           </div>
 
@@ -180,7 +178,7 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
                     </div>
 
                     {/* Question Content */}
-                    <div className="bg-white px-5 py-4">
+                    <div className="bg-white px-5 pt-4 pb-1">
                       <div className="flex items-start gap-2">
                         <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{index + 1} .</div>
 

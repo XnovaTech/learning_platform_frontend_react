@@ -96,64 +96,76 @@ export default function LessonAnswerList({ groupTasks, answers, handleAnswer, en
           </div>
 
           {/* Questions */}
-          <div className="space-y-4">
-            {Object.entries(groupTasks).map(([type, taskList]) =>
-              taskList.map((task, index) => {
-                const isAnswered = answers.hasOwnProperty(task.id);
-                const globalIndex =
-                  Object.values(groupTasks)
-                    .slice(0, Object.keys(groupTasks).indexOf(type))
-                    .reduce((sum, tasks) => sum + tasks.length, 0) +
-                  index +
-                  1;
+          <div className="space-y-5">
+            {Object.entries(groupTasks).map(([type, taskList], typeIndex) => (
+              <div key={type} className="space-y-4">
+                <div className="relative rounded-xl bg-slate-50 border border-slate-200 shadow shadow-primary/10 px-6 py-4">
+                  <div className="absolute left-0 top-0 h-full w-1.5 bg-primary rounded-l-xl" />
 
-                return (
-                  <Card key={task.id} className="border p-1 border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                    <CardContent className="p-0 mb-1">
-                      <div className="flex items-center justify-between px-4 py-3 border-b rounded-md bg-stone-50">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-100 text-blue-700 text-xs font-semibold">{TASK_TITLE[task.task_type as TaskType]}</span>
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/20 text-primary font-semibold">{typeIndex + 1}</div>
+                      <h2 className="text-md font-semibold text-slate-900">{TASK_TITLE[type as TaskType]}</h2>
+                    </div>
 
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 text-xs font-semibold">{task.points} pts</span>
+                    {taskList.length > 1 && <p className="text-sm text-slate-500 text-right">{taskList.length} Questions</p>}
+                  </div>
+                </div>
 
-                          {isAnswered && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-medium">
-                              <CheckCircle2 className="size-3" />
-                              Answered
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                {taskList.map((task, index) => {
+                  const isAnswered = answers.hasOwnProperty(task.id);
+                  const globalIndex =
+                    Object.values(groupTasks)
+                      .slice(0, Object.keys(groupTasks).indexOf(type))
+                      .reduce((sum, tasks) => sum + tasks.length, 0) +
+                    index +
+                    1;
 
-                      {/* Question Content */}
-                      <div className="bg-white px-5 py-4">
-                        <div className="flex items-start gap-2">
-                          <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{globalIndex} .</div>
+                  return (
+                    <Card key={task.id} className="border p-1 border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                      <CardContent className="p-0 mb-1">
+                        {/* Question Content */}
+                        <div className="bg-white px-5 pt-4 border-b pb-1">
+                          <div className="flex items-start gap-2">
+                            <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{globalIndex} .</div>
 
-                          <div className="flex-1 min-w-0">
-                            {task.task_type !== 'paragraph_drag' ? (
-                              <div
-                                className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800"
-                                dangerouslySetInnerHTML={{
-                                  __html: task.question || '',
-                                }}
-                              />
-                            ) : (
-                              <p>Choose the correct answers</p>
+                            <div className="flex-1 min-w-0">
+                              {task.task_type !== 'paragraph_drag' ? (
+                                <div
+                                  className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800"
+                                  dangerouslySetInnerHTML={{
+                                    __html: task.question || '',
+                                  }}
+                                />
+                              ) : (
+                                <p>Choose the correct answers</p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* pts */}
+                          <div className="flex items-center gap-2 justify-end">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 text-xs font-semibold">{task.points} pts</span>
+
+                            {isAnswered && (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-medium">
+                                <CheckCircle2 className="size-3" />
+                                Answered
+                              </span>
                             )}
                           </div>
                         </div>
-                      </div>
 
-                      {/* Answer Area */}
-                      <div className="p-5 bg-white">
-                        <TaskRendererComponent task={task} onAnswer={handleAnswer} value={answers[task.id]} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })
-            )}
+                        {/* Answer Area */}
+                        <div className="p-5 bg-white">
+                          <TaskRendererComponent task={task} onAnswer={handleAnswer} value={answers[task.id]} />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            ))}
           </div>
 
           {/* Actions */}

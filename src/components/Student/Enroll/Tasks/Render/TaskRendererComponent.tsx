@@ -16,9 +16,10 @@ interface TaskRendererComponentProps {
   onScoreChange?: (taskId: number, score: number) => void;
   score?: number;
   isTeacher?: boolean;
+  enrollId?: number;
 }
 
-export default function TaskRendererComponent({ task, onAnswer, value, readonly = false, onScoreChange, score, isTeacher = false }: TaskRendererComponentProps) {
+export default function TaskRendererComponent({ task, onAnswer, value, readonly = false, onScoreChange, score, isTeacher = false, enrollId }: TaskRendererComponentProps) {
 
   switch (task.task_type) {
     case 'mcq':
@@ -28,7 +29,7 @@ export default function TaskRendererComponent({ task, onAnswer, value, readonly 
     case 'short':
       return <ShortTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} />;
     case 'long':
-      return <LongTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} isTeacher={isTeacher} />;
+      return <LongTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} isTeacher={isTeacher} enrollId={enrollId} />;
     case 'fill_blank':
       return <FillBlankTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
     case 'drag_drop':

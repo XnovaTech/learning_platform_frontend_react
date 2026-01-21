@@ -6,15 +6,13 @@ export type DragDropAnswer = Record<string, string>;
 export type ShortAnswer = string;
 
 export interface LongAnswerDocument {
-  id: number;
-  exam_answer_id: number;
-  link: string;
+  html_content: string;
   filename: string;
 }
 
 export interface LongAnswerContent {
   text: string;
-  documents: LongAnswerDocument[];
+  document: LongAnswerDocument;
 }
 
 export type LongAnswer = string | LongAnswerContent;

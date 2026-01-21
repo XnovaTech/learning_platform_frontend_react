@@ -18,7 +18,6 @@ export default function StudentExamRecordDetail() {
   const enrollID = Number(enrollId);
   const classExamID = Number(classExamId);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const { data: data } = useQuery<ClassRoomExamType>({
     queryKey: ['exam-details', classExamID],
     queryFn: () => getClassExamDetails(classExamID),
@@ -120,7 +119,7 @@ export default function StudentExamRecordDetail() {
           <Spinner className="size-8  text-primary" />
         </Card>
       ) : (
-        <ExamAnswerResult studentAnswers={studentAnswers} courseExams={courseExams} totalPossibleScore={totalPossibleScore} isTeacher={true} onScoreChange={handleScoreChange} />
+        <ExamAnswerResult studentAnswers={studentAnswers} courseExams={courseExams} totalPossibleScore={totalPossibleScore} isTeacher={true} onScoreChange={handleScoreChange} enrollId={enrollID} />
       )}
     </div>
   );

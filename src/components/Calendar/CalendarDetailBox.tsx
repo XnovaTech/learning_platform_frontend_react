@@ -2,6 +2,7 @@ import { Clock, ExternalLink, School, User2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { ClassRoomType } from '@/types/class';
 import { displayTime } from '@/utils/format';
+import { Link } from 'react-router-dom';
 
 interface ClassDetailsModalProps {
   isOpen: boolean;
@@ -65,23 +66,17 @@ export default function CalendarDetailBox({ isOpen, onClose, date, events, isTea
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 p-2 rounded-xl bg-linear-to-r from-orange-50 to-red-50 border border-orange-100">
-                  <div className="shrink-0 w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                    <ExternalLink className="size-5 text-orange-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-medium text-orange-700 uppercase tracking-wide mb-1">Zoom Class</div>
-                    <div className="text-sm font-semibold text-orange-900">
-                      {event.zoom_link ? (
-                        <a href={event.zoom_link} target="_blank">
-                          Join Zoom
-                        </a>
-                      ) : (
-                        'Zoom Class'
-                      )}
+                {event.zoom_link && (
+                  <Link to={event.zoom_link} target="_blank" className="flex items-center gap-3 p-2  cursor-pointer rounded-xl bg-linear-to-r from-orange-50 to-red-50 border border-orange-100">
+                    <div className="shrink-0 w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                      <ExternalLink className="size-5 text-orange-600" />
                     </div>
-                  </div>
-                </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-medium text-orange-700 uppercase tracking-wide mb-1">Zoom Class</div>
+                      <div className="text-sm font-semibold text-orange-900">Join Zoom</div>
+                    </div>
+                  </Link>
+                )}
               </div>
             ))
           )}

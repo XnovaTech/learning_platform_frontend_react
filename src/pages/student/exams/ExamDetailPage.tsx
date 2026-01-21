@@ -32,21 +32,24 @@ export default function ExamDetailPage() {
   const courseExams = data?.exams || [];
 
   // group exams by section
-  const groupExams = courseExams?.reduce((acc: Record<string, typeof courseExams>, exam) => {
-    const section = exam.exam_section || '';
-    if (!acc[section]) acc[section] = [];
-    acc[section].push(exam);
-    return acc;
-  }, {} as Record<TaskType, CourseExamType[]>);
+  const groupExams = courseExams?.reduce(
+    (acc: Record<string, typeof courseExams>, exam) => {
+      const section = exam.exam_section || '';
+      if (!acc[section]) acc[section] = [];
+
+      acc[section].push(exam);
+      return acc;
+    },
+    {} as Record<TaskType, CourseExamType[]>,
+  );
 
   const handleAnswer = (taskId: number, value: any) => {
     setAnswers((prev) => ({ ...prev, [taskId]: value }));
   };
 
   const hasSubmittedAnswers = studentAnswers && Object.keys(studentAnswers).length > 0;
-  const totalPossibleScore = courseExams.reduce((sum, exam) => sum + (exam.points || 0), 0) || 0;
+  const totalPossibleScore = courseExams.reduce((sum, exam) => Number(sum) + (Number(exam.points) || 0), 0) || 0;
   const totalQuestions = courseExams.length;
-
 
   return (
     <div className="">
@@ -100,7 +103,7 @@ export default function ExamDetailPage() {
             <Spinner className="text-primary size-7 md:size-8" />
           </div>
         ) : hasSubmittedAnswers ? (
-          <ExamAnswerResult studentAnswers={studentAnswers} courseExams={courseExams} totalPossibleScore={totalPossibleScore} />
+          <ExamAnswerResult studentAnswers={studentAnswers} courseExams={courseExams} totalPossibleScore={totalPossibleScore}  />
         ) : (
           <ExamAnswerList
             groupExams={groupExams}

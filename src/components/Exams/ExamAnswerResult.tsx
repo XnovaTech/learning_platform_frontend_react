@@ -11,6 +11,7 @@ interface ExamResultProps {
   totalPossibleScore: number;
   isTeacher?: boolean;
   onScoreChange?: (taskId: number, score: number) => void;
+  enrollId?: number;
 }
 
 function Stat({ icon, value, label }: { icon: React.ReactNode; value: React.ReactNode; label: string }) {
@@ -25,7 +26,7 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: React.Reac
   );
 }
 
-export default function ExamAnswerResult({ studentAnswers, courseExams, totalPossibleScore, isTeacher = false, onScoreChange }: ExamResultProps) {
+export default function ExamAnswerResult({ studentAnswers, courseExams, totalPossibleScore, isTeacher = false, onScoreChange,enrollId }: ExamResultProps) {
   const totalScore = Object.values(studentAnswers || {}).reduce((sum, ans) => Number(sum) + Number(ans.score), 0);
   const percentage = totalPossibleScore > 0 ? Math.round((totalScore / totalPossibleScore) * 100) : 0;
   const correctAnswers = Object.values(studentAnswers || {}).filter((ans) => ans.is_correct && ans.score > 0).length;
@@ -123,6 +124,7 @@ export default function ExamAnswerResult({ studentAnswers, courseExams, totalPos
                         score={studentAnswers?.[exam.id]?.score}
                         onScoreChange={isTeacher ? onScoreChange : undefined}
                         isTeacher={isTeacher}
+                        enrollId={enrollId}
                       />
 
                       <div className="flex items-center justify-between pt-2 border-t border-slate-100">

@@ -5,11 +5,11 @@ import { Textarea } from '@/components/ui/textarea';
 import type { CourseExamType, LessonTaskType, LongAnswerExtraData } from '@/types/task';
 import { useEffect, useState } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
-import { uploadExamAnswerDocument, deleteExamAnswerDocument } from '@/services/examAnswerDocumentService';
 import { toast } from 'sonner';
-import type { ExamAnswerDocumentType } from '@/types/examanswerdocument';
-import type { LongAnswer } from '@/types/answer';
+import type { LongAnswer, LongAnswerDocument } from '@/types/answer';
+import { uploadDocument } from '@/services/studentCourseExamService';
 import { useMutation } from '@tanstack/react-query';
+import LQDocModalBox from '@/components/LQDocModalBox';
 
 interface LongTaskComponentProps {
   task: LessonTaskType | CourseExamType;
@@ -19,38 +19,16 @@ interface LongTaskComponentProps {
   score?: number;
   onScoreChange?: (taskId: number, score: number) => void;
   isTeacher?: boolean;
+  enrollId?: number;
 }
 
-export default function LongTaskComponent({ task, onAnswer, value = '', readonly = false, score, onScoreChange }: LongTaskComponentProps) {
+export default function LongTaskComponent({ task, onAnswer, value = '', readonly = false, score, onScoreChange, isTeacher = false, enrollId }: LongTaskComponentProps) {
   const minWords = (task?.extra_data as LongAnswerExtraData)?.min_word_count || 50;
   const [text, setText] = useState('');
-  const [documents, setDocuments] = useState<ExamAnswerDocumentType[]>([]);
+  const [document, setDocument] = useState<LongAnswerDocument | null>(null);
   const [localScore, setLocalScore] = useState<number>(score ?? 0);
-
-  const uploadMutation = useMutation({
-    mutationFn: (formData: FormData) => uploadExamAnswerDocument(formData),
-    onSuccess: (newDoc) => {
-      setDocuments((prev) => [...prev, newDoc]);
-      updateAnswer(text, [...documents, newDoc]);
-      toast.success('Document uploaded successfully');
-    },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to upload document');
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (documentId: number) => deleteExamAnswerDocument(documentId),
-    onSuccess: (_, documentId) => {
-      setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
-      const updatedDocs = documents.filter((doc) => doc.id !== documentId);
-      updateAnswer(text, updatedDocs);
-      toast.success('Document removed successfully');
-    },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to remove document');
-    },
-  });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState<LongAnswerDocument | null>(null);
 
   useEffect(() => {
     setLocalScore(score ?? 0);
@@ -58,52 +36,54 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
 
   useEffect(() => {
     if (value && typeof value === 'object') {
-      // text with documents
+      // text with document
       setText(String(value.text) || '');
-      setDocuments(value.documents || []);
+      setDocument(value.document || null);
     } else {
       // text
       setText(String(value || ''));
-      setDocuments([]);
+      setDocument(null);
     }
   }, [value]);
 
   const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
-  const isValid = wordCount >= minWords || documents.length > 0;
+  const isValid = wordCount >= minWords || document !== null;
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const uploadMutation = useMutation({
+    mutationFn: uploadDocument,
+    onSuccess: (newDoc) => {
+      setDocument(newDoc);
+      updateAnswer(text, newDoc);
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('exam_answer_id', 'temp');
+      toast.success('Document uploaded successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to upload document');
+    },
+  });
 
-    uploadMutation.mutate(formData);
-    event.target.value = '';
+  const handleRemoveDocument = () => {
+    setDocument(null);
+    updateAnswer(text, null);
+    toast.success('Document removed successfully');
   };
 
-  const handleRemoveDocument = (documentId: string | number) => {
-    // for temp doc,just remove state
-    if (typeof documentId === 'string') {
-      setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
-      const updatedDocs = documents.filter((doc) => doc.id !== documentId);
-      updateAnswer(text, updatedDocs);
-      toast.success('Document removed successfully');
-    } else {
-      deleteMutation.mutate(documentId);
-    }
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    uploadMutation.mutate(file);
   };
 
   const handleTextChange = (newText: string) => {
     setText(newText);
-    updateAnswer(newText, documents);
+    updateAnswer(newText, document);
   };
 
-  const updateAnswer = (textValue: string, docs: ExamAnswerDocumentType[]) => {
+  const updateAnswer = (textValue: string, doc: LongAnswerDocument | null) => {
     const answerValue = {
       text: textValue,
-      documents: docs,
+      document: doc,
     };
     !readonly && onAnswer(task.id, answerValue);
   };
@@ -114,6 +94,7 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
       <div className="space-y-2">
         <Label className="text-sm font-medium">Type your answer</Label>
         <Textarea
+          disabled={readonly}
           className={`min-h-32 resize-y ${readonly ? 'bg-slate-100 text-slate-600' : ''}`}
           placeholder={`Write at least ${minWords} words...`}
           value={text}
@@ -129,14 +110,15 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
       </div>
 
       {/* File Upload Section */}
-      {!readonly && (
+      {!readonly && document == null && (
         <div className="space-y-2">
           <Label className="text-sm font-medium">Or upload a Word document</Label>
           <div className="flex items-center gap-2">
-            <Input type="file" accept=".docx" onChange={handleFileUpload} disabled={uploadMutation.isPending} className="hidden" id={`file-upload-${task.id}`} />
+            <Input disabled={uploadMutation.isPending || document !== null} type="file" accept=".docx" onChange={handleFileUpload} className="hidden" id={`file-upload-${task.id}`} />
             <Label
               htmlFor={`file-upload-${task.id}`}
-              className={`flex items-center gap-2 px-4 py-2 border border-dashed border-primary/30 bg-primary/5 rounded-lg cursor-pointer hover:border-primary transition-colors ${uploadMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`flex items-center gap-2 px-4 py-2 border border-dashed border-primary/30 bg-primary/5 rounded-lg cursor-pointer hover:border-primary transition-colors ${uploadMutation.isPending || document !== null ? 'opacity-50 cursor-not-allowed' : ''}
+`}
             >
               <Upload className="h-4 w-4" />
               {uploadMutation.isPending ? 'Uploading...' : 'Choose Word Document'}
@@ -147,46 +129,40 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
         </div>
       )}
 
-      {/* Uploaded Documents */}
-      {documents.length > 0 && (
+      {/* Uploaded Document */}
+      {document && (
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Uploaded Documents</Label>
+          <Label className="text-sm font-medium">Uploaded Document</Label>
           <div className="space-y-2">
-            {documents.map((doc) => (
-              <div key={doc.id} className="flex items-center  justify-between p-2 border rounded-lg bg-gray-50">
-                <div className="flex items-center gap-4 w-full flex-wrap justify-between">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm">{doc.filename}</span>
-                  </div>
+            <div key={'doc' + document.filename} className="flex items-center  justify-between p-2 border rounded-lg bg-gray-50">
+              <div className="flex items-center gap-4 w-full flex-wrap justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm">{document.filename}</span>
+                </div>
 
-                  <div className="flex items-center gap-2">
-                    <a href={doc.link} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
-                      View
-                    </a>
-                    {/* {isTeacher && (
-                      <Button
-                        type="button"
-                        variant="red"
-                        className="text-xs"
-                        size="sm"
-                        onClick={() => {
-                          setPdfUrl(doc.link);
-                        }}
-                      >
-                        Review
-                      </Button>
-                    )} */}
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedDoc(document);
+                      setModalOpen(true);
+                    }}
+                    className="text-xs text-blue-500  underline hover:text-blue-600 duration-300 hover:bg-blue-50 transition-all"
+                  >
+                    {isTeacher ? 'Review' : 'View'}
+                  </Button>
 
-                    {!readonly && (
-                      <Button type="button" variant="ghost" size="sm" onClick={() => handleRemoveDocument(doc.id)} className="h-6 w-6  p-0">
-                        <X className="h-3 w-3" />
-                      </Button>
-                    )}
-                  </div>
+                  {!readonly && (
+                    <Button type="button" variant="ghost" size="sm" onClick={() => handleRemoveDocument()} className="h-6 w-6  p-0">
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       )}
@@ -201,6 +177,18 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
             </Button>
           </div>
         </div>
+      )}
+
+      {modalOpen && (
+        <LQDocModalBox
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          document={selectedDoc}
+          isTeacher={isTeacher}
+          enrollId={enrollId}
+          taskId={task.id}
+          onDocumentUpdate={(updatedDoc) => setDocument(updatedDoc)}
+        />
       )}
     </div>
   );
