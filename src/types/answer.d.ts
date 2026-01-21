@@ -78,6 +78,7 @@ export interface UpcomingExamForStudentType{
   start_date: string | null;
   end_date: string | null;
   class_id: number;
+  enroll_id:number;
   class_name: string; 
   course_title: string;
   status: string;

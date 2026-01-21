@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { BookOpen, School, LogOut, Menu, Tag, Home, MessageCircle, UserRound, Search, BookOpenCheck, BookText } from 'lucide-react';
+import { BookOpen, School, LogOut, Menu, Tag, Home, MessageCircle, UserRound, BookOpenCheck, BookText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { StudentDataProvider } from '@/context/StudentDataContext';
@@ -181,7 +181,10 @@ function HeaderBar() {
       {/* search */}
       <div className=" flex items-center justify-center shrink-0">
         <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/70 drop-shadow-2xl hover:bg-primary">
-          <Search className="h-5 w-5 text-white" />
+          <Link to="/student/profile">
+          <UserRound className="h-5 w-5 text-white" />
+          </Link>
+          
         </div>
       </div>
     </header>
