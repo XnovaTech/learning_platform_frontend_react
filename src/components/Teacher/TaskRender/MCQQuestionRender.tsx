@@ -25,14 +25,6 @@ export default function MCQQuestionRender({ type, tasks, onEdit, onDelete }: Pro
               <div className="flex gap-4">
                 {/* Question Number */}
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">{index + 1}</span>
-
-                {/* Question Content */}
-                <div
-                  className="prose prose-slate max-w-none mt-1 leading-relaxed text-slate-800"
-                  dangerouslySetInnerHTML={{
-                    __html: task.question || '',
-                  }}
-                />
               </div>
               {/* Actions */}
               <div className="flex flex-col items-end gap-2">
@@ -49,46 +41,59 @@ export default function MCQQuestionRender({ type, tasks, onEdit, onDelete }: Pro
               </div>
             </div>
 
-            {type === 'Multiple Choice Questions' ? (
-              <ul className="mt-4 flex flex-col space-y-3">
-                {task.options?.map((option: any, optIndex: number) => (
-                  <li
-                    key={option.id}
-                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+            <div className="max-h-80 flex">
+              <div className="flex-1 overflow-auto">
+                {/* Question Content */}
+                <div
+                  className="prose prose-slate max-w-none mt-1 leading-relaxed text-slate-800 bg-slate-100 p-2 rounded-2xl"
+                  dangerouslySetInnerHTML={{
+                    __html: task.question || '',
+                  }}
+                />
+              </div>
+              <div className="pl-4 flex flex-col min-w-56">
+                {type === 'Multiple Choice Questions' ? (
+                  <ul className="mt-4 flex flex-col space-y-3">
+                    {task.options?.map((option: any, optIndex: number) => (
+                      <li
+                        key={option.id}
+                        className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
                         ${option.is_correct ? 'border border-emerald-200 bg-emerald-50 text-emerald-800 font-medium' : 'border bg-white text-slate-700 hover:bg-slate-100'}`}
-                  >
-                    {/* Option Label (A, B, C...) */}
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-700">{String.fromCharCode(65 + optIndex)}</span>
-                    <span>{option.option_text}</span>
+                      >
+                        {/* Option Label (A, B, C...) */}
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-700">{String.fromCharCode(65 + optIndex)}</span>
+                        <span>{option.option_text}</span>
 
-                    {option.is_correct && <span className="ml-auto text-xs font-semibold text-emerald-700">Correct</span>}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <ul className="mt-4 flex flex-col space-y-3">
-                {['true', 'false'].map((value, index) => {
-                  const correctAnswer = task.correct_answer === 'true' ? 'true' : 'false';
+                        {option.is_correct && <span className="ml-auto text-xs font-semibold text-emerald-700">Correct</span>}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <ul className="mt-4 flex flex-col space-y-3">
+                    {['true', 'false'].map((value, index) => {
+                      const correctAnswer = task.correct_answer === 'true' ? 'true' : 'false';
 
-                  const isCorrect = correctAnswer === value;
+                      const isCorrect = correctAnswer === value;
 
-                  return (
-                    <li
-                      key={value}
-                      className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition
+                      return (
+                        <li
+                          key={value}
+                          className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition
                     ${isCorrect ? 'border border-emerald-200 bg-emerald-50 text-emerald-800 font-medium' : 'border bg-white text-slate-700 hover:bg-slate-100'}
                     `}
-                    >
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-300 text-xs font-semibold text-slate-700">{String.fromCharCode(65 + index)}</span>
+                        >
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-300 text-xs font-semibold text-slate-700">{String.fromCharCode(65 + index)}</span>
 
-                      <span className="capitalize">{value}</span>
+                          <span className="capitalize">{value}</span>
 
-                      {isCorrect && <span className="ml-auto text-xs font-semibold text-emerald-700">Correct</span>}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+                          {isCorrect && <span className="ml-auto text-xs font-semibold text-emerald-700">Correct</span>}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            </div>
           </div>
         ))}
       </div>

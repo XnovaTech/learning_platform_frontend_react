@@ -124,42 +124,82 @@ export default function LessonAnswerList({ groupTasks, answers, handleAnswer, en
                   return (
                     <Card key={task.id} className="border p-1 border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                       <CardContent className="p-0 mb-1">
-                        {/* Question Content */}
-                        <div className="bg-white px-5 pt-4 border-b pb-1">
-                          <div className="flex items-start gap-2">
-                            <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{globalIndex} .</div>
+                        {task.task_type === 'mcq' || task.task_type === 'true_false' ? (
+                          <div className="bg-white p-5 flex flex-col md:flex-row h-80 rounded-xl shadow-sm">
+                            {/* Question Section */}
+                            <div className="flex-1 pr-4 flex flex-col mb-4 md:mb-0">
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-6 h-6 flex items-center justify-center font-bold text-sm bg-slate-200 rounded-full">{globalIndex}.</div>
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 text-xs font-semibold">{task.points} pts</span>
+                                {isAnswered && (
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-medium">
+                                    <CheckCircle2 className="w-3 h-3" />
+                                    Answered
+                                  </span>
+                                )}
+                              </div>
 
-                            <div className="flex-1 min-w-0">
-                              {task.task_type !== 'paragraph_drag' ? (
+                              {/* Question Content - Scrollable if needed */}
+                              <div className="flex-1 overflow-y-auto bg-slate-50 p-3 rounded-lg">
                                 <div
                                   className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800"
                                   dangerouslySetInnerHTML={{
                                     __html: task.question || '',
                                   }}
                                 />
+                              </div>
+                            </div>
+
+                            {/* Options Section */}
+                            <div className="md:pl-6 flex flex-col min-w-[220px] shrink-0">
+                              <h4 className="text-sm font-semibold text-slate-700 mb-3">Choose your answer</h4>
+                              <div className="flex-1 overflow-y-auto bg-slate-50 p-3 rounded-lg">
+                                <TaskRendererComponent task={task} onAnswer={handleAnswer} value={answers[task.id]} />
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            {/* Question Content */}
+                            <div className="bg-white px-5 pt-4 border-b pb-1">
+                              <div className="flex items-start gap-2">
+                                <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{globalIndex} .</div>
+                              </div>
+
+                              {/* pts */}
+                              <div className="flex items-center gap-2 justify-end">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 text-xs font-semibold">{task.points} pts</span>
+
+                                {isAnswered && (
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-medium">
+                                    <CheckCircle2 className="size-3" />
+                                    Answered
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              {task.task_type !== 'paragraph_drag' ? (
+                                <div className="max-h-80 overflow-y-auto p-2 bg-slate-100/20 rounded-2xl">
+                                  <div
+                                    className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800"
+                                    dangerouslySetInnerHTML={{
+                                      __html: task.question || '',
+                                    }}
+                                  />
+                                </div>
                               ) : (
                                 <p>Choose the correct answers</p>
                               )}
                             </div>
-                          </div>
 
-                          {/* pts */}
-                          <div className="flex items-center gap-2 justify-end">
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 text-xs font-semibold">{task.points} pts</span>
-
-                            {isAnswered && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-medium">
-                                <CheckCircle2 className="size-3" />
-                                Answered
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Answer Area */}
-                        <div className="p-5 bg-white">
-                          <TaskRendererComponent task={task} onAnswer={handleAnswer} value={answers[task.id]} />
-                        </div>
+                            {/* Answer Area */}
+                            <div className="p-5 bg-white">
+                              <TaskRendererComponent task={task} onAnswer={handleAnswer} value={answers[task.id]} />
+                            </div>
+                          </>
+                        )}
                       </CardContent>
                     </Card>
                   );
