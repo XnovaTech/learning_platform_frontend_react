@@ -1,163 +1,182 @@
-import { deleteExam } from '@/services/courseExamService';
-import type { CourseExamType } from '@/types/task';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Clock, Edit, BadgeQuestionMark, BookOpen, Layers } from 'lucide-react';
+import type { CourseExamType, ExamType } from '@/types/courseexam';
+import { Spinner } from '../ui/spinner';
+import { CourseExamForm } from './CourseExamForm';
+import { CourseExamSectionForm } from './CourseExamSectionForm';
 import { useState } from 'react';
-import { toast } from 'sonner';
-import { ConfirmDialog } from '../ui/dialog-context-menu';
-import { mapTaskToBuilderInitial } from '@/helper/mapTaskToBuilderInitial';
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '../ui/dialog';
-import UpdateExam from './UpdateExam';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import ExamLongRender from '../Teacher/ExamRender/ExamLongRender';
-import ExamShortRender from '../Teacher/ExamRender/ExamShortRender';
-import ExamMCQRender from '../Teacher/ExamRender/ExamMCQRender';
-import ExamDragDropRender from '../Teacher/ExamRender/ExamDragDropRender';
-import ExamMatchingRender from '../Teacher/ExamRender/ExamMatchingRender';
-import ExamParagraphRender from '../Teacher/ExamRender/ExamParagraphRender';
+import { Link } from 'react-router-dom';
+import type { CourseExamPayload } from '@/types/courseexam';
+import type { CourseExamSectionPayload, CourseExamSectionType } from '@/types/courseexamsection';
 
 type Props = {
-  exams: CourseExamType[];
-  refetch: () => void;
-  examType: string;
+  exam: CourseExamType | null;
+  isLoading: boolean;
+  courseId: number;
+  examType: ExamType;
 };
 
-export default function CourseExamList({ exams, refetch, examType }: Props) {
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [editingTask, setEditingTask] = useState<CourseExamType | null>(null);
-  const [editOpen, setEditOpen] = useState(false);
+export default function CourseExamList({ exam, isLoading, courseId, examType }: Props) {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isSectionFormOpen, setIsSectionFormOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<CourseExamType | null>(null);
+  const [editingSection, setEditingSection] = useState<CourseExamSectionType | null>(null);
 
-  const queryClient = useQueryClient();
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => deleteExam(id),
-    onSuccess: async () => {
-      toast.success('Exam deleted successfully');
-      await queryClient.invalidateQueries({ queryKey: ['courseExams'] });
-      setConfirmOpen(false);
-      setDeletingId(null);
-      refetch();
-    },
-    onError: (error: any) => toast.error(error?.message || 'Failed to delete exam'),
-  });
-
-  const askDelete = (id: number) => {
-    setDeletingId(id);
-    setConfirmOpen(true);
+  const defaultExamForm: CourseExamPayload = {
+    course_id: courseId,
+    exam_type: examType,
+    intro: '',
+    total_duration: 0,
   };
 
-  const openEditDialog = (task: CourseExamType) => {
-    setEditingTask(task);
-    setEditOpen(true);
+  const defaultExamSectionForm: CourseExamSectionPayload = {
+    course_exam_id: 0,
+    section_name: '',
+    duration: 0,
   };
 
-  const examsByExamType = exams.reduce<Record<string, CourseExamType[]>>((acc, exam) => {
-    const key = exam.exam_section || 'unknown';
+  const [form, setForm] = useState<CourseExamPayload>(defaultExamForm);
+  const [sectionForm, setSectionForm] = useState<CourseExamSectionPayload>(defaultExamSectionForm);
 
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(exam);
+  const handleEditExam = (exam: CourseExamType) => {
+    setEditingItem(exam);
+    setForm({
+      course_id: courseId,
+      exam_type: exam.exam_type,
+      intro: exam.intro || '',
+      total_duration: exam.total_duration,
+    });
+    setIsFormOpen(true);
+  };
 
-    return acc;
-  }, {});
+  const handleCreateSection = (examId: number) => {
+    setEditingSection(null);
+    setSectionForm({ ...defaultExamSectionForm, course_exam_id: examId });
+    setIsSectionFormOpen(true);
+  };
+
+  const handleEditSection = (examId: number, section: CourseExamSectionType) => {
+    setEditingSection(section);
+    setSectionForm({
+      course_exam_id: examId,
+      section_name: section.section_name,
+      duration: section.duration,
+    });
+    setIsSectionFormOpen(true);
+  };
+
+  const handleFormSuccess = () => {
+    setIsFormOpen(false);
+    setEditingItem(null);
+  };
+
+  const handleSectionFormSuccess = () => {
+    setIsSectionFormOpen(false);
+    setEditingSection(null);
+  };
 
   return (
-    <div className="space-y-8">
-      <Tabs defaultValue={Object.keys(examsByExamType)[0]} className="w-full">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-xl font-semibold text-foreground">{examType} Exam Questions</h3>
-            <p className="text-sm text-muted-foreground mt-1">Manage {examType.toLowerCase()} exam questions </p>
-          </div>
-          <TabsList className="rounded-2xl bg-white shadow h-10">
-            {Object.keys(examsByExamType).map((examTypeKey) => (
-              <TabsTrigger key={examTypeKey} value={examTypeKey} className="gap-2 rounded-xl px-5 transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                {examTypeKey.toUpperCase()}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+    <div className="space-y-6">
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16">
+          <Spinner className="size-8 text-primary" />
         </div>
+      ) : exam == null ? (
+        <CourseExamForm open={isFormOpen} onOpenChange={setIsFormOpen} isModal={false} courseId={courseId} examType={examType} form={form} setForm={setForm} onSuccess={handleFormSuccess} />
+      ) : (
+        <Card className="rounded-2xl shadow-sm">
+          <CardHeader className="border-b  rounded-t-2xl">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <CardTitle className="flex items-center gap-2 text-xl">{examType} Exam </CardTitle>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="size-4" />
+                  Total Duration: <span className="font-medium">{exam.total_duration} minutes</span>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => handleEditExam(exam)}>
+                  <Edit className="size-4 mr-1" /> Edit Exam
+                </Button>
+                <Button size="sm" onClick={() => handleCreateSection(exam.id)}>
+                  <Plus className="size-4 mr-1" /> Add Section
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
 
-        {Object.entries(examsByExamType).map(([examType, examList]) => {
-          const mcqTasks = examList.filter((exam) => exam.task_type === 'mcq');
-          const tfTasks = examList.filter((exam) => exam.task_type === 'true_false');
-          const shortTasks = examList.filter((exam) => exam.task_type === 'short');
-          const longTasks = examList.filter((exam) => exam.task_type === 'long');
-          const blankTasks = examList.filter((exam) => exam.task_type === 'fill_blank');
-          const matchingTasks = examList.filter((exam) => exam.task_type === 'matching');
-          const dragTasks = examList.filter((exam) => exam.task_type === 'drag_drop');
-          const paragraphDragTasks = examList.filter((exam) => exam.task_type === 'paragraph_drag');
+          <CardContent className="space-y-5">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-muted-foreground">Introduction</p>
+              {exam.intro ? (
+                <div className="text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: exam.intro }} />
+              ) : (
+                <span className="italic text-muted-foreground">No introduction provided.</span>
+              )}
+            </div>
 
-          return (
-            <TabsContent key={examType} value={examType} className="space-y-8">
-              {/** ------------  Long Questions -------------- */}
-              {longTasks.length > 0 && <ExamLongRender type="Long Questions" tasks={longTasks} onEdit={openEditDialog} onDelete={askDelete} />}
+            {/* Sections */}
+            <div className="space-y-3">
+              <div className="text-sm font-medium flex items-center gap-2">
+                <Layers className="size-4" />
+                Sections ({exam.sections?.length || 0})
+              </div>
 
-              {/* ---------------- SHORT QUESTIONS ---------------- */}
-              {shortTasks.length > 0 && <ExamShortRender type="Short Questions" tasks={shortTasks} onEdit={openEditDialog} onDelete={askDelete} />}
+              {exam.sections && exam.sections.length > 0 ? (
+                <div className="space-y-3">
+                  {exam.sections
+                    .sort((a, b) => a.section_name - b.section_name)
+                    .map((section) => (
+                      <div key={section.id} className="flex items-center justify-between rounded-xl border p-4 hover:bg-muted/40 transition">
+                        <div className="flex items-center gap-4">
+                          <div
+                            className={`flex size-9 ${section.section_name.toLowerCase() == 'break' ? 'bg-red-100 text-red-600 px-7' : 'bg-primary/10 text-primary'} items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold`}
+                          >
+                            {section.section_name}
+                          </div>
+                          <div>
+                            <p className="font-medium">Section {section.section_name}</p>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <Clock className="size-3" /> {section.duration} mins
+                            </div>
+                          </div>
+                        </div>
 
-              {/** -------------  Fill in The Questions ------------- */}
-              {blankTasks.length > 0 && <ExamShortRender type="Fill in the Blanks Questions" tasks={blankTasks} onEdit={openEditDialog} onDelete={askDelete} />}
+                        {section.section_name.toLowerCase() !== 'break' && (
+                          <div className="flex items-center gap-2">
+                            <Button asChild size="sm">
+                              <Link to={`/teacher/courses/${courseId}/exams/${exam.exam_type}/questions/create/${section.id}`}>
+                                <BadgeQuestionMark className="size-4 mr-1" /> Create Questions
+                              </Link>
+                            </Button>
+                            <Button size="sm" variant="primary" onClick={() => handleEditSection(exam.id, section)}>
+                              <Edit className="size-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <p className="text-sm italic text-muted-foreground">No sections created yet.</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-              {/* ---------------- MCQ ---------------- */}
-              {mcqTasks.length > 0 && <ExamMCQRender type="Multiple Choice Questions" tasks={mcqTasks} onEdit={openEditDialog} onDelete={askDelete} />}
+      {editingItem && (
+        <CourseExamForm open={isFormOpen} onOpenChange={setIsFormOpen} editingItem={editingItem} courseId={courseId} examType={examType} form={form} setForm={setForm} onSuccess={handleFormSuccess} />
+      )}
 
-              {/* ---------------- TRUE / FALSE ---------------- */}
-              {tfTasks.length > 0 && <ExamMCQRender type="True / False Questions" tasks={tfTasks} onEdit={openEditDialog} onDelete={askDelete} />}
-
-              {/* ---------------- DRAG & DROP QUESTIONS ---------------- */}
-              {dragTasks.length > 0 && <ExamDragDropRender type="Drag & Drop Questions" tasks={dragTasks} onEdit={openEditDialog} onDelete={askDelete} />}
-
-              {/* ---------------- MATCHING QUESTIONS ---------------- */}
-              {matchingTasks.length > 0 && <ExamMatchingRender type="Matching Questions" tasks={matchingTasks} onEdit={openEditDialog} onDelete={askDelete} />}
-              {/* ---------------- PARAGRAPH DRAG ---------------- */}
-              {paragraphDragTasks.length > 0 && <ExamParagraphRender type="Paragraph (Dropdown Blanks)" tasks={paragraphDragTasks} onEdit={openEditDialog} onDelete={askDelete} />}
-            </TabsContent>
-          );
-        })}
-      </Tabs>
-
-      {/* Edit Dialog*/}
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogTrigger />
-        <DialogContent className="w-[85vw] max-w-none max-h-[95vh] overflow-y-auto p-6" onCloseAutoFocus={(e) => e.preventDefault()} onOpenAutoFocus={(e) => e.preventDefault()}>
-          {editingTask && (
-            <>
-              <DialogTitle>Edit Task</DialogTitle>
-              <UpdateExam
-                initial={{
-                  task_type: editingTask.task_type,
-                  points: editingTask.points,
-                  question: editingTask.question,
-                  course_id: editingTask.course_id,
-                  exam_type: editingTask.exam_type,
-                  exam_section: editingTask.exam_section,
-                  extra_data: mapTaskToBuilderInitial(editingTask),
-                }}
-                refetch={refetch}
-                onClose={() => setEditOpen(false)}
-                examId={editingTask.id}
-              />
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <ConfirmDialog
-        open={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        title="Delete Task?"
-        description="This action cannot be undone. The class will be permanently removed."
-        confirmText="Delete"
-        cancelText="Cancel"
-        loading={deleteMutation.isPending}
-        destructive
-        onCancel={() => {
-          setConfirmOpen(false);
-          setDeletingId(null);
-        }}
-        onConfirm={() => {
-          if (deletingId != null) deleteMutation.mutate(deletingId);
-        }}
+      <CourseExamSectionForm
+        open={isSectionFormOpen}
+        onOpenChange={setIsSectionFormOpen}
+        editingItem={editingSection}
+        form={sectionForm}
+        setForm={setSectionForm}
+        onSuccess={handleSectionFormSuccess}
       />
     </div>
   );

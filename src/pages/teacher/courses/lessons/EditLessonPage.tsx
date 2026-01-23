@@ -6,6 +6,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import type { LessonType } from '@/types/lesson';
 import { LessonForm } from '@/components/Form/LessonForm';
+import { Book, BookOpen, Home, Edit } from 'lucide-react';
 
 export default function EditLessonPage() {
   const params = useParams();
@@ -21,7 +22,6 @@ export default function EditLessonPage() {
     initialData: preloadedLesson,
     staleTime: 60 * 1000,
   });
-
 
   if (isLoading) {
     return (
@@ -42,7 +42,8 @@ export default function EditLessonPage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/dashboard">
+              <Link className="text-base md:text-md gap-2" to="/teacher/dashboard">
+                <Home className="size-4" />
                 Dashboard
               </Link>
             </BreadcrumbLink>
@@ -50,7 +51,8 @@ export default function EditLessonPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/courses">
+              <Link className="text-base md:text-md gap-2" to="/teacher/courses">
+                <BookOpen className="size-4" />
                 Courses
               </Link>
             </BreadcrumbLink>
@@ -58,14 +60,18 @@ export default function EditLessonPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to={`/teacher/courses/${lesson?.course_id}`}>
+              <Link className="text-base md:text-md gap-2" to={`/teacher/courses/${lesson?.course_id}`}>
+                <Book className="size-4" />
                 Course Detail
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">Edit Lesson</BreadcrumbPage>
+            <BreadcrumbPage className="text-base md:text-md gap-2">
+              <Edit className="size-4" />
+              Edit Lesson
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

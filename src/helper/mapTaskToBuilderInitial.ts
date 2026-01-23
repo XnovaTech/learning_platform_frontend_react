@@ -1,12 +1,12 @@
+import type { CourseExamQuestionType } from '@/types/courseexamquestion';
 import type {
-  LessonTaskType,
+  LessonTaskType ,
   DragDropExtraData,
   MatchingExtraData,
   ParagraphDropdownData,
-  CourseExamType,
 } from '@/types/task';
 
-export function mapTaskToBuilderInitial(task: LessonTaskType | CourseExamType ) {
+export function mapTaskToBuilderInitial(task: LessonTaskType | CourseExamQuestionType ) {
   switch (task.task_type) {
     case 'mcq':
       return {
@@ -28,9 +28,7 @@ export function mapTaskToBuilderInitial(task: LessonTaskType | CourseExamType ) 
       };
 
     case 'long':
-      return {
-        extra_data: task.extra_data,
-      };
+      return task.extra_data || {};
 
     case 'matching': {
       const left: string[] = [];

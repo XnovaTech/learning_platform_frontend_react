@@ -21,7 +21,6 @@ type Props = {
 }
 
 const examTypes =  ['Midterm', 'Final'];
-
 const examSections = ['Section A', 'Section B', 'Section C', 'Section D', 'Section E'];
 
 export default function CreateExamPage({initial, examId}: Props){

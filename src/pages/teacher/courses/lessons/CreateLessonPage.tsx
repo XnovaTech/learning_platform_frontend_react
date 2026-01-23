@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { LessonForm } from '@/components/Form/LessonForm';
+import { Book, BookOpen, Home, Plus } from 'lucide-react';
 
 export default function CreateLessonPage() {
   const params = useParams();
@@ -14,7 +15,8 @@ export default function CreateLessonPage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/dashboard">
+              <Link className="text-base md:text-md gap-2" to="/teacher/dashboard">
+                <Home className="size-4" />
                 Dashboard
               </Link>
             </BreadcrumbLink>
@@ -22,7 +24,8 @@ export default function CreateLessonPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/courses">
+              <Link className="text-base md:text-md gap-2" to="/teacher/courses">
+                <BookOpen className="size-4" />
                 Courses
               </Link>
             </BreadcrumbLink>
@@ -30,14 +33,18 @@ export default function CreateLessonPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to={`/teacher/courses/${courseId}`}>
+              <Link className="text-base md:text-md gap-2" to={`/teacher/courses/${courseId}`}>
+                <Book className="size-4" />
                 Course Detail
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">Create Lesson</BreadcrumbPage>
+            <BreadcrumbPage className="text-base md:text-md gap-2">
+              <Plus className="size-4" />
+              Create Lesson
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

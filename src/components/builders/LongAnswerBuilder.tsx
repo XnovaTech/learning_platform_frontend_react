@@ -3,18 +3,16 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 
 type Props = {
-  initial?: {
-    extra_data?: { min_word_count?: number };
-  };
-  onChange: (data: {extra_data: { min_word_count: number } }) => void;
+  initial?: { min_word_count?: number };
+  onChange: (data: { min_word_count: number }) => void;
 };
 
 export default function LongAnswerBuilder({ initial, onChange }: Props) {
-  const [minWords, setMinWords] = useState<number>(initial?.extra_data?.min_word_count ?? 0);
+  const [minWords, setMinWords] = useState<number>(initial?.min_word_count ?? 0);
 
   useEffect(() => {
     onChange({
-      extra_data: { min_word_count: Number(minWords) },
+      min_word_count: Number(minWords),
     });
   }, [ minWords]);
 

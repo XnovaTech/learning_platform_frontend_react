@@ -10,7 +10,6 @@ import { deleteLessonDocument, uploadLessonDocument } from '@/services/lessonDoc
 import type { LessonPayloadType, LessonType } from '@/types/lesson';
 import type { LessonDocumentType } from '@/types/lessondocument';
 import { useNavigate } from 'react-router-dom';
-import { CardTitle } from '../ui/card';
 import { LessonQuill } from '../ui/lesson-quill';
 import FileUploader from '../FileUploader';
 
@@ -92,7 +91,7 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
             formData.append('file', file);
             formData.append('lesson_id', lessonId.toString());
             return uploadLessonDocument(formData);
-          })
+          }),
         );
         toast.success('Lesson documents uploaded successfully');
       }
@@ -109,12 +108,7 @@ export function LessonForm({ editingItem = null, courseId }: LessonFormProps) {
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <form onSubmit={onSubmit} className=" p-6 ">
-      <CardTitle className="text-lg font-semibold flex items-center  mb-6 gap-2">
-        <div className="h-8 w-1 bg-primary rounded-full" />
-        {editingItem ? 'Edit Lesson' : 'Create Lesson'}{' '}
-      </CardTitle>
-
+    <form onSubmit={onSubmit} className=" px-6 md:px-8 py-4 ">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 space-y-4">
         <div className=" space-y-2">
           <Label htmlFor="title">
