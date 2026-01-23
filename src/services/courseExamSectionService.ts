@@ -44,3 +44,10 @@ export const getCourseExamSection = async (id: number): Promise<CourseExamSectio
     throw new Error(error.response.data.message || error.message);
   }
 };
+
+export const reorderCourseExamSectoins = async (payload: {
+  sections: {id: number; order: number} [];
+}) => {
+  const {data} = await api.post('/v1/course-exam-sections/data/reorder', payload);
+  return data;
+}

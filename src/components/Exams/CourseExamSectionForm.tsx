@@ -76,8 +76,21 @@ export function CourseExamSectionForm({ open, onOpenChange, editingItem, form, s
               </SelectContent>
             </Select>
            </div>
-
             <div className="space-y-2">
+              <Label htmlFor="duration">
+               Title <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="tit,e"
+                type="string"
+           
+                value={form.title || ''}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="Enter Title"
+                required
+              />
+            </div>
+            <div className="space-y-2 col-span-2">
               <Label htmlFor="duration">
                 Duration (minutes) <span className="text-destructive">*</span>
               </Label>
