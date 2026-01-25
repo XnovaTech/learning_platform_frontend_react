@@ -207,7 +207,7 @@ export default function CourseExamList({ exam, isLoading, courseId, examType }: 
                         const isBreak = section.section_name.toLowerCase() === 'break';
 
                         return (
-                          <SortableSectionItem key={section.id} id={section.id} disabled={isBreak}>
+                          <SortableSectionItem key={section.id} id={section.id} disabled={!isBreak}>
                             <div className="flex items-center justify-between rounded-xl border p-4 hover:bg-muted/40 transition">
                               <div className="flex items-center gap-4">
                                 <div className={`flex size-9 ${isBreak ? 'bg-red-100 text-red-600 px-7' : 'bg-primary/10 text-primary'} items-center justify-center rounded-lg text-sm font-semibold`}>
@@ -216,7 +216,13 @@ export default function CourseExamList({ exam, isLoading, courseId, examType }: 
 
                                 <div>
                                   <p className="font-medium">
-                                    Section {section.section_name} {section.title}
+                                    {isBreak ? (
+                                      section.title
+                                    ) : (
+                                      <>
+                                      Section {section.section_name} {section.title}
+                                      </>
+                                    )}
                                   </p>
                                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                     <Clock className="size-3" /> {section.duration} mins
