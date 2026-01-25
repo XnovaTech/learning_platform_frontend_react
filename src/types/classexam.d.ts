@@ -1,5 +1,6 @@
 import { ClassRoomType } from './class';
-import { CourseExamType } from './task';
+import type { ClassExamType } from './courseexam';
+
 
 export interface ClassRoomExamType {
   id: number;
@@ -8,7 +9,7 @@ export interface ClassRoomExamType {
   start_date: string | null;
   end_date: string | null;
   class_room?: ClassRoomType;
-  exams?:CourseExamType[];
+  exam?: ClassExamType;
 }
 
 export interface ClassRoomExamPayloadType {

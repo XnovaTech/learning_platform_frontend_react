@@ -3,10 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import type { LongAnswerDocument } from '@/types/answer';
-import { updateDocumentHtml } from '@/services/studentCourseExamService';
 import { useMutation } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { updateDocumentHtml } from '@/services/studentExamAnswerListService';
 
 interface LQDocModalBoxProps {
   open: boolean;

@@ -18,3 +18,9 @@ export const examTypes = [
 
 export const examSections = ['1', '2', '3', '4', '5','Break'];
 
+ export const getTimerColor = (remaining: number, total: number): string => {
+    const percentage = (remaining / total) * 100;
+    if (percentage <= 10) return 'text-red-600 bg-red-50 border-red-200';
+    if (percentage <= 25) return 'text-orange-600 bg-orange-50 border-orange-200';
+    return 'text-primary bg-primary/10 border-primary/20';
+  };

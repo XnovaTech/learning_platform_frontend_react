@@ -1,37 +1,40 @@
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
-import type { StudentExamMarkUpdatePayload } from '@/types/answer';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import ExamAnswerResult from '@/components/Exams/ExamAnswerResult';
-import { getStudentCourseExamDetail, updateStudentExamMark } from '@/services/studentCourseExamService';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Book, BookOpenCheck, School } from 'lucide-react';
 import { enrollDetail } from '@/services/enrollService';
 import type { ClassRoomExamType } from '@/types/classexam';
 import { getClassExamDetails } from '@/services/classExamService';
+import { getStudentExamsDetail } from '@/services/studentExamAnswerService';
+import { updateStudentExamMark } from '@/services/studentExamAnswerListService';
+import type { StudentExamMarkUpdatePayload } from '@/types/studentexamanswer';
 
 export default function StudentExamRecordDetail() {
   const { enrollId, classExamId } = useParams();
   const enrollID = Number(enrollId);
   const classExamID = Number(classExamId);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { data: data } = useQuery<ClassRoomExamType>({
     queryKey: ['exam-details', classExamID],
     queryFn: () => getClassExamDetails(classExamID),
     enabled: !!classExamID,
   });
 
+  const examType = data?.exam_type || '';
   const {
     data: studentAnswers,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ['studentRecord', enrollID],
-    queryFn: () => getStudentCourseExamDetail(Number(enrollID), data?.exam_type || ''),
-    enabled: !!enrollID && !!data?.exam_type,
+    queryKey: ['studentRecord', enrollID, examType],
+    queryFn: () => getStudentExamsDetail(Number(enrollID), examType),
+    enabled: !!enrollID && !!examType,
   });
 
   const { data: enrollment } = useQuery({
@@ -39,8 +42,6 @@ export default function StudentExamRecordDetail() {
     queryFn: () => enrollDetail(enrollID),
     enabled: !!enrollID,
   });
-
-  const courseExams = data?.exams || [];
 
   const updateMarkMutation = useMutation({
     mutationFn: updateStudentExamMark,
@@ -55,18 +56,20 @@ export default function StudentExamRecordDetail() {
     },
   });
 
-  const handleScoreChange = async (examId: number, score: number) => {
+  const handleScoreChange = async (questionId: number, score: number) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
     await updateMarkMutation.mutateAsync({
       enroll_id: enrollID,
-      exam_id: examId,
+      question_id: questionId,
       score,
     } as StudentExamMarkUpdatePayload);
   };
 
-  const totalPossibleScore = courseExams.reduce((sum, exam) => sum + (exam.points || 0), 0) || 0;
+  const sections = data?.exam?.sections || [];
+  const allQuestions = sections.flatMap((section) => section.questions);
+  const totalPossibleScore = allQuestions.reduce((sum: number, exam) => Number(sum) + (Number(exam.points) || 0), 0) || 0;
 
   return (
     <div className="max-w-9xl mx-auto p-4 space-y-6">
@@ -119,7 +122,7 @@ export default function StudentExamRecordDetail() {
           <Spinner className="size-8  text-primary" />
         </Card>
       ) : (
-        <ExamAnswerResult studentAnswers={studentAnswers} courseExams={courseExams} totalPossibleScore={totalPossibleScore} isTeacher={true} onScoreChange={handleScoreChange} enrollId={enrollID} />
+        <ExamAnswerResult studentAnswers={studentAnswers} questions={allQuestions} totalPossibleScore={totalPossibleScore} isTeacher={true} onScoreChange={handleScoreChange} enrollId={enrollID} />
       )}
     </div>
   );

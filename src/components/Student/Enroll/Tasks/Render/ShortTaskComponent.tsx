@@ -1,11 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import type { CourseExamType, LessonTaskType } from '@/types/task';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
+import type { LessonTaskType } from '@/types/task';
 import { useEffect, useState } from 'react';
 
 interface ShortTaskComponentProps {
-  task: LessonTaskType | CourseExamType;
+  task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: any) => void;
   value?: string;
   readonly?: boolean;

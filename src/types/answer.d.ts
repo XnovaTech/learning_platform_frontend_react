@@ -4,7 +4,6 @@ export type FillBlankAnswer = string;
 export type MatchingAnswer = Record<string, string>;
 export type DragDropAnswer = Record<string, string>;
 export type ShortAnswer = string;
-
 export interface LongAnswerDocument {
   html_content: string;
   filename: string;
@@ -42,35 +41,17 @@ export interface StudentsLessonTaskRecordType {
 }
 
 export interface StudentAnswer {
+  id: number;
   answer: string | number;
   is_correct: number | null;
   score: number;
 }
 
-export type StudentExamAnswersType = Record<number, StudentAnswer>;
 export type StudentLessonType = Record<number, StudentAnswer>;
 
-//student course exams
-export interface StudentExamSubmitPayload {
-  enroll_id: number;
-  exam_type?: string | null;
-  answers: Record<number, string | Record<string, string>>;
-}
 
-export interface StudentExamMarkUpdatePayload {
-  enroll_id: number;
-  exam_id: number;
-  score: number;
-}
 
-export interface StudentCourseExamTaskRecordType {
-  enroll_id: number;
-  student_id: number;
-  first_name: string;
-  last_name: string;
-  total_points: number;
-  exam_total_points: number;
-}
+
 
 export interface UpcomingExamForStudentType{
   id: number;

@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 // import { Label } from "@/components/ui/label";
-import type { CourseExamType, LessonTaskType } from '@/types/task';
+import type {  LessonTaskType } from '@/types/task';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 
 interface Props {
-  task: LessonTaskType | CourseExamType;
+  task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: Record<string, string>) => void;
   readonly?: boolean;
   value?: Record<string, string>;

@@ -1,8 +1,9 @@
 import { Input } from '@/components/ui/input';
-import type { CourseExamType, LessonTaskType } from '@/types/task';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
+import type {  LessonTaskType } from '@/types/task';
 
 interface FillBlankTaskComponentProps {
-  task: LessonTaskType | CourseExamType;
+  task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: any) => void;
   value?: string;
   readonly?: boolean;

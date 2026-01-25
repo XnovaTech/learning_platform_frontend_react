@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import type { LessonTaskType, CourseExamType } from '@/types/task';
+import type { LessonTaskType } from '@/types/task';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 
 interface MatchingTaskComponentProps {
-  task: LessonTaskType | CourseExamType;
+  task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: any) => void;
   value?: Record<string, string>;
   readonly?: boolean;

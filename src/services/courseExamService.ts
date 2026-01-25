@@ -1,6 +1,6 @@
-import type { CreateCourseExamPayloadType, UpdateCourseExamPayloadType } from '@/types/task';
 import type { CourseExamType, CourseExamPayload } from '@/types/courseexam';
 import api from './api';
+import type { UpcomingExamForStudentType } from '@/types/answer';
 
 export const ListCourseExam = async (courseId: number): Promise<CourseExamType[]> => {
   try {
@@ -10,6 +10,16 @@ export const ListCourseExam = async (courseId: number): Promise<CourseExamType[]
     throw new Error(error.response.data.message || error.message);
   }
 };
+
+export const getUpcomingExamForStudent = async (studentId: number): Promise<UpcomingExamForStudentType[]> => {
+  try {
+    const { data } = await api.get(`/v1/student/upcoming/exams/${studentId}`);
+    return data?.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.message || error.message);
+  }
+};
+
 
 export const ListCourseExamWithType = async (courseId: number, examType: string) => {
   try {
@@ -40,7 +50,7 @@ export const uploadImage = async (payload: FormData) => {
   }
 };
 
-export const createCourseExam = async (payload: CreateCourseExamPayloadType): Promise<CourseExamType> => {
+export const createCourseExam = async (payload: CourseExamPayload): Promise<CourseExamType> => {
   try {
     const { data } = await api.post('v1/course-exams', payload);
     return data?.data;
@@ -49,7 +59,7 @@ export const createCourseExam = async (payload: CreateCourseExamPayloadType): Pr
   }
 };
 
-export const updateCourseExam = async (id: number, payload: UpdateCourseExamPayloadType): Promise<CourseExamType> => {
+export const updateCourseExam = async (id: number, payload: CourseExamPayload): Promise<CourseExamType> => {
   try {
     const { data } = await api.put(`v1/course-exams/${id}`, payload);
     return data?.data;

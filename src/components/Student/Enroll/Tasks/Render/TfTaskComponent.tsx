@@ -1,9 +1,10 @@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import type { CourseExamType, LessonTaskType } from '@/types/task';
+import type { LessonTaskType } from '@/types/task';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 
 interface TfTaskComponentProps {
-  task: LessonTaskType | CourseExamType;
+  task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: any) => void;
   value?: string;
   readonly?: boolean;

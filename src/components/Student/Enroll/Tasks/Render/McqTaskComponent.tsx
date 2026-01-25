@@ -1,10 +1,11 @@
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type { LessonTaskType, CourseExamType } from '@/types/task';
+import type { LessonTaskType } from '@/types/task';
 import { cn } from '@/lib/utils';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 
 interface McqTaskComponentProps {
-  task: LessonTaskType | CourseExamType;
+  task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: any) => void;
   value?: string;
   readonly?: boolean;

@@ -6,10 +6,11 @@ import FillBlankTaskComponent from './FillBlankTaskComponent';
 import DragDropTaskComponent from './DragDropTaskComponent';
 import MatchingTaskComponent from './MatchingTaskComponent';
 import ParagraphDragTaskComponent from './ParagraphDragTaskComponent';
-import type { CourseExamType, LessonTaskType } from '@/types/task';
+import type {  LessonTaskType } from '@/types/task';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 
 interface TaskRendererComponentProps {
-  task: LessonTaskType | CourseExamType;
+  task: LessonTaskType | ClassExamQuestionType;
   onAnswer?: any;
   value?: any;
   readonly?: boolean;

@@ -2,12 +2,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { getPerformanceLabel, getScoreBarColor, getScoreColor } from '@/mocks/tasks';
-import { listStudentCourseExamRecords } from '@/services/studentCourseExamService';
 import { getClass } from '@/services/classService';
 import { useQuery } from '@tanstack/react-query';
 import { BookOpen, ChevronRight, Book, School } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { listStudentExamAnswerRecords } from '@/services/studentExamAnswerListService';
 
 export default function StudentsExamRecords() {
   const { classId, courseId, examId } = useParams();
@@ -23,7 +23,7 @@ export default function StudentsExamRecords() {
 
   const { data: records, isLoading } = useQuery({
     queryKey: ['student-exam-records', courseID, classRoomID],
-    queryFn: () => listStudentCourseExamRecords(courseID, classRoomID),
+    queryFn: () => listStudentExamAnswerRecords(courseID, classRoomID),
     enabled: !!courseID && !!classRoomID,
   });
 

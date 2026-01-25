@@ -2,14 +2,14 @@ import { DndContext, PointerSensor, useSensor, useSensors, useDroppable, useDrag
 import { CSS } from '@dnd-kit/utilities';
 import { useEffect, useState } from 'react';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-
-import type { CourseExamType, LessonTaskType } from '@/types/task';
+import type { LessonTaskType } from '@/types/task';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { RotateCcw } from 'lucide-react';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 
 interface DragDropTaskComponentProps {
-  task: LessonTaskType | CourseExamType;
+  task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: any) => void;
   value?: Record<string, string | null>;
   readonly?: boolean;

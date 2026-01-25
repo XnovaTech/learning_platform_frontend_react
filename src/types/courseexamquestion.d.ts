@@ -1,15 +1,29 @@
 import type { CourseExamSectionType } from './courseexamsection';
-import type { TaskType, ExtraData } from './task';
+import type { TaskType, ExtraData, blankType } from './task';
 
-export interface CourseExamQuestionType {
+export interface QuestionType {
+  id: number;
+  task_type: TaskType;
+  question: string | null;
+  correct_answer?: string | null;
+  extra_data?: ExtraData | null;
+  points?: number | null;
+  order?: number | null;
+  options?: CourseExamOptionEntity[];
+}
+
+export interface ClassExamQuestionType extends QuestionType {
+  targets?: { id: string; text: string }[];
+  items?: { id: string; text: string }[];
+  left?: { id: string; text: string }[];
+  right?: { id: string; text: string }[];
+
+  blanks?: blankType[];
+}
+
+export interface CourseExamQuestionType extends QuestionType {
   id: number;
   section_id: number;
-  question: string;
-  task_type: TaskType;
-  correct_answer?: string;
-  extra_data?: ExtraData;
-  points: number;
-  order: number;
   options?: CourseExamOptionEntity[];
   section?: CourseExamSectionType;
 }

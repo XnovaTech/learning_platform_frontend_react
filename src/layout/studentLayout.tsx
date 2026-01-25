@@ -126,7 +126,7 @@ function HeaderBar() {
   const { pathname } = useLocation();
 
   return (
-    <header className="sticky top-2 bg-white/50 rounded-3xl backdrop-blur-lg drop-shadow-2xl z-50 mx-5  flex h-16.5 items-center gap-2 px-6 justify-between">
+    <header className="sticky top-2 bg-white/50 rounded-3xl backdrop-blur-lg drop-shadow-2xl z-30 mx-5  flex h-16.5 items-center gap-2 px-6 justify-between">
       {/*Mobile*/}
       <div className="flex items-center gap-3 md:hidden">
         <Sheet>

@@ -2,17 +2,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { CourseExamType, LessonTaskType, LongAnswerExtraData } from '@/types/task';
+import type {  LessonTaskType, LongAnswerExtraData } from '@/types/task';
 import { useEffect, useState } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
 import { toast } from 'sonner';
 import type { LongAnswer, LongAnswerDocument } from '@/types/answer';
-import { uploadDocument } from '@/services/studentCourseExamService';
 import { useMutation } from '@tanstack/react-query';
 import LQDocModalBox from '@/components/LQDocModalBox';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
+import { uploadDocument } from '@/services/studentExamAnswerListService';
 
 interface LongTaskComponentProps {
-  task: LessonTaskType | CourseExamType;
+  task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: any) => void;
   value?: LongAnswer;
   readonly?: boolean;
