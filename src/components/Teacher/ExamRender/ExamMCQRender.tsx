@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import type { CourseExamQuestionType, CourseExamOptionEntity } from '@/types/courseexamquestion';
 import { Edit3, Trash2 } from 'lucide-react';
 
@@ -62,8 +63,9 @@ export default function ExamMCQRender({ type, tasks, onEdit, onDelete }: Props) 
             </div>
 
             {/* Content Row (Side by Side) */}
-            <div className="flex max-h-80 gap-4">
+            <ResizablePanelGroup orientation="horizontal" className="max-h-[500px] p-3">
               {/* Question */}
+                <ResizablePanel defaultSize={70}>
               <div className="flex-1 overflow-y-auto rounded-xl bg-white p-4 ring-1 ring-slate-200">
                 <div
                   className="prose prose-slate max-w-none text-sm leading-relaxed"
@@ -72,7 +74,9 @@ export default function ExamMCQRender({ type, tasks, onEdit, onDelete }: Props) 
                   }}
                 />
               </div>
-
+              </ResizablePanel>
+               <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={30}>
               {/* Options */}
               <div className="flex min-w-64 flex-col rounded-xl bg-white p-4 ring-1 ring-slate-200">
                 <h4 className="mb-3 text-sm font-semibold text-slate-700">
@@ -140,7 +144,8 @@ export default function ExamMCQRender({ type, tasks, onEdit, onDelete }: Props) 
                   )}
                 </div>
               </div>
-            </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </div>
         ))}
       </div>

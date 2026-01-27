@@ -149,9 +149,9 @@ function HeaderBar() {
       {/* logo */}
       <Link to="/student" className="flex items-center gap-3 fex-shrink-0">
         <div className="hidden md:flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/70 to-primary shadow-md">
-          <img src="/logo.png" className="object-cover" />
+          <img src="/logo.png" className="object-cover rounded-2xl" />
         </div>
-        <h1 className="text-md md:text-base font-semibold text-gray-900">The Crystal Academy</h1>
+        <img src="/logotext.png" className="object-center max-w-56 drop-shadow-2xl" />
       </Link>
 
       {/* navigation */}

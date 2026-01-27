@@ -1,7 +1,7 @@
 import { DndContext, PointerSensor, useSensor, useSensors, useDroppable, useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { useEffect, useState } from 'react';
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 import type { LessonTaskType } from '@/types/task';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +21,6 @@ interface DragDropTaskComponentProps {
 
 export default function DragDropTaskComponent({ task, onAnswer, value = {}, readonly = false, score, onScoreChange }: DragDropTaskComponentProps) {
   const sensors = readonly ? undefined : useSensors(useSensor(PointerSensor));
-  const [activeId, setActiveId] = useState<string | null>(null);
   const [assigned, setAssigned] = useState<Record<string, string | null>>(value);
   const [localScore, setLocalScore] = useState<string>(score ? score.toString() : '');
   const items = task.items ?? [];
@@ -31,18 +30,16 @@ export default function DragDropTaskComponent({ task, onAnswer, value = {}, read
 
   const allItemsDropped = remainingItems.length === 0;
 
-  const handleDragStart = (event: DragStartEvent) => {
+  const handleDragStart = () => {
     if (readonly) return;
-    setActiveId(event.active.id.toString());
   };
 
-  console.log(activeId);
+
 
   const handleDragEnd = (event: DragEndEvent) => {
     if (readonly) return;
 
     const { active, over } = event;
-    setActiveId(null);
 
     if (!over) return;
 

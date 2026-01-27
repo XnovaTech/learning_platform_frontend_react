@@ -4,6 +4,8 @@ import { TASK_TITLE } from '@/mocks/tasks';
 import type { TaskType } from '@/types/task';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle2 } from 'lucide-react';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable';
+
 
 interface QuestionItemProps {
   question: any;
@@ -20,8 +22,9 @@ export const QuestionItem = memo(function QuestionItem({ question, index, isAnsw
     <Card key={question.id} className="p-2">
       <CardContent className="p-0 mb-1">
         {isChoiceQuestion ? (
-          <div className="bg-white p-5 flex flex-col md:flex-row h-auto md:h-80 hover rounded-xl">
-            <div className="flex-1 pr-4 flex flex-col mb-4 md:mb-0">
+           <ResizablePanelGroup orientation="horizontal" className="max-h-[500px] p-3">
+          <ResizablePanel defaultSize={70}>
+            <div className="pr-4 flex flex-col h-full">
               <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
                 <div className="flex items-center">
                   <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{index + 1}.</div>
@@ -38,18 +41,28 @@ export const QuestionItem = memo(function QuestionItem({ question, index, isAnsw
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto bg-slate-100 p-3 rounded-lg">
-                <div className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800" dangerouslySetInnerHTML={{ __html: question.question || '' }} />
+              <div className="flex flex-1 overflow-y-auto bg-slate-100 p-3 rounded-lg">
+                <div
+                  className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800"
+                  dangerouslySetInnerHTML={{
+                    __html: question.question || '',
+                  }}
+                />
               </div>
             </div>
+          </ResizablePanel>
 
+          <ResizableHandle withHandle />
+
+          <ResizablePanel defaultSize={30}>
             <div className="md:pl-6 flex flex-col min-w-[220px] shrink-0">
               <h4 className="text-sm font-semibold text-slate-700 mb-3">Choose your answer</h4>
               <div className="flex-1 overflow-y-auto bg-slate-100 p-3 my-auto justify-center rounded-lg">
                 <TaskRendererComponent task={question} onAnswer={handleAnswer} value={answers[question.id]} />
               </div>
             </div>
-          </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
         ) : (
           <>
             <div className="bg-slate-100 shadow-sm rounded-xl px-4 flex items-center justify-between py-2">

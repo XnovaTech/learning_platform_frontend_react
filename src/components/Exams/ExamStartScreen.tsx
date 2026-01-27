@@ -1,6 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { BookOpenCheck, Play, Clock, HelpCircle, Trophy, Layers, Calendar, AlertTriangle } from 'lucide-react';
-import { formatDate } from '@/utils/format';
+import {
+  BookOpenCheck,
+  Play,
+  Clock,
+  HelpCircle,
+  Trophy,
+  Layers,
+  AlertTriangle,
+} from 'lucide-react';
 import type { ClassRoomExamType } from '@/types/classexam';
 import type { ClassExamSectionType } from '@/types/courseexamsection';
 
@@ -12,105 +19,146 @@ interface ExamStartScreenProps {
   onStartExam: () => void;
 }
 
-export default function ExamStartScreen({ data, totalQuestions, totalPossibleScore, sections, onStartExam }: ExamStartScreenProps) {
+export default function ExamStartScreen({
+  data,
+  totalQuestions,
+  totalPossibleScore,
+  sections,
+  onStartExam,
+}: ExamStartScreenProps) {
   return (
-    <div className="flex flex-col items-center justify-center px-4">
-      <div className="max-w-6xl rounded-2xl w-full py-5 px-8">
-        <div className="flex flex-col items-center text-center">
-          <div className="p-4 rounded-full bg-primary/10 mb-4">
-            <BookOpenCheck className="size-10 text-primary" />
+    <div className="flex justify-center px-4 py-10">
+      <div className="w-full max-w-5xl space-y-8">
+
+        {/* HEADER */}
+        <div className="rounded-2xl border bg-transparent p-8 shadow-sm text-center space-y-6">
+          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10">
+            <BookOpenCheck className="size-8 text-primary" />
           </div>
 
-          <h1 className="text-3xl font-semibold text-slate-900 mb-3">{data?.exam_type} Exam</h1>
+          <h1 className="text-3xl font-semibold text-slate-900">
+            {data?.exam_type} Exam
+          </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-left w-full">
-            {/* Duration */}
-            <div
-              className="flex items-center justify-between py-3 px-4 rounded-xl
-                  bg-blue-50 border border-blue-100
-                  hover:shadow-sm transition"
-            >
-              <div className="flex items-center gap-2">
-                <Clock className="size-4 text-blue-500" />
-                <span className="text-blue-700 font-medium">Duration</span>
-              </div>
-              <span className="font-semibold text-blue-900">{data?.exam?.total_duration} min</span>
-            </div>
+         
 
-            {/* Questions */}
-            <div
-              className="flex items-center justify-between py-3 px-4 rounded-xl
-                  bg-violet-50 border border-violet-100
-                  hover:shadow-sm transition"
-            >
-              <div className="flex items-center gap-2">
-                <HelpCircle className="size-4 text-violet-500" />
-                <span className="text-violet-700 font-medium">Questions</span>
-              </div>
-              <span className="font-semibold text-violet-900">{totalQuestions}</span>
-            </div>
+        {/* STATS */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            icon={Clock}
+            label="Duration"
+            value={`${data?.exam?.total_duration} min`}
+            color="blue"
+          />
 
-            {/* Points */}
-            <div
-              className="flex items-center justify-between py-3 px-4 rounded-xl
-                  bg-amber-50 border border-amber-100
-                  hover:shadow-sm transition"
-            >
-              <div className="flex items-center gap-2">
-                <Trophy className="size-4 text-amber-500" />
-                <span className="text-amber-700 font-medium">Points</span>
-              </div>
-              <span className="font-semibold text-amber-900">{totalPossibleScore}</span>
-            </div>
+             <StatCard
+            icon={Layers}
+            label="Sections"
+            value={sections.length}
+            color="emerald"
+          />
+          
+          <StatCard
+            icon={HelpCircle}
+            label="Questions"
+            value={totalQuestions}
+            color="violet"
+          />
+          <StatCard
+            icon={Trophy}
+            label="Total Points"
+            value={totalPossibleScore}
+            color="amber"
+          />
+       
+       
+        </div>
 
-            {/* Sections */}
-            <div
-              className="flex items-center justify-between py-3 px-4 rounded-xl
-                  bg-emerald-50 border border-emerald-100
-                  hover:shadow-sm transition"
-            >
-              <div className="flex items-center gap-2">
-                <Layers className="size-4 text-emerald-500" />
-                <span className="text-emerald-700 font-medium">Sections</span>
-              </div>
-              <span className="font-semibold text-emerald-900">{sections.length}</span>
-            </div>
+         <p className="mt-2 text-sm text-red-600">
+            Please review the exam details before starting
+          </p>
 
-            {/* End Date */}
+        </div>
+
+
+        {/* INTRO */}
+        {data?.exam?.intro && (
+          <div className="rounded-xl border bg-slate-50 p-6">
             <div
-              className="flex items-center justify-between py-3 px-4 rounded-xl
-                  bg-rose-50 border border-rose-100
-                  hover:shadow-sm transition md:col-span-2"
-            >
-              <div className="flex items-center gap-2">
-                <Calendar className="size-4 text-rose-500" />
-                <span className="text-rose-700 font-medium">End Date</span>
-              </div>
-              <span className="font-semibold text-rose-900">{formatDate(data?.end_date)}</span>
-            </div>
+              className="prose prose-slate max-w-none text-sm"
+              dangerouslySetInnerHTML={{ __html: data.exam.intro }}
+            />
           </div>
+        )}
 
-          {data?.exam?.intro && (
-            <div className="w-full bg-slate-100 border rounded-lg p-4 mb-6 text-left">
-              <div className="text-sm text-slate-700 leading-relaxed prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: data?.exam.intro }} />
-            </div>
-          )}
-
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 w-full">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="size-5 text-amber-600 mt-0.5 shrink-0" />
-              <p className="text-sm text-amber-800">
-                <strong>Important:</strong> Once you start the exam, the timer will begin and cannot be paused. Make sure you're ready before clicking the Start button.
-              </p>
-            </div>
+        {/* WARNING */}
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="flex gap-3">
+            <AlertTriangle className="size-5 text-amber-600 shrink-0" />
+            <p className="text-sm text-amber-800 leading-relaxed">
+              <strong>Important:</strong> Once you start the exam, the timer
+              begins immediately and cannot be paused. Ensure you are fully
+              prepared before starting.
+            </p>
           </div>
+        </div>
 
-          <Button onClick={onStartExam} size="lg" className="px-8 py-6 text-lg font-semibold bg-primary hover:bg-primary/90 transition-colors duration-200 shadow-md hover:shadow-lg">
-            <Play className="size-5 mr-2" />
+        {/* ACTION */}
+        <div className="flex justify-center">
+          <Button
+            onClick={onStartExam}
+            size="lg"
+            className="gap-2 px-10 py-6 text-lg shadow-md hover:shadow-lg"
+          >
+            <Play className="size-5" />
             Start Exam
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* --------------------------------
+   STAT CARD
+--------------------------------- */
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  color,
+  className,
+}: {
+  icon: any;
+  label: string;
+  value: any;
+  color: 'blue' | 'violet' | 'amber' | 'emerald' | 'rose';
+  className?: string;
+}) {
+  const colorMap = {
+    blue: 'bg-blue-50 text-blue-700',
+    violet: 'bg-violet-50 text-violet-700',
+    amber: 'bg-amber-50 text-amber-700',
+    emerald: 'bg-emerald-50 text-emerald-700',
+    rose: 'bg-rose-50 text-rose-700',
+  };
+
+  return (
+    <div
+      className={`rounded-xl border bg-white p-4 flex items-center justify-between ${className}`}
+    >
+      <div className="flex items-center gap-3">
+        <div className={`rounded-lg p-2 ${colorMap[color]}`}>
+          <Icon className="size-4" />
+        </div>
+        <span className="text-sm font-medium text-slate-600">
+          {label}
+        </span>
+      </div>
+
+      <span className="text-lg font-semibold text-slate-900">
+        {value}
+      </span>
     </div>
   );
 }
