@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { cn } from '@/lib/utils';
+
 
 interface CharacterWebBuilderProps {
   initial?: {
@@ -43,14 +43,14 @@ export default function CharacterWebBuilder({ initial, onChange }: CharacterWebB
     setTargets(newTargets);
   };
 
-  const moveTarget = (fromIndex: number, toIndex: number) => {
-    if (toIndex < 0 || toIndex >= targets.length) return;
+  // const moveTarget = (fromIndex: number, toIndex: number) => {
+  //   if (toIndex < 0 || toIndex >= targets.length) return;
     
-    const newTargets = [...targets];
-    const [movedItem] = newTargets.splice(fromIndex, 1);
-    newTargets.splice(toIndex, 0, movedItem);
-    setTargets(newTargets);
-  };
+  //   const newTargets = [...targets];
+  //   const [movedItem] = newTargets.splice(fromIndex, 1);
+  //   newTargets.splice(toIndex, 0, movedItem);
+  //   setTargets(newTargets);
+  // };
 
   return (
     <div className="space-y-4">
