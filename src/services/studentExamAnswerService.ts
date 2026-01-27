@@ -1,5 +1,5 @@
 import api from './api';
-import type { StudentExamAnswersType, StudentExamSubmitPayload } from '@/types/studentexamanswer';
+import type { StudentExamAnswers, StudentExamAnswersType, StudentExamSubmitPayload } from '@/types/studentexamanswer';
 
 export const getStudentExamsDetail = async (enrollId: number, examType: string): Promise<StudentExamAnswersType> => {
   try {
@@ -18,3 +18,18 @@ export const submitStudentExamAnswers = async (payload: StudentExamSubmitPayload
     throw new Error(error.response.data.message || error.message);
   }
 };
+
+
+
+
+export const updateExamAnswer = async (id: number, payload: { review?: string; status?: string }): Promise<StudentExamAnswers> => {
+  try {
+    const { data } = await api.put(`/v1/student-exam-answers/${id}`, payload);
+    return data?.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.message || error.message);
+  }
+};
+
+
+

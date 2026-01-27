@@ -26,25 +26,25 @@ export default function TaskRendererComponent({ task, onAnswer, value, readonly 
 
   switch (task.task_type) {
     case 'mcq':
-      return <McqTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+      return <McqTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} />;
     case 'true_false':
-      return <TfTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+      return <TfTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} />;
     case 'short':
       return <ShortTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} />;
     case 'long':
       return <LongTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} isTeacher={isTeacher} enrollId={enrollId} />;
     case 'fill_blank':
-      return <FillBlankTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+      return <FillBlankTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} />;
     case 'drag_drop':
-      return <DragDropTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+      return <DragDropTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} />;
     case 'matching':
-      return <MatchingTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+      return <MatchingTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} />;
     case 'paragraph_drag':
-      return <ParagraphDragTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+      return <ParagraphDragTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} />;
     case 'table_drag':
-      return <TableDragTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+      return <TableDragTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} onScoreChange={onScoreChange} score={score} />;
     case 'character_web':
-      return <CharacterWebTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+      return <CharacterWebTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly}  onScoreChange={onScoreChange} score={score} />;
     default:
       return <div>Unsupported task type</div>;
   }

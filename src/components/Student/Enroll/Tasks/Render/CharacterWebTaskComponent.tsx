@@ -7,17 +7,22 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { RotateCcw } from 'lucide-react';
 import type { ClassExamQuestionType } from '@/types/courseexamquestion';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 interface CharacterWebTaskComponentProps {
   task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: any) => void;
   value?: Record<string, string | null>;
   readonly?: boolean;
+    score?: number;
+  onScoreChange?: (taskId: number, score: number) => void;
 }
 
-export default function CharacterWebTaskComponent({ task, onAnswer, value = {}, readonly = false }: CharacterWebTaskComponentProps) {
+export default function CharacterWebTaskComponent({ task, onAnswer, value = {}, readonly = false ,score, onScoreChange }: CharacterWebTaskComponentProps) {
   const sensors = readonly ? undefined : useSensors(useSensor(PointerSensor));
   const [assigned, setAssigned] = useState<Record<string, string | null>>(value);
+  const [localScore, setLocalScore] = useState<string>(score ? score.toString() : '');
 
   // Parse options into center label and targets
   const [centerLabel, setCenterLabel] = useState<string>('');
@@ -58,6 +63,11 @@ export default function CharacterWebTaskComponent({ task, onAnswer, value = {}, 
       setTargets(parsedTargets);
     }
   }, [task]);
+
+  
+  useEffect(() => {
+    setLocalScore(score ? score.toString() : '');
+  }, [score]);
 
   const remainingTargets = targets.filter((target) => !Object.values(assigned).includes(target.text));
 
@@ -168,6 +178,17 @@ export default function CharacterWebTaskComponent({ task, onAnswer, value = {}, 
         )}
       </div>
     </DndContext>
+
+    
+      {readonly && onScoreChange && (
+        <div className="space-y-2 flex  items-center gap-3">
+          <Label className="text-base font-medium text-slate-700 mt-2">Score:</Label>
+          <div className="flex items-center gap-2">
+            <Input  type="number"  step={0.1} min={''}  max={task.points || 100} value={localScore} onChange={(e) => setLocalScore(e.target.value)} className="w-30" />
+            <Button className='rounded-lg' onClick={() => onScoreChange(task.id, localScore === '' ? 0 : parseFloat(localScore) || 0)}>Update Score</Button>
+          </div>
+        </div>
+      )}
   </div>
 );
 

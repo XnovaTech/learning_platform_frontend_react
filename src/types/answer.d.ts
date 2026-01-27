@@ -50,9 +50,6 @@ export interface StudentAnswer {
 export type StudentLessonType = Record<number, StudentAnswer>;
 
 
-
-
-
 export interface UpcomingExamForStudentType{
   id: number;
   exam_type: string;

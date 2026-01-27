@@ -58,6 +58,15 @@ export default function StudentExamRecordDetail() {
 
   const handleScoreChange = async (questionId: number, score: number) => {
     if (isSubmitting) return;
+
+    const question = allQuestions.find((q) => q.id === questionId);
+    const maxScore = question?.points || 0;
+
+    if (score > maxScore) {
+      toast.error('Cannot be greater than maximum score');
+      return;
+    }
+
     setIsSubmitting(true);
 
     await updateMarkMutation.mutateAsync({
@@ -122,7 +131,15 @@ export default function StudentExamRecordDetail() {
           <Spinner className="size-8  text-primary" />
         </Card>
       ) : (
-        <ExamAnswerResult studentAnswers={studentAnswers} questions={allQuestions} totalPossibleScore={totalPossibleScore} isTeacher={true} onScoreChange={handleScoreChange} enrollId={enrollID} />
+        <ExamAnswerResult
+          studentAnswers={studentAnswers}
+          questions={allQuestions}
+          totalPossibleScore={totalPossibleScore}
+          isTeacher={true}
+          onScoreChange={handleScoreChange}
+          enrollId={enrollID}
+          refetch={refetch}
+        />
       )}
     </div>
   );

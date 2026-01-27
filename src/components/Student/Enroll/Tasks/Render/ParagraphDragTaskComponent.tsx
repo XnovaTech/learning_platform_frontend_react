@@ -1,5 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 // import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import type {  LessonTaskType } from '@/types/task';
 import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 
@@ -8,11 +11,14 @@ interface Props {
   onAnswer: (taskId: number, value: Record<string, string>) => void;
   readonly?: boolean;
   value?: Record<string, string>;
+  score?: number;
+  onScoreChange?: (taskId: number, score: number) => void;
 }
 
-export default function ParagraphDragTaskStudent({ task, onAnswer, readonly = false, value = {} }: Props) {
+export default function ParagraphDragTaskStudent({ task, onAnswer, readonly = false, value = {}, score, onScoreChange }: Props) {
   const blanks = task.blanks ?? [];
   const [answers, setAnswers] = useState<Record<string, string>>(value);
+  const [localScore, setLocalScore] = useState<number>(score ?? 0);
 
   // 🔒 parse paragraph ONCE (no infinite loop)
   const parts = useMemo(() => {
@@ -20,6 +26,10 @@ export default function ParagraphDragTaskStudent({ task, onAnswer, readonly = fa
 
     return task.question.split(/(\{\{blank_\d+\}\})/g);
   }, [task.question]);
+
+  useEffect(() => {
+    setLocalScore(score ?? 0);
+  }, [score]);
 
   const handleChange = (blankId: string, selected: string) => {
     const updated = { ...answers, [blankId]: selected };
@@ -32,7 +42,7 @@ export default function ParagraphDragTaskStudent({ task, onAnswer, readonly = fa
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* <Label className="text-sm font-medium text-slate-700">
         Choose the correct answers
       </Label> */}
@@ -68,6 +78,16 @@ export default function ParagraphDragTaskStudent({ task, onAnswer, readonly = fa
           );
         })}
       </div>
+
+      {readonly && onScoreChange && (
+        <div className="space-y-2 flex items-center gap-3">
+          <Label className="text-base font-medium text-slate-700 mt-2">Score:</Label>
+          <div className="flex items-center gap-2">
+            <Input type="number" step={0.1} min={''} max={task.points || 100} value={localScore} onChange={(e) => setLocalScore(Number(e.target.value))} className="w-30" />
+            <Button className='rounded-lg' onClick={() => onScoreChange(task.id, localScore)}>Update Score</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

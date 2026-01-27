@@ -23,7 +23,7 @@ export interface ClassExamQuestionType extends QuestionType {
 
 export interface CourseExamQuestionType extends QuestionType {
   id: number;
-  section_id: number;
+  section_id?: number;
   options?: CourseExamOptionEntity[];
   section?: CourseExamSectionType;
 }

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import type { LessonTaskType } from '@/types/task';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { RotateCcw } from 'lucide-react';
 import type { ClassExamQuestionType } from '@/types/courseexamquestion';
@@ -13,13 +15,15 @@ interface DragDropTaskComponentProps {
   onAnswer: (taskId: number, value: any) => void;
   value?: Record<string, string | null>;
   readonly?: boolean;
+  score?: number;
+  onScoreChange?: (taskId: number, score: number) => void;
 }
 
-export default function DragDropTaskComponent({ task, onAnswer, value = {}, readonly = false }: DragDropTaskComponentProps) {
+export default function DragDropTaskComponent({ task, onAnswer, value = {}, readonly = false, score, onScoreChange }: DragDropTaskComponentProps) {
   const sensors = readonly ? undefined : useSensors(useSensor(PointerSensor));
   const [activeId, setActiveId] = useState<string | null>(null);
   const [assigned, setAssigned] = useState<Record<string, string | null>>(value);
-
+  const [localScore, setLocalScore] = useState<string>(score ? score.toString() : '');
   const items = task.items ?? [];
   const targets = task.targets ?? [];
 
@@ -60,6 +64,10 @@ export default function DragDropTaskComponent({ task, onAnswer, value = {}, read
       setAssigned(value);
     }
   }, [value]);
+
+  useEffect(() => {
+    setLocalScore(score ? score.toString() : '');
+  }, [score]);
 
   const reset = () => {
     if (readonly) return;
@@ -103,6 +111,18 @@ export default function DragDropTaskComponent({ task, onAnswer, value = {}, read
           </div>
         </div>
       </DndContext>
+
+      {readonly && onScoreChange && (
+        <div className="space-y-2 flex items-center gap-3">
+          <Label className="text-base font-medium text-slate-700 mt-2">Score:</Label>
+          <div className="flex items-center gap-2">
+            <Input type="number" step={0.1} min={''} max={task.points || 100} value={localScore} onChange={(e) => setLocalScore(e.target.value)} className="w-30" />
+            <Button className="rounded-lg" onClick={() => onScoreChange(task.id, localScore === '' ? 0 : parseFloat(localScore) || 0)}>
+              Update Score
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -148,13 +168,17 @@ function DropZone({ id, text, assignedItem, items, readOnly }: { id: string; tex
         'p-4 w-full md:w-fit min-h-20 border-2 border-dashed rounded-xl transition',
         isOver && !readOnly ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-gray-50',
         matchedItem && 'border-green-500 bg-green-50',
-        readOnly && 'cursor-not-allowed'
+        readOnly && 'cursor-not-allowed',
       )}
     >
       <div className="text-gray-600 text-sm">{text}</div>
 
       <div className="mt-2">
-        {matchedItem ? <div className="p-2 bg-green-100 border-green-500 text-green-700  rounded-lg shadow-sm">{matchedItem.text}</div> : <div className="text-gray-400 italic text-sm">Drop here…</div>}
+        {matchedItem ? (
+          <div className="p-2 bg-green-100 border-green-500 text-green-700  rounded-lg shadow-sm">{matchedItem.text}</div>
+        ) : (
+          <div className="text-gray-400 italic text-sm">Drop here…</div>
+        )}
       </div>
     </div>
   );

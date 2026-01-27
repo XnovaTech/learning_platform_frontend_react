@@ -16,11 +16,10 @@ interface ShortTaskComponentProps {
 
 export default function ShortTaskComponent({ task, onAnswer, value = '', readonly = false, score, onScoreChange }: ShortTaskComponentProps) {
   const [text, setText] = useState('');
-
-  const [localScore, setLocalScore] = useState<number>(score ?? 0);
+  const [localScore, setLocalScore] = useState<string>(score ? score.toString() : '');
 
   useEffect(() => {
-    setLocalScore(score ?? 0);
+    setLocalScore(score ? score.toString() : '');
   }, [score]);
 
   useEffect(() => {
@@ -46,8 +45,8 @@ export default function ShortTaskComponent({ task, onAnswer, value = '', readonl
         <div className="space-y-2 flex  items-center gap-3">
           <Label className="text-base font-medium text-slate-700 mt-2">Score:</Label>
           <div className="flex items-center gap-2">
-            <Input  type="number"  max={task.points || 100} value={localScore} onChange={(e) => setLocalScore(Number(e.target.value))} className="w-30" />
-            <Button className='rounded-lg' onClick={() => onScoreChange(task.id, localScore)}>Update Score</Button>
+            <Input  type="number"  step={0.1} min={''}  max={task.points || 100} value={localScore} onChange={(e) => setLocalScore(e.target.value)} className="w-30" />
+            <Button className='rounded-lg' onClick={() => onScoreChange(task.id, localScore === '' ? 0 : parseFloat(localScore) || 0)}>Update Score</Button>
           </div>
         </div>
       )}

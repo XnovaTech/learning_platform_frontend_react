@@ -1,25 +1,22 @@
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  useDroppable,
-  useDraggable,
-} from '@dnd-kit/core';
+import { DndContext, PointerSensor, useSensor, useSensors, useDroppable, useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import {  useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import type { LessonTaskType } from '@/types/task';
 import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { RotateCcw } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface TableDragTaskComponentProps {
   task: LessonTaskType | ClassExamQuestionType;
   onAnswer: (taskId: number, value: any) => void;
   value?: Record<string, string | null>;
   readonly?: boolean;
+    score?: number;
+  onScoreChange?: (taskId: number, score: number) => void;
 }
 
 interface Item {
@@ -33,18 +30,10 @@ interface Row {
   evidences: string[];
 }
 
-export default function TableDragTaskComponent({
-  task,
-  onAnswer,
-  value = {},
-  readonly = false,
-}: TableDragTaskComponentProps) {
+export default function TableDragTaskComponent({ task, onAnswer, value = {}, readonly = false,score, onScoreChange }: TableDragTaskComponentProps) {
   const sensors = readonly ? undefined : useSensors(useSensor(PointerSensor));
-  const [assigned, setAssigned] = useState<Record<string, string | null>>(
-  () => value ?? {}
-);
-
-
+  const [assigned, setAssigned] = useState<Record<string, string | null>>(() => value ?? {});
+  const [localScore, setLocalScore] = useState<string>(score ? score.toString() : '');
   const items: Item[] = [];
   const rows: Row[] = [];
 
@@ -54,7 +43,6 @@ export default function TableDragTaskComponent({
      PARSE BACKEND RESPONSE
   ----------------------------- */
   if (taskWithTableDrag.items && taskWithTableDrag.rows) {
- 
     taskWithTableDrag.items.forEach((item: any) => {
       items.push({
         id: String(item.id),
@@ -62,21 +50,16 @@ export default function TableDragTaskComponent({
       });
     });
 
-  
     taskWithTableDrag.rows.forEach((row: any) => {
       rows.push({
         id: String(row.id),
         claim: row.claim,
-        evidences: row.evidences.map((e: any) =>
-          typeof e === 'object' ? e.text : e
-        ),
+        evidences: row.evidences.map((e: any) => (typeof e === 'object' ? e.text : e)),
       });
     });
   }
 
-  const remainingItems = items.filter(
-    (item) => !Object.values(assigned).includes(item.id)
-  );
+  const remainingItems = items.filter((item) => !Object.values(assigned).includes(item.id));
 
   const handleDragStart = (_: DragStartEvent) => {
     if (readonly) return;
@@ -102,6 +85,11 @@ export default function TableDragTaskComponent({
   //   if (value) setAssigned(value);
   // }, [value]);
 
+    useEffect(() => {
+      setLocalScore(score ? score.toString() : '');
+    }, [score]);
+  
+
   const reset = () => {
     if (readonly) return;
     setAssigned({});
@@ -110,92 +98,74 @@ export default function TableDragTaskComponent({
 
   return (
     <div className="space-y-6">
-  {!readonly && (
-    <div className="flex items-center justify-between rounded-xl border bg-white px-4 py-2 shadow-sm">
-      <p className="text-sm font-medium text-slate-600">
-        Drag items into the correct evidence cells
-      </p>
+      {!readonly && (
+        <div className="flex items-center justify-between rounded-xl border bg-white px-4 py-2 shadow-sm">
+          <p className="text-sm font-medium text-slate-600">Drag items into the correct evidence cells</p>
 
-      <Button size="sm" variant="outline" onClick={reset} className="gap-2">
-        <RotateCcw className="size-4" />
-        Reset
-      </Button>
-    </div>
-  )}
-
-  <DndContext
-    sensors={sensors}
-    onDragStart={handleDragStart}
-    onDragEnd={handleDragEnd}
-  >
-    <div className="rounded-2xl border bg-gradient-to-b from-slate-50 to-white p-6 shadow-md space-y-6">
-
-      {/* DRAG ITEMS */}
-      <div className="rounded-xl border bg-white p-4">
-        <h4 className="mb-3 text-sm font-semibold text-slate-700">
-          Available Items
-        </h4>
-
-        <div className="flex flex-wrap gap-3">
-          {remainingItems.map(item => (
-            <DraggableItem
-              key={item.id}
-              id={item.id}
-              text={item.text}
-              readOnly={readonly}
-            />
-          ))}
+          <Button size="sm" variant="outline" onClick={reset} className="gap-2">
+            <RotateCcw className="size-4" />
+            Reset
+          </Button>
         </div>
-      </div>
+      )}
 
-      {/* TABLE */}
-      <div className="overflow-hidden rounded-xl border bg-white">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-100 text-slate-700">
-            <tr>
-              <th className="px-4 py-3 text-left font-semibold w-1/3">
-                Claim
-              </th>
-              <th className="px-4 py-3 text-left font-semibold">
-                Evidence
-              </th>
-            </tr>
-          </thead>
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <div className="rounded-2xl border bg-gradient-to-b from-slate-50 to-white p-6 shadow-md space-y-6">
+          {/* DRAG ITEMS */}
+          <div className="rounded-xl border bg-white p-4">
+            <h4 className="mb-3 text-sm font-semibold text-slate-700">Available Items</h4>
 
-          <tbody className="divide-y">
-            {rows.map(row => (
-              <tr key={row.id} className="align-top">
-                <td className="px-4 py-4 font-medium text-slate-800">
-                  {row.claim}
-                </td>
+            <div className="flex flex-wrap gap-3">
+              {remainingItems.map((item) => (
+                <DraggableItem key={item.id} id={item.id} text={item.text} readOnly={readonly} />
+              ))}
+            </div>
+          </div>
 
-                <td className="px-4 py-4">
-                  <div className="flex flex-wrap gap-3">
-                    {row.evidences.map((ev, index) => {
-                      const dropId = `${row.id}-E-${index}`;
+          {/* TABLE */}
+          <div className="overflow-hidden rounded-xl border bg-white">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-100 text-slate-700">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold w-1/3">Claim</th>
+                  <th className="px-4 py-3 text-left font-semibold">Evidence</th>
+                </tr>
+              </thead>
 
-                      return (
-                        <DropZone
-                          key={dropId}
-                          id={dropId}
-                          text={ev}
-                          assignedItem={assigned[dropId]}
-                          items={items}
-                          readOnly={readonly}
-                        />
-                      );
-                    })}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              <tbody className="divide-y">
+                {rows.map((row) => (
+                  <tr key={row.id} className="align-top">
+                    <td className="px-4 py-4 font-medium text-slate-800">{row.claim}</td>
+
+                    <td className="px-4 py-4">
+                      <div className="flex flex-wrap gap-3">
+                        {row.evidences.map((ev, index) => {
+                          const dropId = `${row.id}-E-${index}`;
+
+                          return <DropZone key={dropId} id={dropId} text={ev} assignedItem={assigned[dropId]} items={items} readOnly={readonly} />;
+                        })}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </DndContext>
+
+            {readonly && onScoreChange && (
+        <div className="space-y-2 flex items-center gap-3">
+          <Label className="text-base font-medium text-slate-700 mt-2">Score:</Label>
+          <div className="flex items-center gap-2">
+            <Input type="number" step={0.1} min={''} max={task.points || 100} value={localScore} onChange={(e) => setLocalScore(e.target.value)} className="w-30" />
+            <Button className="rounded-lg" onClick={() => onScoreChange(task.id, localScore === '' ? 0 : parseFloat(localScore) || 0)}>
+              Update Score
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
-  </DndContext>
-</div>
-
   );
 }
 
@@ -214,7 +184,7 @@ function DraggableItem({ id, text, readOnly }: any) {
         'select-none rounded-full border bg-white px-4 py-2 text-sm font-medium shadow-sm transition-all',
         'hover:-translate-y-0.5 hover:shadow-md',
         !readOnly && 'cursor-grab active:cursor-grabbing',
-        readOnly && 'opacity-60 cursor-not-allowed'
+        readOnly && 'opacity-60 cursor-not-allowed',
       )}
     >
       {text}
@@ -222,39 +192,25 @@ function DraggableItem({ id, text, readOnly }: any) {
   );
 }
 
-
 /* ----------------------------
    DROP ZONE
 ----------------------------- */
 function DropZone({ id, text, assignedItem, items, readOnly }: any) {
   const { setNodeRef, isOver } = useDroppable({ id });
-  const matched = items.find((i:any) => i.id === assignedItem);
+  const matched = items.find((i: any) => i.id === assignedItem);
 
   return (
     <div
       ref={setNodeRef}
       className={cn(
         'min-w-[160px] rounded-lg border-2 border-dashed p-3 transition-all',
-        matched
-          ? 'border-emerald-500 bg-emerald-50'
-          : 'border-slate-300 bg-white',
-        isOver && !readOnly && 'ring-4 ring-emerald-200'
+        matched ? 'border-emerald-500 bg-emerald-50' : 'border-slate-300 bg-white',
+        isOver && !readOnly && 'ring-4 ring-emerald-200',
       )}
     >
-      <div className="mb-1 text-xs text-slate-500">
-        {text}
-      </div>
+      <div className="mb-1 text-xs text-slate-500">{text}</div>
 
-      {matched ? (
-        <div className="rounded-md bg-white px-2 py-1 text-sm font-medium shadow-sm">
-          {matched.text}
-        </div>
-      ) : (
-        <div className="text-center text-xs italic text-slate-400">
-          Drop here
-        </div>
-      )}
+      {matched ? <div className="rounded-md bg-white px-2 py-1 text-sm font-medium shadow-sm">{matched.text}</div> : <div className="text-center text-xs italic text-slate-400">Drop here</div>}
     </div>
   );
 }
-

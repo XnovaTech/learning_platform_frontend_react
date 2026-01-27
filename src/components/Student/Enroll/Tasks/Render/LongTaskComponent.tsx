@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type {  LessonTaskType, LongAnswerExtraData } from '@/types/task';
+import type { LessonTaskType, LongAnswerExtraData } from '@/types/task';
 import { useEffect, useState } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -27,12 +27,12 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
   const minWords = (task?.extra_data as LongAnswerExtraData)?.min_word_count || 50;
   const [text, setText] = useState('');
   const [document, setDocument] = useState<LongAnswerDocument | null>(null);
-  const [localScore, setLocalScore] = useState<number>(score ?? 0);
+  const [localScore, setLocalScore] = useState<string>(score ? score.toString() : '');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<LongAnswerDocument | null>(null);
 
   useEffect(() => {
-    setLocalScore(score ?? 0);
+    setLocalScore(score ? score.toString() : '');
   }, [score]);
 
   useEffect(() => {
@@ -168,12 +168,14 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
         </div>
       )}
 
+
+      {/* Update score */}
       {readonly && onScoreChange && (
         <div className="space-y-2 flex items-center gap-3">
           <Label className="text-base font-medium text-slate-700 mt-2">Score:</Label>
           <div className="flex items-center gap-2">
-            <Input type="number" max={task.points || 100} value={localScore} onChange={(e) => setLocalScore(Number(e.target.value))} className="w-30" />
-            <Button className="rounded-lg" onClick={() => onScoreChange(task.id, localScore)}>
+            <Input type="number" step={0.1} min={''}  max={task.points || 100} value={localScore} onChange={(e) => setLocalScore(e.target.value)} className="w-30" />
+            <Button className="rounded-lg" onClick={() => onScoreChange(task.id, localScore === '' ? 0 : parseFloat(localScore) || 0)}>
               Update Score
             </Button>
           </div>
