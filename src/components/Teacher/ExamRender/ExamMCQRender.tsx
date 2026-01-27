@@ -1,94 +1,151 @@
 import { Button } from '@/components/ui/button';
-import type { CourseExamType } from '@/types/task';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import type { CourseExamQuestionType, CourseExamOptionEntity } from '@/types/courseexamquestion';
 import { Edit3, Trash2 } from 'lucide-react';
 
 interface Props {
   type: string;
-  tasks: CourseExamType[];
-  onEdit: (task: CourseExamType) => void;
+  tasks: CourseExamQuestionType[];
+  onEdit: (task: CourseExamQuestionType) => void;
   onDelete: (taskId: number) => void;
 }
 
 export default function ExamMCQRender({ type, tasks, onEdit, onDelete }: Props) {
   if (tasks.length === 0) return null;
+
   return (
-    <section className="rounded-2xl border bg-slate-300/5 p-4">
-      <header className="mb-5 p-3 flex items-center justify-between shadow-sm">
+    <section className="rounded-2xl border bg-white p-5 shadow-sm">
+      {/* Header */}
+      <header className="mb-6 flex items-center justify-between border-b pb-3">
         <h3 className="text-lg font-semibold text-slate-800">{type}</h3>
         <span className="text-sm text-slate-500">{tasks.length} questions</span>
       </header>
+
       <div className="space-y-6">
         {tasks.map((task, index) => (
-          <div key={task.id} className="rounded-xl border bg-slate-50 p-4 transition hover:shadow-sm">
-            {/* Question */}
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex gap-4">
+          <div
+            key={task.id}
+            className="rounded-xl border bg-slate-50 p-5 transition hover:shadow-md"
+          >
+            {/* Top Row */}
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3">
                 {/* Question Number */}
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">{index + 1}</span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-slate-700">
+                  {index + 1}
+                </span>
 
-                {/* Question Content */}
+                {/* Points */}
+                <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                  {task.points} pts
+                </span>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-blue-600 hover:bg-blue-50"
+                  onClick={() => onEdit(task)}
+                >
+                  <Edit3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-red-600 hover:bg-red-50"
+                  onClick={() => onDelete(task.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Content Row (Side by Side) */}
+            <ResizablePanelGroup orientation="horizontal" className="max-h-[500px] p-3">
+              {/* Question */}
+                <ResizablePanel defaultSize={70}>
+              <div className="flex-1 overflow-y-auto rounded-xl bg-white p-4 ring-1 ring-slate-200">
                 <div
-                  className="prose prose-slate max-w-none mt-1 leading-relaxed text-slate-800"
+                  className="prose prose-slate max-w-none text-sm leading-relaxed"
                   dangerouslySetInnerHTML={{
                     __html: task.question || '',
                   }}
                 />
               </div>
-              {/* Actions */}
-              <div className="flex flex-col items-end gap-2">
-                <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">{task.points} pts</span>
-                <div className="flex gap-3">
-                  <Button variant="ghost" size="sm" className="text-blue-600 hover:bg-blue-50 hover:text-blue-700" onClick={() => onEdit(task)}>
-                    <Edit3 className="mr-1 h-4 w-4" />
-                  </Button>
+              </ResizablePanel>
+               <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={30}>
+              {/* Options */}
+              <div className="flex min-w-64 flex-col rounded-xl bg-white p-4 ring-1 ring-slate-200">
+                <h4 className="mb-3 text-sm font-semibold text-slate-700">
+                  Options
+                </h4>
 
-                  <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => onDelete(task.id)}>
-                    <Trash2 className="mr-1 h-4 w-4" />
-                  </Button>
+                <div className="flex-1 overflow-y-auto">
+                  {type === 'Multiple Choice Questions' ? (
+                    <ul className="space-y-2">
+                      {task.options?.map(
+                        (option: CourseExamOptionEntity, optIndex: number) => (
+                          <li
+                            key={option.id}
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition
+                              ${
+                                option.is_correct
+                                  ? 'border border-emerald-200 bg-emerald-50 text-emerald-800 font-medium'
+                                  : 'border bg-slate-50 text-slate-700 hover:bg-slate-100'
+                              }`}
+                          >
+                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold">
+                              {String.fromCharCode(65 + optIndex)}
+                            </span>
+
+                            <span className="flex-1">{option.option_text}</span>
+
+                            {option.is_correct && (
+                              <span className="text-xs font-semibold text-emerald-700">
+                                Correct
+                              </span>
+                            )}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  ) : (
+                    <ul className="space-y-2">
+                      {['true', 'false'].map((value, index) => {
+                        const isCorrect = task.correct_answer === value;
+                        return (
+                          <li
+                            key={value}
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition
+                              ${
+                                isCorrect
+                                  ? 'border border-emerald-200 bg-emerald-50 text-emerald-800 font-medium'
+                                  : 'border bg-slate-50 text-slate-700 hover:bg-slate-100'
+                              }`}
+                          >
+                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold">
+                              {String.fromCharCode(65 + index)}
+                            </span>
+
+                            <span className="capitalize">{value}</span>
+
+                            {isCorrect && (
+                              <span className="ml-auto text-xs font-semibold text-emerald-700">
+                                Correct
+                              </span>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </div>
               </div>
-            </div>
-
-            {type === 'Multiple Choice Questions' ? (
-              <ul className="mt-4 flex flex-col space-y-3">
-                {task.options?.map((option: any, optIndex: number) => (
-                  <li
-                    key={option.id}
-                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
-                        ${option.is_correct ? 'border border-emerald-200 bg-emerald-50 text-emerald-800 font-medium' : 'border bg-white text-slate-700 hover:bg-slate-100'}`}
-                  >
-                    {/* Option Label (A, B, C...) */}
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-700">{String.fromCharCode(65 + optIndex)}</span>
-                    <span>{option.option_text}</span>
-
-                    {option.is_correct && <span className="ml-auto text-xs font-semibold text-emerald-700">Correct</span>}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <ul className="mt-4 flex flex-col space-y-3">
-                {['true', 'false'].map((value, index) => {
-                  const correctAnswer = task.correct_answer === 'true' ? 'true' : 'false';
-
-                  const isCorrect = correctAnswer === value;
-
-                  return (
-                    <li
-                      key={value}
-                      className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition
-                    ${isCorrect ? 'border border-emerald-200 bg-emerald-50 text-emerald-800 font-medium' : 'border bg-white text-slate-700 hover:bg-slate-100'}
-                    `}
-                    >
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-300 text-xs font-semibold text-slate-700">{String.fromCharCode(65 + index)}</span>
-
-                      <span className="capitalize">{value}</span>
-
-                      {isCorrect && <span className="ml-auto text-xs font-semibold text-emerald-700">Correct</span>}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </div>
         ))}
       </div>

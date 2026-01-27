@@ -40,7 +40,7 @@ export default function HomePage() {
             <h1 className="text-xl md:text-3xl">
               Welcome Back {studentData?.first_name} {studentData?.last_name}
             </h1>
-            <p className="mt-2 hidden md:flex text-xl  font-semibold text-shadow-sm tracking-wider text-primary">Learn with Crystal</p>
+            <p className="mt-2 hidden md:flex text-xl text-shadow-sm tracking-wider text-primary uppercase">Learn with Crystal</p>
           </div>
           <div className="relative -top-10 w-60 h-60">
             <Lottie animationData={Hello} loop={true} className="h-full w-auto" />

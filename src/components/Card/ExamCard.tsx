@@ -5,7 +5,7 @@ import { formatDate } from '@/utils/format';
 import { Link } from 'react-router-dom';
 import { Card, CardTitle } from '../ui/card';
 import { useState } from 'react';
-import { ClassExamForm } from '../Exams/ClassExamForm';
+import { ClassExamForm } from '../Form/ClassExamForm';
 
 interface Props {
   exams: ClassRoomExamType[];

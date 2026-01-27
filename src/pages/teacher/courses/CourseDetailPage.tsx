@@ -14,11 +14,11 @@ import type { CourseType } from '@/types/course';
 import { ClassroomForm } from '@/components/Form/ClassroomForm';
 import { deleteLesson, lessonDetail } from '@/services/lessonService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Home, BookOpen, Book, Users, BookOpenCheck, Clock, Trophy } from 'lucide-react';
+import { Plus, Home, BookOpen, Book, Users, BookOpenCheck } from 'lucide-react';
 import ClassRoomTable from '@/components/Table/ClassRoomTable';
 import LessonTable from '@/components/Table/LessonTable';
 import CourseCard from '@/components/Card/CourseCard';
-// import CourseExamList from '@/components/Exams/CourseExamList';
+import { examTypes } from '@/mocks/exam';
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -56,20 +56,6 @@ export default function CourseDetailPage() {
   };
 
   const [form, setForm] = useState<ClassRoomPayloadType>(defaultForm);
-  const examTypeData = [
-    {
-      type: 'Midterm',
-      icon: Clock,
-      description: 'Mid-course assessment to evaluate student progress',
-      color: 'bg-cyan-50 border-cyan-100 hover:bg-cyan-100 text-blue-700',
-    },
-    {
-      type: 'Final',
-      icon: Trophy,
-      description: 'Comprehensive end-of-course examination',
-      color: 'bg-amber-50 border-amber-100 hover:bg-amber-100 text-amber-700',
-    },
-  ];
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteClassRoom(id),
@@ -276,8 +262,8 @@ export default function CourseDetailPage() {
                 <h3 className="text-xl font-semibold text-foreground">Course Exams</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {examTypeData.map((item) => (
-                    <Link key={item.type} to={`/teacher/courses/exam/${courseId}/${item.type}`}>
+                  {examTypes.map((item) => (
+                    <Link key={item.type} to={`/teacher/courses/${courseId}/exams/${item.type}`}>
                       <Card className={`transition-all duration-300 cursor-pointer ${item.color} border-2 h-48 p-6 hover:shadow-sm hover:scale-105`}>
                         <CardContent className="flex flex-col items-center text-center space-y-4">
                           <item.icon className="size-12" />

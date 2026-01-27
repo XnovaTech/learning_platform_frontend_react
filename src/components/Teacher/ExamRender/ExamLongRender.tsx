@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Edit3, Trash2 } from "lucide-react";
-import type {  CourseExamType, LongAnswerExtraData } from '@/types/task';
+import type { LongAnswerExtraData } from '@/types/task';
+import type { CourseExamQuestionType } from '@/types/courseexamquestion';
 
 interface Props {
     type: string;
-    tasks: CourseExamType[];
-    onEdit: (task: CourseExamType) => void;
+    tasks: CourseExamQuestionType[];
+    onEdit: (task: CourseExamQuestionType) => void;
     onDelete: (taskId: number) => void;
 }
 

@@ -1,5 +1,5 @@
 import { useStudentData } from "@/context/StudentDataContext";
-import { getUpcomingExamForStudent } from "@/services/studentCourseExamService";
+import { getUpcomingExamForStudent } from "@/services/courseExamService";
 import type { UpcomingExamForStudentType } from "@/types/answer";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import Loading from "@/components/Loading";
 import { formatDate } from "@/utils/format";
+import { Link } from "react-router-dom";
+
 
 export default function ExamPage() {
   const { studentData } = useStudentData();
@@ -111,11 +113,12 @@ export default function ExamPage() {
                 )}
 
                 {/* Divider */}
-                <div className="pt-4 border-t flex justify-between items-center">
-                  <span className="text-xs text-gray-400">
+                <div className="pt-4 border-t flex justify-end items-center">
+                  {/* <span className="text-xs text-gray-400">
                     Exam ID: {exam.id}
-                  </span>
+                  </span> */}
 
+                <Link to={`/student/enrolls/${exam.enroll_id}/exams/${exam.id}`}>
                   <Button
                     size="sm"
                     variant="ghost"
@@ -124,6 +127,7 @@ export default function ExamPage() {
                     View Exam
                     <ArrowRight className="h-4 w-4" />
                   </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

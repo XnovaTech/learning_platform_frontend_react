@@ -22,27 +22,14 @@ export default function ShortQuestionRender({ type, tasks, onEdit, onDelete }: P
               <div key={task.id} className="rounded-xl border bg-slate-50 p-4 transition hover:shadow-sm">
                 {/* Question Row */}
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex gap-4">
+                 
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">{index + 1}</span>
 
-                    {/* Question Content*/}
-                    <div className="space-y-2">
-                      <div
-                        className="prose prose-slate max-w-none leading-relaxed text-slate-800"
-                        dangerouslySetInnerHTML={{
-                          __html: task.question || '',
-                        }}
-                      />
-
-                      {/* Answer */}
-                      <div className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-                        <span className="font-medium">Answer:</span> <span className="font-semibold">{task.correct_answer}</span>
-                      </div>
-                    </div>
-                  </div>
+                  
+                  
 
                   {/* Actions */}
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex flex-row items-end gap-2">
                     <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">{task.points} pts</span>
                     <div className="flex gap-3">
                       <Button variant="ghost" size="sm" className="text-blue-600 hover:bg-blue-50 hover:text-blue-700" onClick={() => onEdit(task)}>
@@ -56,8 +43,25 @@ export default function ShortQuestionRender({ type, tasks, onEdit, onDelete }: P
                       </Button>
                     </div>
                   </div>
-                </div>
+                
               </div>
+              <div className="mt-4">
+                  {/* Question Content*/}
+                    <div className="max-h-80 overflow-y-auto p-3 bg-slate-100 rounded-2xl">
+                      <div
+                        className="prose prose-slate max-w-none leading-relaxed text-slate-800"
+                        dangerouslySetInnerHTML={{
+                          __html: task.question || '',
+                        }}
+                      />
+
+                      {/* Answer */}
+                      <div className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700 mt-2">
+                        <span className="font-medium">Answer:</span> <span className="font-semibold">{task.correct_answer}</span>
+                      </div>
+                    </div>
+              </div>
+            </div>
             ))}
           </div>
         </section>

@@ -1,18 +1,18 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { BookOpenCheck, Clock, CheckCircle2, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save } from 'lucide-react';
-import TaskRendererComponent from '@/components/Student/Enroll/Tasks/Render/TaskRendererComponent';
-import { TASK_TITLE } from '@/mocks/tasks';
-import type { TaskType, CourseExamType } from '@/types/task';
-import { formatDate } from '@/utils/format';
+import { BookOpenCheck, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import type { ClassRoomExamType } from '@/types/classexam';
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
-import { submitStudentCourseExams } from '@/services/studentCourseExamService';
+import type { ClassExamSectionType } from '@/types/courseexamsection';
+import ExamTimer from './ExamTimer';
+import ExamStartScreen from './ExamStartScreen';
+import { useTimer } from '@/context/TimerContext';
+import { submitStudentExamAnswers } from '@/services/studentExamAnswerService';
+import { QuestionItem } from '../QuestionItem';
 
 interface ExamAnswerListProps {
-  groupExams: Record<string, CourseExamType[]>;
+  sections: ClassExamSectionType[];
   answers: Record<number, any>;
   handleAnswer: (taskId: number, value: any) => void;
   enrollId: string | undefined;
@@ -22,15 +22,19 @@ interface ExamAnswerListProps {
   refetch: () => void;
 }
 
-export default function ExamAnswerList({ groupExams, answers, handleAnswer, enrollId, data, totalQuestions, totalPossibleScore, refetch }: ExamAnswerListProps) {
+
+
+export default function ExamAnswerList({ sections, answers, handleAnswer, enrollId, data, totalQuestions, totalPossibleScore, refetch }: ExamAnswerListProps) {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-
-  const sections = Object.keys(groupExams);
+  const [isExamStarted, setIsExamStarted] = useState(false);
   const currentSection = sections[currentSectionIndex];
+  const hasResumedRef = useRef(false);
   const draftLoaded = useRef(false);
-  const currentSectionExams = groupExams[currentSection] || [];
-
+  const currentSectionExams = currentSection?.questions || [];
   const draftKey = `exam-draft-${enrollId}`;
+
+  const { timerState, startTimer, resetSectionTimer, clearTimerData } = useTimer();
+  const { isExamExpired, isSectionExpired } = timerState;
 
   useEffect(() => {
     if (enrollId && !draftLoaded.current) {
@@ -50,21 +54,55 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
     }
   }, [enrollId, handleAnswer, draftKey]);
 
+  useEffect(() => {
+    // if exam was already started, resume the timer
+    const timerKey = `exam-timer-${enrollId}-${data?.exam_type}`;
+    const savedTimer = localStorage.getItem(timerKey);
+    if (savedTimer) {
+      try {
+        const parsed = JSON.parse(savedTimer);
+        const savedSectionIndex = parsed.currentSectionIndex ?? 0;
+
+        setCurrentSectionIndex(savedSectionIndex);
+        setIsExamStarted(true);
+        hasResumedRef.current = true;
+
+        startTimer({
+          totalExamDuration: data?.exam?.total_duration || 0,
+          sections: sections.map((s) => ({ id: s.id, duration: s.duration })),
+          currentSectionIndex: savedSectionIndex,
+          enrollId,
+          examType: data?.exam_type || '',
+          onSectionTimeExpired: () => {
+            if (savedSectionIndex < sections.length - 1) {
+              handleNext();
+            } else {
+              handleSubmit();
+            }
+          },
+          onExamTimeExpired: handleSubmit,
+        });
+      } catch {
+        console.error('Invalid timer state');
+      }
+    }
+  }, [enrollId, data?.exam_type, data?.exam?.total_duration, sections, startTimer]);
+
   const saveDraft = (isDraft = false) => {
     if (enrollId && Object.keys(answers).length > 0) {
       localStorage.setItem(draftKey, JSON.stringify(answers));
-
       if (isDraft) toast.success('Draft saved successfully');
     } else {
-      toast.error('No answers to save');
+      if (isDraft) toast.error('No answers to save');
     }
   };
 
   const submitMutation = useMutation({
-    mutationFn: submitStudentCourseExams,
+    mutationFn: submitStudentExamAnswers,
     onSuccess: async () => {
       toast.success('Exam Submitted Successfully');
       localStorage.removeItem(draftKey);
+      clearTimerData();
       refetch();
     },
     onError: (e: any) => {
@@ -72,10 +110,27 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
     },
   });
 
+  const handleSubmit = () => {
+    if (isExamExpired || Object.keys(answers).length === 0) {
+      toast.error('Please answer at least one question');
+      return;
+    }
+
+    const transformedAnswers = Object.entries(answers).map(([question_id, answer]) => ({
+      question_id: Number(question_id),
+      answer,
+    }));
+
+    submitMutation.mutate({
+      enroll_id: Number(enrollId),
+      exam_id: Number(data?.exam?.id),
+      answers: transformedAnswers,
+    });
+  };
+
   const handleNext = () => {
     if (currentSectionIndex < sections.length - 1) {
       setCurrentSectionIndex(currentSectionIndex + 1);
-      saveDraft();
     }
   };
 
@@ -85,40 +140,56 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
     }
   };
 
+  const handleStartExam = () => {
+    setIsExamStarted(true);
+    startTimer({
+      totalExamDuration: data?.exam?.total_duration || 0,
+      sections: sections.map((s) => ({ id: s.id, duration: s.duration })),
+      currentSectionIndex,
+      enrollId,
+      examType: data?.exam_type || '',
+      onSectionTimeExpired: () => {
+        if (currentSectionIndex < sections.length - 1) {
+          handleNext();
+        } else {
+          handleSubmit();
+        }
+      },
+      onExamTimeExpired: () => {
+        handleSubmit();
+      },
+    });
+    toast.success('Exam started! Timer is now running.');
+  };
+
+  //  rest section timer when section changes
+  useEffect(() => {
+    if (!isExamStarted || sections.length === 0) return;
+
+    if (hasResumedRef.current) {
+      hasResumedRef.current = false;
+      return;
+    }
+
+    resetSectionTimer(currentSectionIndex, sections);
+  }, [currentSectionIndex, isExamStarted, resetSectionTimer, sections]);
+
   const isLastSection = currentSectionIndex === sections.length - 1;
   const currentSectionAnswered = currentSectionExams.filter((exam) => answers.hasOwnProperty(exam.id)).length;
+  //disable when exam timeout
+  const isDisabled = isExamExpired || submitMutation.isPending;
 
   return (
     <div className="">
-      {groupExams && sections.length > 0 ? (
+      {/* Start Exam Screen */}
+      {!isExamStarted && <ExamStartScreen data={data} totalQuestions={totalQuestions} totalPossibleScore={totalPossibleScore} sections={sections} onStartExam={handleStartExam} />}
+
+      {isExamStarted && sections && sections.length > 0 && (
         <div className="space-y-5">
-          {/*  Overview */}
+          <ExamTimer currentSectionName={currentSection?.section_name || ''} />
+
+          {/* Overview */}
           <div className="rounded-2xl bg-white shadow-md border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 flex flex-wrap items-center justify-between gap-5 border-b bg-slate-50">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-lg bg-primary/10">
-                  <BookOpenCheck className="size-6 text-primary" />
-                </div>
-
-                <div>
-                  <h1 className="text-xl md:text-2xl font-semibold text-slate-900">{data?.exam_type} Exam</h1>
-                  <p className="text-sm text-slate-500">
-                    {totalQuestions} Questions •{totalPossibleScore} Points
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600">
-                <span className="flex items-center gap-1.5">
-                  <Clock className="size-4 text-primary" />
-                  Ends {formatDate(data?.end_date)}
-                </span>
-
-            
-              </div>
-            </div>
-
-            {/* Progress */}
             <div className="px-6 py-4 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-slate-700">
@@ -143,78 +214,48 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
           </div>
 
           {/* Section  */}
-          <div className="relative rounded-xl bg-slate-50 border border-slate-200 shadow shadow-primary/10 px-6 py-4">
+          <div className="relative rounded-xl bg-slate-50 border border-slate-200 shadow shadow-primary/10 px-6 py-3">
             <div className="absolute left-0 top-0 h-full w-1.5 bg-primary rounded-l-xl" />
 
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/20 text-primary font-semibold">{currentSectionIndex + 1}</div>
-                <h2 className="text-xl font-semibold text-slate-900">{currentSection}</h2>
+                <div>
+                  <h2 className="text-md font-semibold text-slate-900">
+                    {currentSection?.section_name} {currentSection?.title}
+                  </h2>
+                  <p className="text-sm text-slate-500">{currentSection?.duration} Minutes</p>
+                </div>
               </div>
 
-              <p className="text-sm text-slate-500 text-right">{currentSectionExams.length} Questions</p>
+              {currentSectionExams.length > 1 && <p className="text-sm text-slate-500 font-medium text-right">{currentSectionExams.length} Questions</p>}
             </div>
           </div>
 
-          {/* Questions */}
+          {/* Questions  */}
           <div className="space-y-4">
             {currentSectionExams.map((exam, index) => {
               const isAnswered = answers.hasOwnProperty(exam.id);
 
-              return (
-                <Card key={exam.id} className="border p-1 border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  <CardContent className="p-0 mb-1">
-                    <div className="flex items-center justify-between px-4 py-3 border-b rounded-md bg-stone-50">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-100 text-blue-700 text-xs font-semibold">{TASK_TITLE[exam.task_type as TaskType]}</span>
-
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 text-xs font-semibold">{exam.points} pts</span>
-
-                        {isAnswered && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-medium">
-                            <CheckCircle2 className="size-3" />
-                            Answered
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Question Content */}
-                    <div className="bg-white px-5 py-4">
-                      <div className="flex items-start gap-2">
-                        <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{index + 1} .</div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800" dangerouslySetInnerHTML={{ __html: exam.question || '' }} />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Answer Area */}
-                    <div className="p-5 bg-white  ">
-                      <TaskRendererComponent task={exam} onAnswer={handleAnswer} value={answers[exam.id]} />
-                    </div>
-                  </CardContent>
-                </Card>
-              );
+              return <QuestionItem key={exam.id} question={exam} index={index} isAnswered={isAnswered} handleAnswer={handleAnswer} answers={answers} />;
             })}
           </div>
 
-          {/* Navigation  */}
+          {/* Navigation */}
           <div className="mt-6 flex items-center justify-between py-4">
-            <Button onClick={handlePrevious} disabled={currentSectionIndex === 0} className="flex rounded-lg px-5 md:py-5 items-center gap-2">
+            <Button onClick={handlePrevious} disabled={currentSectionIndex === 0 || isDisabled} className="flex rounded-lg px-5 md:py-5 items-center gap-2">
               <ArrowBigLeft className="size-5" />
               Previous
             </Button>
 
             {isLastSection ? (
               <div className="flex items-center gap-2">
-                <Button variant={'red'} onClick={() => saveDraft(true)} className="  rounded-lg py-5" disabled={Object.keys(answers).length === 0}>
+                <Button variant={'red'} onClick={() => saveDraft(true)} className="rounded-lg py-5" disabled={Object.keys(answers).length === 0 || isDisabled}>
                   <Save className="size-4" />
                   Save Draft
                 </Button>
 
-                <Button className="  rounded-lg py-5" onClick={() => submitMutation.mutate({ enroll_id: Number(enrollId), exam_type: data?.exam_type, answers })} disabled={submitMutation.isPending}>
+                <Button className="rounded-lg py-5" onClick={handleSubmit} disabled={isDisabled}>
                   {submitMutation.isPending ? (
                     'Submitting'
                   ) : (
@@ -226,14 +267,17 @@ export default function ExamAnswerList({ groupExams, answers, handleAnswer, enro
                 </Button>
               </div>
             ) : (
-              <Button onClick={handleNext} className="flex px-5 md:py-5 rounded-lg items-center gap-2">
+              <Button onClick={handleNext} className="flex px-5 md:py-5 rounded-lg items-center gap-2" disabled={isDisabled || isSectionExpired}>
                 Next
                 <ArrowBigRight className="size-5" />
               </Button>
             )}
           </div>
         </div>
-      ) : (
+      )}
+
+      {/* No sections */}
+      {(!sections || sections.length === 0) && (
         <div className="flex flex-col items-center justify-center py-12">
           <div className="rounded-full bg-primary/90 p-4 mb-4">
             <BookOpenCheck className="size-8 text-white" />

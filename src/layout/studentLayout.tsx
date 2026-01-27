@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { BookOpen, School, LogOut, Menu, Tag, Home, MessageCircle, UserRound, Search, BookOpenCheck, BookText } from 'lucide-react';
+import { BookOpen, School, LogOut, Menu, Tag, Home, MessageCircle, UserRound, BookOpenCheck, BookText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { StudentDataProvider } from '@/context/StudentDataContext';
@@ -126,7 +126,7 @@ function HeaderBar() {
   const { pathname } = useLocation();
 
   return (
-    <header className="sticky top-2 bg-white/50 rounded-3xl backdrop-blur-lg drop-shadow-2xl z-50 mx-5  flex h-16.5 items-center gap-2 px-6 justify-between">
+    <header className="sticky top-2 bg-white/50 rounded-3xl backdrop-blur-lg drop-shadow-2xl z-30 mx-5  flex h-16.5 items-center gap-2 px-6 justify-between">
       {/*Mobile*/}
       <div className="flex items-center gap-3 md:hidden">
         <Sheet>
@@ -149,9 +149,9 @@ function HeaderBar() {
       {/* logo */}
       <Link to="/student" className="flex items-center gap-3 fex-shrink-0">
         <div className="hidden md:flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/70 to-primary shadow-md">
-          <img src="/logo.png" className="object-cover" />
+          <img src="/logo.png" className="object-cover rounded-2xl" />
         </div>
-        <h1 className="text-md md:text-base font-semibold text-gray-900">The Crystal Academy</h1>
+        <img src="/logotext.png" className="object-center max-w-56 drop-shadow-2xl" />
       </Link>
 
       {/* navigation */}
@@ -181,7 +181,10 @@ function HeaderBar() {
       {/* search */}
       <div className=" flex items-center justify-center shrink-0">
         <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/70 drop-shadow-2xl hover:bg-primary">
-          <Search className="h-5 w-5 text-white" />
+          <Link to="/student/profile">
+          <UserRound className="h-5 w-5 text-white" />
+          </Link>
+          
         </div>
       </div>
     </header>

@@ -1,165 +1,161 @@
+import { useCallback, useMemo, useState } from 'react';
 import { Card } from '@/components/ui/card';
-import type { CourseExamType } from '@/types/task';
-import type { StudentExamAnswersType } from '@/types/answer';
-import { CheckCircle, XCircle, TrendingUp, AlertCircle, Star } from 'lucide-react';
-import TaskRendererComponent from '../Student/Enroll/Tasks/Render/TaskRendererComponent';
+import { Button } from '@/components/ui/button';
+import { CheckCircle, XCircle, TrendingUp, Star, MessageCircle } from 'lucide-react';
 import { getPerformanceMessage } from '@/mocks/tasks';
+import { StudentExamReviewForm } from '../Form/StudentExamReviewForm';
+import type { ClassExamQuestionType } from '@/types/courseexamquestion';
+import type { StudentExamAnswersType } from '@/types/studentexamanswer';
+import type { StudentAnswer } from '@/types/answer';
+import Lottie from 'lottie-react';
+import Teacher from '../../../public/lottie/Teacher.json';
+import { QuestionResultItem } from '../QuestionResultItem';
 
 interface ExamResultProps {
   studentAnswers?: StudentExamAnswersType;
-  courseExams: CourseExamType[];
+  questions: ClassExamQuestionType[];
   totalPossibleScore: number;
   isTeacher?: boolean;
   onScoreChange?: (taskId: number, score: number) => void;
+  enrollId?: number;
+  refetch?: () => void;
 }
 
-function Stat({ icon, value, label }: { icon: React.ReactNode; value: React.ReactNode; label: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      {icon}
-      <div className="leading-tight flex items-center gap-1 ">
-        <div className="font-semibold   text-slate-800">{value}</div>
-        <div className="text-sm l text-slate-500">{label}</div>
-      </div>
+const Stat = ({ icon, value, label }: { icon: React.ReactNode; value: React.ReactNode; label: string }) => (
+  <div className="flex items-center gap-2">
+    {icon}
+    <div className="flex items-center gap-1">
+      <div className="font-semibold text-slate-800">{value}</div>
+      <div className="text-sm text-slate-500">{label}</div>
     </div>
+  </div>
+);
+
+export default function ExamAnswerResult({ studentAnswers, questions, totalPossibleScore, isTeacher = false, onScoreChange, enrollId, refetch }: ExamResultProps) {
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
+
+  const answersMap = useMemo(
+    () =>
+      studentAnswers?.answers?.reduce<Record<number, StudentAnswer>>((acc, ans) => {
+        acc[ans.id] = ans;
+        return acc;
+      }, {}) ?? {},
+    [studentAnswers],
   );
-}
 
-export default function ExamAnswerResult({ studentAnswers, courseExams, totalPossibleScore, isTeacher = false, onScoreChange }: ExamResultProps) {
-  const totalScore = Object.values(studentAnswers || {}).reduce((sum, ans) => Number(sum) + Number(ans.score), 0);
-  const percentage = totalPossibleScore > 0 ? Math.round((totalScore / totalPossibleScore) * 100) : 0;
-  const correctAnswers = Object.values(studentAnswers || {}).filter((ans) => ans.is_correct && ans.score > 0).length;
-  const totalQuestions = courseExams.length;
-  const performanceMessage = getPerformanceMessage(percentage);
-
-  const getParsedAnswer = (taskId: number) => {
-    const record = studentAnswers?.[taskId];
-    if (!record) return undefined;
-    const raw = record.answer;
-
-    if (typeof raw === 'string') {
-      try {
-        return JSON.parse(raw);
-      } catch {
-        return raw;
+  const parsedAnswers = useMemo(() => {
+    const map: Record<number, any> = {};
+    Object.values(answersMap).forEach((ans) => {
+      if (typeof ans.answer === 'string') {
+        try {
+          map[ans.id] = JSON.parse(ans.answer);
+        } catch {
+          map[ans.id] = ans.answer;
+        }
+      } else {
+        map[ans.id] = ans.answer;
       }
-    }
+    });
+    return map;
+  }, [answersMap]);
 
-    return raw;
-  };
+  const getParsedAnswer = useCallback((taskId: number) => parsedAnswers[taskId], [parsedAnswers]);
+  const totalScore = useMemo(() => Object.values(answersMap).reduce((sum, ans) => sum + Number(ans.score), 0), [answersMap]);
+  const percentage = totalPossibleScore > 0 ? Math.round((totalScore / totalPossibleScore) * 100) : 0;
+  const correctAnswers = useMemo(() => Object.values(answersMap).filter((a) => a.is_correct && a.score > 0).length, [answersMap]);
+  const performanceMessage = getPerformanceMessage(percentage);
+  const isPendingStudent = studentAnswers?.status === 'Pending' && !isTeacher;
+  const isCompletedStudent = studentAnswers?.status === 'Approved' && !isTeacher;
 
   return (
     <div className="min-h-screen px-4">
-      <div className=" mx-auto space-y-5">
-        {!isTeacher && (
-          <div className="text-center ">
-            <div className="inline-flex items-center gap-1 px-5 py-2 rounded-full bg-gradient-to-r from-primary/5 to-primary/12 text-primary font-semibold shadow-sm">
-              <Star className="size-4 text-yellow-500" />
-              Exam Completed !
-              <Star className="size-4 text-yellow-500" />
-            </div>
-          </div>
-        )}
-
-        {/*  Summary Card */}
-        <Card className={`px-5 py-6 border ${performanceMessage.borderColor} ${performanceMessage.bgColor}`}>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="space-y-1">
-              <h2 className={`text-xl font-semibold ${performanceMessage.color}`}>{performanceMessage.text}</h2>
-              <p className="text-sm text-slate-600">Exam completed · {percentage}% score</p>
-            </div>
-
-            <div className="flex items-center gap-5 text-sm">
-              <Stat icon={<CheckCircle className="w-5 h-5 text-green-600" />} value={correctAnswers} label="Correct" />
-              <Stat icon={<XCircle className="w-5 h-5 text-red-600" />} value={totalQuestions - correctAnswers} label="Wrong" />
-              <Stat icon={<TrendingUp className="w-5 h-5 text-blue-600" />} value={`${totalScore}/${totalPossibleScore}`} label="Points" />
-            </div>
-          </div>
-        </Card>
-
-        <div className="flex items-center gap-2 pt-4">
-          <AlertCircle className="w-5 h-5 text-slate-600" />
-          <h3 className="text-xl font-semibold text-slate-800">Detailed Review</h3>
+      {isPendingStudent && (
+        <div className="max-w-3xl mx-auto text-center space-y-6">
+          <Lottie animationData={Teacher} loop className="mx-auto w-64 h-64" />
+          <p className="text-lg text-slate-700 font-medium">Your exam has been submitted successfully</p>
+          <p className="text-sm text-slate-600">The teacher is reviewing your answers.</p>
         </div>
+      )}
 
-        {/* Questions  */}
-        <div className="grid gap-4">
-          {courseExams.map((exam, index) => {
-            const answer = studentAnswers?.[exam.id];
-            const isCorrect = answer ? answer.is_correct && answer.score > 0 : false;
-            const isReviewing = answer && answer.is_correct === null && exam.task_type === 'long';
-            const status = isCorrect ? 'correct' : isReviewing ? 'reviewing' : 'incorrect';
+      {(isCompletedStudent || isTeacher) && (
+        <div className="mx-auto space-y-5">
+          {isTeacher && (
+            <div className="flex justify-end ">
+              <Button variant={'default'} className="px-14 gap-2 py-5" onClick={() => setIsReviewDialogOpen(true)}>
+                <MessageCircle className="size-5" />
+                {studentAnswers?.review !== null || studentAnswers?.review == '' ? 'Update' : 'Give'} Student Review
+              </Button>
+            </div>
+          )}
 
-            return (
-              <Card
-                key={exam.id}
-                className={`p-3 transition-all hover:shadow-md border-l-4 ${
-                  status === 'correct' ? 'border-l-green-500 bg-green-50/30' : status === 'reviewing' ? 'border-l-yellow-500 bg-yellow-50/30' : 'border-l-red-500 bg-red-50/30'
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                      status === 'correct' ? 'bg-green-100 text-green-700' : status === 'reviewing' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
-                    }`}
-                  >
-                    {index + 1}
-                  </div>
+          {!isTeacher && (
+            <div className="text-center">
+              <div className="inline-flex items-center gap-1 px-5 py-2 rounded-full bg-primary/10 text-primary font-semibold">
+                <Star className="size-4 text-yellow-500" />
+                Exam Completed
+                <Star className="size-4 text-yellow-500" />
+              </div>
+            </div>
+          )}
 
-                  <div className="flex-1 space-y-3">
-                    <div
-                      className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800 font-medium"
-                      dangerouslySetInnerHTML={{
-                        __html: exam.question || '',
-                      }}
-                    />
+          <Card className={`px-5 py-6 border ${performanceMessage.borderColor} ${performanceMessage.bgColor}`}>
+            <div className="flex flex-col md:flex-row flex-wrap md:justify-between gap-4">
+              <div>
+                <h2 className={`text-xl font-semibold ${performanceMessage.color}`}>{studentAnswers?.review ? studentAnswers?.review : performanceMessage.text}</h2>
+                <p className="text-sm text-slate-600">Exam completed · {percentage}%</p>
+              </div>
 
-                    {/* Answer Section */}
-                    <div className="bg-white rounded-lg p-3 space-y-2 border border-slate-200">
-                    <TaskRendererComponent
-                        task={exam}
-                        value={getParsedAnswer(exam.id)}
-                        readonly={true}
-                        score={studentAnswers?.[exam.id]?.score}
-                        onScoreChange={isTeacher ? onScoreChange : undefined}
-                        isTeacher={isTeacher}
-                      />
+              <div className="flex items-center gap-5 text-sm">
+                <Stat icon={<CheckCircle className="w-5 h-5 text-green-600" />} value={correctAnswers} label="Correct" />
+                <Stat icon={<XCircle className="w-5 h-5 text-red-600" />} value={questions.length - correctAnswers} label="Wrong" />
+                <Stat icon={<TrendingUp className="w-5 h-5 text-blue-600" />} value={`${totalScore}/${totalPossibleScore}`} label="Points" />
+              </div>
+            </div>
+            {studentAnswers?.sections && studentAnswers.sections.length > 0 && (
+              <div className="mt-4 pt-4 border-t ">
+                <h3 className="text-sm font-medium text-slate-700 mb-3">Section Scores</h3>
 
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                        <div className="flex items-center gap-2">
-                          {status === 'correct' ? (
-                            <>
-                              <CheckCircle className="w-5 h-5 text-green-600" />
-                              <span className="text-sm font-semibold text-green-600">Correct</span>
-                            </>
-                          ) : status === 'reviewing' ? (
-                            <>
-                              <AlertCircle className="w-5 h-5 text-yellow-600" />
-                              <span className="text-sm font-semibold text-yellow-600">Teacher is reviewing</span>
-                            </>
-                          ) : (
-                            <>
-                              <XCircle className="w-5 h-5 text-red-600" />
-                              <span className="text-sm font-semibold text-red-600">Incorrect</span>
-                            </>
-                          )}
-                        </div>
-                        <div
-                          className={`px-4 py-2 rounded-lg text-xs font-semibold ${
-                            status === 'correct' ? 'bg-green-100 text-green-700' : status === 'reviewing' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
-                          }`}
-                        >
-                          {answer?.score || 0} / {exam.points || 0} pts
-                        </div>
-                      </div>
+                <div className=" grid grid-cols-2 lg:grid-cols-3 items-center gap-4">
+                  {studentAnswers.sections.map((section, index) => (
+                    <div key={index} className={`flex justify-between items-center px-3 py-3 rounded-md  bg-white/70 shadow-xs border-slate-400 border text-sm`}>
+                      <p className="inline-flex text-slate-700 font-semibold">
+                        Section {section.name}: <span className="ml-2 font-bold">{section.title}</span>
+                      </p>
+
+                      <Stat icon={<TrendingUp className="w-5 h-5 text-blue-600" />} value={`${section.total_score}/${section.total_possible_score}`} label="Points" />
                     </div>
-                  </div>
+                  ))}
                 </div>
-              </Card>
-            );
-          })}
+              </div>
+            )}
+          </Card>
+
+          {isTeacher && (
+            <div className="grid gap-4">
+              {questions.map((q, i) => {
+                const ans = answersMap[q.id];
+                const status = ans?.is_correct && ans.score > 0 ? 'correct' : ans?.is_correct === null && q.task_type === 'long' ? 'reviewing' : 'incorrect';
+
+                return (
+                  <QuestionResultItem
+                    key={q.id}
+                    question={q}
+                    index={i}
+                    answer={ans}
+                    status={status}
+                    parsedAnswer={getParsedAnswer(q.id)}
+                    isTeacher={isTeacher}
+                    onScoreChange={onScoreChange}
+                    enrollId={enrollId}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
-      </div>
+      )}
+
+      {isTeacher && <StudentExamReviewForm open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen} studentExamAnswer={studentAnswers} refetch={refetch || (() => {})} />}
     </div>
   );
 }

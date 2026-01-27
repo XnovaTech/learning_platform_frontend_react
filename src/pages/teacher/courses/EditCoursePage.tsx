@@ -5,6 +5,7 @@ import { getCourse } from '@/services/courseService';
 import { Spinner } from '@/components/ui/spinner';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { CourseForm } from '@/components/Form/CourseForm';
+import { BookOpen, Edit, Home } from 'lucide-react';
 
 export default function EditCoursePage() {
   const params = useParams();
@@ -35,7 +36,8 @@ export default function EditCoursePage() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/dashboard">
+              <Link className="text-base md:text-md gap-2" to="/teacher/dashboard">
+                <Home className="size-4" />
                 Dashboard
               </Link>
             </BreadcrumbLink>
@@ -43,14 +45,17 @@ export default function EditCoursePage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link className="text-base md:text-md" to="/teacher/courses">
+              <Link className="text-base md:text-md gap-2" to="/teacher/courses">
+                <BookOpen className="size-4" />
                 Courses
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-base md:text-md">Edit</BreadcrumbPage>
+            <BreadcrumbPage className="text-base md:text-md gap-2">
+            <Edit className="size-4" />
+            Edit Course</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

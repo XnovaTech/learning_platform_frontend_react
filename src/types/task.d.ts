@@ -1,173 +1,118 @@
-export type TaskType = 
-| "mcq"
-| "short"
-| "long"
-| "drag_drop"
-| "matching"
-| "fill_blank"
-| "true_false"
-| "paragraph_drag";
-
-
-
+export type TaskType = 'mcq' | 'short' | 'long' | 'drag_drop' | 'matching' | 'fill_blank' | 'true_false' | 'paragraph_drag' | 'table_drag' | 'character_web';
 
 export interface LessonTaskOptionType {
-    id?: number;
-    task_id?: number;
+  id?: number;
+  task_id?: number;
 
-    option_text: string;
-    is_correct?: boolean;
-    pair_key?: string | null;
-    order?: number | null
+  option_text: string;
+  is_correct?: boolean;
+  pair_key?: string | null;
+  order?: number | null;
 }
 
 export interface DragDropExtraData {
-    items: string[];
-    targets: string[];
+  items: string[];
+  targets: string[];
 }
 
 export type ParagraphDropdownData = {
-    paragraph: string;
-    blanks: ParagraphBlank[];
-}
+  paragraph: string;
+  blanks: ParagraphBlank[];
+};
 
 export type ParagraphBlank = {
-    id: string;
-    options: string[];
-    correct: string;
-}
-
+  id: string;
+  options: string[];
+  correct: string;
+};
 
 export interface MatchingExtraData {
-    left: string[];
-    right: string[];
-    matches?: Record<string, string>;
+  left: string[];
+  right: string[];
+  matches?: Record<string, string>;
 }
 
 export interface FillBlankExtraData {
-    text: string;
-    answers: string[];
+  text: string;
+  answers: string[];
 }
 
 export interface LongAnswerExtraData {
-    min_word_count?: number;
+  min_word_count?: number;
 }
 
 export interface ParagraphDropdownData {
-    paragraph: string;
-    blanks: {
-        id: string;
-        options: string[];
-        correct?: string;
-    }[];
-};
+  paragraph: string;
+  blanks: {
+    id: string;
+    options: string[];
+    correct?: string;
+  }[];
+}
 
 export interface blankType {
-    id: string,
-    options: string[]
+  id: string;
+  options: string[];
 }
 
-export type ExtraData = 
-    | DragDropExtraData
-    | ParagraphDropdownData
-    | MatchingExtraData
-    | FillBlankExtraData
-    | LongAnswerExtraData
-    | Record<string, any>;
+export type TableDragDropExtraData = {
+  items: string[];
+  rows: {
+    id: string;
+    claim: string;
+    evidences: string[];
+  }[];
+};
+
+export type CharacterWebExtraData = {
+  center_label: string;
+  targets: { text: string; is_correct: number }[];
+};
+
+export type ExtraData = DragDropExtraData | ParagraphDropdownData | MatchingExtraData | FillBlankExtraData | LongAnswerExtraData | TableDragDropExtraData | CharacterWebExtraData | Record<string, any>;
 
 export interface LessonTaskType {
-    id: number;
-    lesson_id: number;
+  id: number;
+  lesson_id: number;
 
-    task_type: TaskType;
-    question: string | null;
-    correct_answer?: string | null;
-    extra_data ?: ExtraData | null;
+  task_type: TaskType;
+  question: string | null;
+  correct_answer?: string | null;
+  extra_data?: ExtraData | null;
 
-    points?: number | null;
-    order?: number | null;
+  points?: number | null;
+  order?: number | null;
 
-    options ?: LessonTaskOption[];
+  options?: LessonTaskOption[];
 
-    created_at?: string;
-    updated_at?: string;
+  created_at?: string;
+  updated_at?: string;
 
-    targets?: { id: string; text: string }[];
-    items?: { id: string; text: string }[];
+  targets?: { id: string; text: string }[];
+  items?: { id: string; text: string }[];
 
-    left?: { id: string; text: string }[];
-    right?: { id: string; text: string }[];
+  left?: { id: string; text: string }[];
+  right?: { id: string; text: string }[];
 
-    blanks?: blankType[];
+  blanks?: blankType[];
+  total_correct?: number;
 }
-
-
 
 export interface CreateLessonTaskPayloadType {
-    lesson_id: number;
-    task_type: TaskType;
-    question?: string | null;
-    correct_answer?: string | null;
-    extra_data?: ExtraData | null;
-    points?: number | null;
-    order?: number | null;
+  lesson_id: number;
+  task_type: TaskType;
+  question?: string | null;
+  correct_answer?: string | null;
+  extra_data?: ExtraData | null;
+  points?: number | null;
+  order?: number | null;
 
-    options?: {
-        option_text: string;
-        is_correct?: boolean;
-        pair_key?: string | null;
-        order?: number | null;
-    }[];
+  options?: {
+    option_text: string;
+    is_correct?: boolean;
+    pair_key?: string | null;
+    order?: number | null;
+  }[];
 }
 
-export interface UpdateLessonTaskPayloadType extends Partial<CreateLessonTaskPayloadType>{}
-
-//exam section
-export interface CourseExamType{
-    id: number,
-    course_id: number,
-    exam_type: string | null,
-    exam_section: string | null,
-
-    task_type: TaskType;
-    question: string | null;
-    correct_answer?: string | null;
-    extra_data ?: ExtraData | null;
-
-    points?: number | null;
-    order?: number | null;
-
-    options ?: LessonTaskOption[];
-
-    created_at?: string;
-    updated_at?: string;
-
-    targets?: { id: string; text: string }[];
-    items?: { id: string; text: string }[];
-
-    left?: { id: string; text: string }[];
-    right?: { id: string; text: string }[];
-
-    blanks?: blankType[];
-}
-
-export interface CreateCourseExamPayloadType {
-    course_id: number;
-    exam_type?: string | null;
-    exam_section?: string | null;
-    task_type: TaskType;
-    question?: string | null;
-    correct_answer?: string | null;
-    extra_data?: ExtraData | null;
-    points?: number | null;
-    order?: number | null;
-
-    options?: {
-        option_text: string;
-        is_correct?: boolean;
-        pair_key?: string | null;
-        order?: number | null;
-    }[];
-}
-
-export interface UpdateCourseExamPayloadType extends Partial<CreateCourseExamPayloadType>{}
+export interface UpdateLessonTaskPayloadType extends Partial<CreateLessonTaskPayloadType> {}

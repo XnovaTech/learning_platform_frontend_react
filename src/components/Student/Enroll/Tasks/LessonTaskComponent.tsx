@@ -35,14 +35,17 @@ export default function LessonTaskComponent({ lessonId, enrollId }: LessonTaskCo
     setAnswers((prev) => ({ ...prev, [taskId]: value }));
   };
 
-  const groupTasks = tasks?.reduce((acc, task) => {
-    if (!acc[task.task_type]) acc[task.task_type] = [];
-    acc[task.task_type].push(task);
-    return acc;
-  }, {} as Record<TaskType, LessonTaskType[]>);
+  const groupTasks = tasks?.reduce(
+    (acc, task) => {
+      if (!acc[task.task_type]) acc[task.task_type] = [];
+      acc[task.task_type].push(task);
+      return acc;
+    },
+    {} as Record<TaskType, LessonTaskType[]>,
+  );
 
   const hasSubmittedAnswers = studentAnswers && typeof studentAnswers === 'object' && Object.keys(studentAnswers).length > 0;
-  const totalPossibleScore = tasks?.reduce((sum, task) => sum + (task.points || 0), 0) || 0;
+  const totalPossibleScore = tasks?.reduce((sum, task) => Number(sum) + (Number(task.points) || 0), 0) || 0;
   const totalQuestions = tasks?.length || 0;
 
   return (

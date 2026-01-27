@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
-import type { CourseExamType } from '@/types/task';
+import type { CourseExamQuestionType } from '@/types/courseexamquestion';
 import { Edit3, Trash2 } from 'lucide-react';
 
 interface Props {
   type: string;
-  tasks: CourseExamType[];
-  onEdit: (task: CourseExamType) => void;
+  tasks: CourseExamQuestionType[];
+  onEdit: (task: CourseExamQuestionType) => void;
   onDelete: (taskId: number) => void;
 }
 

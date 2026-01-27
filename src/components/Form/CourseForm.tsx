@@ -12,7 +12,6 @@ import { listCategories } from '@/services/categoryService';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import type { CoursePayloadType, CourseType } from '@/types/course';
 import { useNavigate } from 'react-router-dom';
-import { CardTitle } from '../ui/card';
 import ImageUploader from '../ImageUploader';
 
 interface CourseFormProps {
@@ -108,11 +107,11 @@ export function CourseForm({ editingItem = null }: CourseFormProps) {
   const isLoading = createMutation.isPending || updateMutation.isPending || categoryLoading;
 
   return (
-    <form onSubmit={onSubmit} className="p-6 md:p-8">
-      <CardTitle className="text-lg font-semibold flex items-center mb-6 gap-2">
+    <form onSubmit={onSubmit} className="px-6 py-4 md:px-8 ">
+      {/* <CardTitle className="text-lg font-semibold flex items-center mb-6 gap-2">
         <div className="h-8 w-1 bg-primary rounded-full" />
         {editingItem ? 'Edit Course' : 'Create Course'}
-      </CardTitle>
+    </CardTitle> */}
 
       <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4   gap-7`}>
         <div className={`space-y-2 col-span-2   ${editingItem && 'md:col-span-1'}   lg:col-span-2   `}>
