@@ -9,6 +9,8 @@ import ExamMCQRender from '../Teacher/ExamRender/ExamMCQRender';
 import ExamDragDropRender from '../Teacher/ExamRender/ExamDragDropRender';
 import ExamMatchingRender from '../Teacher/ExamRender/ExamMatchingRender';
 import ExamParagraphRender from '../Teacher/ExamRender/ExamParagraphRender';
+import ExamTableDragRender from '../Teacher/ExamRender/ExamTableDragRender';
+import ExamCharacterWebRender from '../Teacher/ExamRender/ExamCharacterWebRender';
 import { deleteCourseExamQuestion } from '@/services/courseExamQuestionService';
 import { useNavigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
@@ -56,6 +58,8 @@ export default function SectionQuestionList({ questions, refetch, courseId, exam
   const matchingTasks = questions.filter((q) => q.task_type === 'matching');
   const dragTasks = questions.filter((q) => q.task_type === 'drag_drop');
   const paragraphDragTasks = questions.filter((q) => q.task_type === 'paragraph_drag');
+  const tableDragTasks = questions.filter((q) => q.task_type === 'table_drag');
+  const characterWebTasks = questions.filter((q) => q.task_type === 'character_web');
 
   if (questions.length === 0) {
     return (
@@ -84,6 +88,10 @@ export default function SectionQuestionList({ questions, refetch, courseId, exam
       {matchingTasks.length > 0 && <ExamMatchingRender type="Matching Questions" tasks={matchingTasks} onEdit={handleEdit} onDelete={askDelete} />}
 
       {paragraphDragTasks.length > 0 && <ExamParagraphRender type="Paragraph (Dropdown Blanks)" tasks={paragraphDragTasks} onEdit={handleEdit} onDelete={askDelete} />}
+
+      {tableDragTasks.length > 0 && <ExamTableDragRender type="Table Drag & Drop Questions" tasks={tableDragTasks} onEdit={handleEdit} onDelete={askDelete} />}
+
+      {characterWebTasks.length > 0 && <ExamCharacterWebRender type="Character Web Questions" tasks={characterWebTasks} onEdit={handleEdit} onDelete={askDelete} />}
 
       <ConfirmDialog
         open={confirmOpen}

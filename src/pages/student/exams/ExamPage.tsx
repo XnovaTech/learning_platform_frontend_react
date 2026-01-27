@@ -1,5 +1,5 @@
 import { useStudentData } from "@/context/StudentDataContext";
-import { getUpcomingExamForStudent } from "@/services/studentCourseExamService";
+import { getUpcomingExamForStudent } from "@/services/courseExamService";
 import type { UpcomingExamForStudentType } from "@/types/answer";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -21,6 +21,7 @@ import {
 import Loading from "@/components/Loading";
 import { formatDate } from "@/utils/format";
 import { Link } from "react-router-dom";
+
 
 export default function ExamPage() {
   const { studentData } = useStudentData();

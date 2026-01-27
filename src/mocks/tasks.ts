@@ -9,6 +9,8 @@ export const TASK_TITLE: Record<TaskType, string> = {
   fill_blank: 'Fill in the Blanks',
   true_false: 'True or False',
   paragraph_drag: 'Paragraph Reading',
+  table_drag: 'Table Drag Drop',
+  character_web: 'Character Drag Drop',
 };
 
 export const getPerformanceMessage = (percentage: number) => {

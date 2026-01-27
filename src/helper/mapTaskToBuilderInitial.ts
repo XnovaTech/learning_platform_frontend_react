@@ -86,6 +86,54 @@ export function mapTaskToBuilderInitial(task: LessonTaskType | CourseExamQuestio
     
     }
 
+    case 'table_drag': {
+      const items: string[] = [];
+      const rows: { id: string; claim: string; evidences: string[] }[] = [];
+
+      task.options?.forEach((opt) => {
+        if (opt.pair_key?.startsWith('I')) {
+          items.push(opt.option_text);
+        } else if (opt.pair_key?.startsWith('R')) {
+          // Format: R-{rowId}-{type}-{index}
+          // type: 'C' for claim, 'E' for evidence
+          const parts = opt.pair_key.split('-');
+          const rowId = parts[1];
+          const type = parts[2];
+          const index = parts[3];
+
+          let row = rows.find(r => r.id === rowId);
+          if (!row) {
+            row = { id: rowId, claim: '', evidences: [] };
+            rows.push(row);
+          }
+
+          if (type === 'C') {
+            row.claim = opt.option_text;
+          } else if (type === 'E') {
+            // Ensure evidences array has enough space
+            const evIndex = Number(index);
+            while (row.evidences.length <= evIndex) {
+              row.evidences.push('');
+            }
+            row.evidences[evIndex] = opt.option_text;
+          }
+        }
+      });
+
+      return { items, rows };
+    }
+
+    case 'character_web': {
+      const options = task.options || [];
+      const center_label = options.find((opt) => opt.pair_key === 'center')?.option_text || '';
+      const targets = options
+        .filter((opt) => opt.pair_key?.startsWith('T'))
+        .sort((a, b) => Number(a.pair_key?.replace('T', '')) - Number(b.pair_key?.replace('T', '')))
+        .map((opt) => ({ text: opt.option_text, is_correct: opt.is_correct ? 1 : 0 }));
+
+      return { center_label, targets };
+    }
+
     default:
       return {};
   }

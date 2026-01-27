@@ -1,4 +1,4 @@
-import type { DragDropExtraData, MatchingExtraData, ParagraphDropdownData, TaskType } from "@/types/task";
+import type { DragDropExtraData, MatchingExtraData, ParagraphDropdownData, TableDragDropExtraData, CharacterWebExtraData, TaskType } from "@/types/task";
 import DragDropBuilder from "./DragDropBuilder";
 import FillBlankBuilder from "./FillBlankBuilder";
 import LongAnswerBuilder from "./LongAnswerBuilder";
@@ -7,6 +7,8 @@ import ShortAnswerBuilder from "./ShortAnswerBuilder";
 import TrueFalseBuilder from "./TrueFalseBuilder";
 import MatchingBuilder from "./MatchingBuilder";
 import ParagraphDragDropBuilder from "./ParagraphDragDropBuilder";
+import TableDragDropBuilder from "./TableDragDropBuilder";
+import CharacterWebBuilder from "./CharacterWebBuilder";
 
 
 export default function RenderBuilder(taskType: TaskType, extraData: any, setExtraData: (data: any) => void) {
@@ -34,7 +36,12 @@ export default function RenderBuilder(taskType: TaskType, extraData: any, setExt
 
       case 'paragraph_drag':
         return <ParagraphDragDropBuilder initial={extraData as ParagraphDropdownData} onChange={setExtraData} />;
+      
+      case 'table_drag':
+        return <TableDragDropBuilder initial={extraData as TableDragDropExtraData} onChange={setExtraData} />;
 
+      case 'character_web':
+        return <CharacterWebBuilder initial={extraData as CharacterWebExtraData} onChange={setExtraData} />;
       default:
         return null;
     }

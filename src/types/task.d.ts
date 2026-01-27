@@ -6,7 +6,9 @@ export type TaskType =
 | "matching"
 | "fill_blank"
 | "true_false"
-| "paragraph_drag";
+| "paragraph_drag"
+| "table_drag"
+| "character_web";
 
 
 
@@ -67,12 +69,29 @@ export interface blankType {
     options: string[]
 }
 
+
+export type TableDragDropExtraData = {
+    items: string[];
+    rows: {
+        id: string;
+        claim: string;
+        evidences: string[];
+    }[];
+};
+
+export type CharacterWebExtraData = {
+    center_label: string,
+    targets: { text: string; is_correct: number }[];
+}
+
 export type ExtraData = 
     | DragDropExtraData
     | ParagraphDropdownData
     | MatchingExtraData
     | FillBlankExtraData
     | LongAnswerExtraData
+    | TableDragDropExtraData
+    | CharacterWebExtraData
     | Record<string, any>;
 
 export interface LessonTaskType {
@@ -99,6 +118,7 @@ export interface LessonTaskType {
     right?: { id: string; text: string }[];
 
     blanks?: blankType[];
+    total_correct?: number;
 }
 
 

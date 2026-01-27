@@ -85,6 +85,62 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
       return [...d.items.map((t, i) => ({ option_text: t, pair_key: `I${i}` })), ...d.targets.map((t, i) => ({ option_text: t, pair_key: `T${i}` }))];
     }
 
+    if (taskType === 'table_drag') {
+      const t = extraData as { items: string[]; rows: { id: string; claim: string; evidences: string[] }[] };
+      
+      const output: any[] = [];
+
+      // Add items
+      t.items.forEach((item, i) => {
+        output.push({
+          option_text: item,
+          pair_key: `I${i}`,
+        });
+      });
+
+      // Add rows (claims and evidences)
+      t.rows.forEach((row) => {
+        // Add claim
+        output.push({
+          option_text: row.claim,
+          pair_key: `R-${row.id}-C-0`,
+        });
+
+        // Add evidences
+        row.evidences.forEach((evidence, evIndex) => {
+          output.push({
+            option_text: evidence,
+            pair_key: `R-${row.id}-E-${evIndex}`,
+          });
+        });
+      });
+
+      return output;
+    }
+
+    if (taskType === 'character_web') {
+      const c = extraData as { center_label: string; targets: { text: string; is_correct: number }[] };
+      
+      const output: any[] = [];
+
+      // Add center label
+      output.push({
+        option_text: c.center_label,
+        pair_key: 'center',
+      });
+
+      // Add targets
+      c.targets.forEach((target, i) => {
+        output.push({
+          option_text: target.text,
+          pair_key: `T${i}`,
+          is_correct: target.is_correct === 1,
+        });
+      });
+
+      return output;
+    }
+
     if (taskType === 'fill_blank') {
       return [];
     }
@@ -198,6 +254,8 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
               <SelectItem value="true_false">True False</SelectItem>
               <SelectItem value="paragraph_drag">Paragraph Select</SelectItem>
               <SelectItem value="drag_drop">Drag & Drop</SelectItem>
+              <SelectItem value='table_drag'>Table Drag & Drop</SelectItem>
+              <SelectItem value='character_web'>Character Drag</SelectItem>
               <SelectItem value="matching">Matching</SelectItem>
             </SelectContent>
           </Select>

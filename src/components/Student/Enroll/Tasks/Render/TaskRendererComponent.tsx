@@ -6,6 +6,8 @@ import FillBlankTaskComponent from './FillBlankTaskComponent';
 import DragDropTaskComponent from './DragDropTaskComponent';
 import MatchingTaskComponent from './MatchingTaskComponent';
 import ParagraphDragTaskComponent from './ParagraphDragTaskComponent';
+import TableDragTaskComponent from './TableDragTaskComponent';
+import CharacterWebTaskComponent from './CharacterWebTaskComponent';
 import type {  LessonTaskType } from '@/types/task';
 import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 
@@ -39,6 +41,10 @@ export default function TaskRendererComponent({ task, onAnswer, value, readonly 
       return <MatchingTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
     case 'paragraph_drag':
       return <ParagraphDragTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+    case 'table_drag':
+      return <TableDragTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
+    case 'character_web':
+      return <CharacterWebTaskComponent task={task} onAnswer={onAnswer} value={value} readonly={readonly} />;
     default:
       return <div>Unsupported task type</div>;
   }

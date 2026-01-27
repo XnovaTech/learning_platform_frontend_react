@@ -7,7 +7,7 @@ export interface QuestionType {
   question: string | null;
   correct_answer?: string | null;
   extra_data?: ExtraData | null;
-  points?: number | null;
+  points: number;
   order?: number | null;
   options?: CourseExamOptionEntity[];
 }
