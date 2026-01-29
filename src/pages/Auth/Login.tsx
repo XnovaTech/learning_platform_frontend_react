@@ -78,7 +78,7 @@ export default function Login() {
 
             {/* Submit Button */}
             <Button className="w-full h-10 text-lg " type="submit" disabled={isLoading}>
-              {isLoading ? <Spinner /> : 'Login'}
+              {isLoading ? <Spinner /> : 'Sign In'}
             </Button>
 
             <p className="text-center text-sm text-gray-500 border-t">

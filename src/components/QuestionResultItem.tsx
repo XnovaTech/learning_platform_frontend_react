@@ -49,6 +49,7 @@ interface QuestionResultItemProps {
   isTeacher: boolean;
   onScoreChange?: (taskId: number, score: number) => void;
   enrollId?: number;
+  isParagraph?: boolean;
 }
 
 const StatusBadge = ({ status }: { status: Status }) => {
@@ -67,7 +68,7 @@ const ScoreBadge = ({ score, total, status }: { score: number; total: number; st
   </div>
 );
 
-export const QuestionResultItem = ({ question, index, answer, status, parsedAnswer, isTeacher, onScoreChange, enrollId }: QuestionResultItemProps) => {
+export const QuestionResultItem = ({ question, index, answer, status, parsedAnswer, isTeacher, onScoreChange, enrollId, isParagraph }: QuestionResultItemProps) => {
   const config = STATUS_CONFIG[status];
   const isChoiceQuestion = question.task_type === 'mcq' || question.task_type === 'true_false';
 
@@ -77,9 +78,9 @@ export const QuestionResultItem = ({ question, index, answer, status, parsedAnsw
         <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${config.badge}`}>{index + 1}</div>
 
         <div className="flex-1 space-y-3">
-          <div className={`bg-white rounded-lg p-4 border border-slate-200 ${isChoiceQuestion ? 'flex flex-col lg:flex-row gap-3 overflowy-auto h-auto lg:max-h-78' : 'space-y-3'}`}>
+          <div className={`bg-white rounded-lg p-4 border border-slate-200 ${isChoiceQuestion && isParagraph == false ? 'flex flex-col lg:flex-row gap-3 overflowy-auto h-auto lg:max-h-78' : 'space-y-3'}`}>
             <div
-              className={`prose prose-slate max-w-none text-base text-slate-800 ${isChoiceQuestion ? 'flex-1 overflow-y-auto p-2  bg-slate-100' : ''}`}
+              className={`prose prose-slate max-w-none text-base text-slate-800 ${isChoiceQuestion && isParagraph == false ? 'flex-1 overflow-y-auto p-2  bg-slate-100' : ''}`}
               dangerouslySetInnerHTML={{
                 __html: question.question || '',
               }}

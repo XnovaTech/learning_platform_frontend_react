@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 import type { LessonTaskType } from '@/types/task';
 import { useEffect, useState } from 'react';
@@ -28,8 +29,7 @@ export default function ShortTaskComponent({ task, onAnswer, value = '', readonl
 
   return (
     <div className=" space-y-3">
-      <Input
-        type="text"
+      <Textarea
         value={text}
         placeholder="Type your answer here"
         onChange={(e) => {

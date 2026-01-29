@@ -45,16 +45,31 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
       setPoints(editingItem.points);
       setQuestion(editingItem.question || '');
       setExtraData(mapTaskToBuilderInitial(editingItem));
+      
+      // Set paragraph data for editing
+      if (editingItem.paragraph_id && editingItem.paragraph) {
+        setParagraphId(editingItem.paragraph_id);
+        setParagraph(editingItem.paragraph.content);
+      } else if (editingItem.paragraph_id && !editingItem.paragraph) {
+        // If paragraph_id exists but paragraph data is not loaded, try to find it from the paragraphs list
+        const foundParagraph = paragraphs.find(p => p.id === editingItem.paragraph_id);
+        if (foundParagraph) {
+          setParagraphId(editingItem.paragraph_id);
+          setParagraph(foundParagraph.content);
+        }
+      }
     } else {
       // Reset for create mode
       setTaskType('long');
       setPoints(1);
       setQuestion('');
       setExtraData({});
+      setParagraphId(null);
+      setParagraph('');
     }
   }, [editingItem]);
 
-  console.log("Paragraph", paragraphs)
+  //console.log("Paragraph", paragraphs)
   useEffect(() => {
     if (taskType === 'paragraph_drag') {
       setExtraData({
@@ -286,7 +301,7 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
             </Label>
             <Button 
               type="button" 
-              variant="outline" 
+              variant="default" 
               size="sm"
               onClick={onSubmitParagraph}
               >
