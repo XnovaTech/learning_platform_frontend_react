@@ -39,7 +39,7 @@ export function LessonTaskQuill({ value, onChange, uploadFn }: QuillHelperProps)
   const quillModules = useMemo(
     () => ({
        toolbar: {
-      container: [['bold', 'italic', 'underline'], [{ list: 'ordered' }, { list: 'bullet' }], ['link', 'image'], ['clean']],
+      container: [['bold', 'italic', 'underline'], [{ color: [] }, { background: [] }], [{ list: 'ordered' }, { list: 'bullet' }], ['link', 'image'], ['clean']],
       handlers: {
         image: imageHandler,
       },
@@ -49,7 +49,7 @@ export function LessonTaskQuill({ value, onChange, uploadFn }: QuillHelperProps)
   );
 
     const quillFormats = useMemo(
-    () => ['bold', 'italic', 'underline', 'list', 'link', 'image'],
+    () => ['bold', 'italic', 'underline', 'color', 'background', 'list', 'link', 'image'],
     []
   );
 
