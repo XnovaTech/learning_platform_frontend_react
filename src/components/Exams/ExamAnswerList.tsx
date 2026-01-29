@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { BookOpenCheck, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save } from 'lucide-react';
+import { BookOpenCheck, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save, BookOpen } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import type { ClassRoomExamType } from '@/types/classexam';
 import { useState, useEffect, useRef } from 'react';
@@ -10,6 +10,7 @@ import ExamStartScreen from './ExamStartScreen';
 import { useTimer } from '@/context/TimerContext';
 import { submitStudentExamAnswers } from '@/services/studentExamAnswerService';
 import { QuestionItem } from '../QuestionItem';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
 interface ExamAnswerListProps {
   sections: ClassExamSectionType[];
@@ -21,8 +22,6 @@ interface ExamAnswerListProps {
   totalPossibleScore: number;
   refetch: () => void;
 }
-
-
 
 export default function ExamAnswerList({ sections, answers, handleAnswer, enrollId, data, totalQuestions, totalPossibleScore, refetch }: ExamAnswerListProps) {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
@@ -233,12 +232,89 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
           </div>
 
           {/* Questions  */}
-          <div className="space-y-4">
-            {currentSectionExams.map((exam, index) => {
-              const isAnswered = answers.hasOwnProperty(exam.id);
+          <div className="space-y-6">
+            {/* Group questions by paragraph_id */}
+            {(() => {
+              const questionsWithParagraph = currentSectionExams.filter((q) => q.paragraph_id);
+              const questionsWithoutParagraph = currentSectionExams.filter((q) => !q.paragraph_id);
 
-              return <QuestionItem key={exam.id} question={exam} index={index} isAnswered={isAnswered} handleAnswer={handleAnswer} answers={answers} />;
-            })}
+              // Group questions by paragraph_id
+              const paragraphGroups = questionsWithParagraph.reduce(
+                (acc, question) => {
+                  const paragraphId = question.paragraph_id!;
+                  if (!acc[paragraphId]) {
+                    acc[paragraphId] = [];
+                  }
+                  acc[paragraphId].push(question);
+                  return acc;
+                },
+                {} as Record<number, any[]>,
+              );
+
+              return (
+                <>
+                  {/* Paragraph-based questions */}
+                  {Object.entries(paragraphGroups).map(([paragraphId, questions]) => {
+                    const paragraph = questions[0]?.paragraph;
+                    return (
+                      <section key={paragraphId} className="rounded-2xl border bg-white p-5 shadow-sm">
+                        {/* Header */}
+                        <header className="mb-6 flex items-center justify-between border-b pb-3">
+                          <div className="flex items-center gap-3">
+                            <BookOpen className="h-5 w-5 text-blue-600" />
+                            <h3 className="text-lg font-semibold text-slate-800">Paragraph-based Questions</h3>
+                          </div>
+                          <span className="text-sm text-slate-500">{questions.length} questions</span>
+                        </header>
+
+                        {/* Content Row (Side by Side) */}
+                        <ResizablePanelGroup orientation="horizontal" className="h-[550px] max-h-[550px] w-full overflow-hidden rounded-xl border">
+                          {/* ===== Paragraph ===== */}
+                          <ResizablePanel defaultSize={70}>
+                            <div className="flex h-full flex-col overflow-hidden bg-slate-50 p-4 ring-1 ring-slate-200">
+                              <h4 className="mb-3 text-sm font-semibold text-slate-700">Paragraph</h4>
+
+                              <div
+                                className="flex-1 overflow-y-auto prose prose-slate max-w-none text-sm leading-relaxed"
+                                dangerouslySetInnerHTML={{
+                                  __html: paragraph?.content || '',
+                                }}
+                              />
+                            </div>
+                          </ResizablePanel>
+
+                          <ResizableHandle withHandle />
+
+                          {/* ===== Questions ===== */}
+                          <ResizablePanel defaultSize={30}>
+                            <div className="flex h-full flex-col overflow-hidden bg-white p-4 ring-1 ring-slate-200">
+                              <h4 className="mb-3 text-sm font-semibold text-slate-700">All Questions</h4>
+
+                              <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+                                {questions.map((question, index) => {
+                                  const isAnswered = answers.hasOwnProperty(question.id);
+                                  return <QuestionItem key={question.id} question={question} index={index} isAnswered={isAnswered} handleAnswer={handleAnswer} answers={answers} />;
+                                })}
+                              </div>
+                            </div>
+                          </ResizablePanel>
+                        </ResizablePanelGroup>
+                      </section>
+                    );
+                  })}
+
+                  {/* Regular questions (without paragraph) */}
+                  {questionsWithoutParagraph.length > 0 && (
+                    <div className="space-y-4">
+                      {questionsWithoutParagraph.map((exam, index) => {
+                        const isAnswered = answers.hasOwnProperty(exam.id);
+                        return <QuestionItem key={exam.id} question={exam} index={index} isAnswered={isAnswered} handleAnswer={handleAnswer} answers={answers} />;
+                      })}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
 
           {/* Navigation */}

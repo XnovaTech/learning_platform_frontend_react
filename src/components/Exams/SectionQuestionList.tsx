@@ -11,6 +11,7 @@ import ExamMatchingRender from '../Teacher/ExamRender/ExamMatchingRender';
 import ExamParagraphRender from '../Teacher/ExamRender/ExamParagraphRender';
 import ExamTableDragRender from '../Teacher/ExamRender/ExamTableDragRender';
 import ExamCharacterWebRender from '../Teacher/ExamRender/ExamCharacterWebRender';
+import ExamParagraphGroupRender from '../Teacher/ExamRender/ExamParagraphGroupRender';
 import { deleteCourseExamQuestion } from '@/services/courseExamQuestionService';
 import { useNavigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
@@ -28,6 +29,22 @@ export default function SectionQuestionList({ questions, refetch, courseId, exam
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // Group questions by paragraph_id
+  const questionsWithParagraph = questions.filter((q) => q.paragraph_id != null);
+  const questionsWithoutParagraph = questions.filter((q) => q.paragraph_id == null);
+
+  // Group questions by paragraph_id for paragraph-based rendering
+  const paragraphGroups = questionsWithParagraph.reduce((acc, question) => {
+    const paragraphId = question.paragraph_id!;
+    if (!acc[paragraphId]) {
+      acc[paragraphId] = [];
+    }
+    acc[paragraphId].push(question);
+    return acc;
+  }, {} as Record<number, CourseExamQuestionType[]>);
+
+  // No need to fetch paragraphs separately since content is available in question.paragraph.content
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteCourseExamQuestion(id),
@@ -50,16 +67,16 @@ export default function SectionQuestionList({ questions, refetch, courseId, exam
     navigate(`/teacher/courses/${courseId}/exams/${examType}/questions/edit/${task.id}`);
   };
 
-  const mcqTasks = questions.filter((q) => q.task_type === 'mcq');
-  const tfTasks = questions.filter((q) => q.task_type === 'true_false');
-  const shortTasks = questions.filter((q) => q.task_type === 'short');
-  const longTasks = questions.filter((q) => q.task_type === 'long');
-  const blankTasks = questions.filter((q) => q.task_type === 'fill_blank');
-  const matchingTasks = questions.filter((q) => q.task_type === 'matching');
-  const dragTasks = questions.filter((q) => q.task_type === 'drag_drop');
-  const paragraphDragTasks = questions.filter((q) => q.task_type === 'paragraph_drag');
-  const tableDragTasks = questions.filter((q) => q.task_type === 'table_drag');
-  const characterWebTasks = questions.filter((q) => q.task_type === 'character_web');
+  const mcqTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'mcq');
+  const tfTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'true_false');
+  const shortTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'short');
+  const longTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'long');
+  const blankTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'fill_blank');
+  const matchingTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'matching');
+  const dragTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'drag_drop');
+  const paragraphDragTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'paragraph_drag');
+  const tableDragTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'table_drag');
+  const characterWebTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'character_web');
 
   if (questions.length === 0) {
     return (
@@ -92,6 +109,22 @@ export default function SectionQuestionList({ questions, refetch, courseId, exam
       {tableDragTasks.length > 0 && <ExamTableDragRender type="Table Drag & Drop Questions" tasks={tableDragTasks} onEdit={handleEdit} onDelete={askDelete} />}
 
       {characterWebTasks.length > 0 && <ExamCharacterWebRender type="Character Web Questions" tasks={characterWebTasks} onEdit={handleEdit} onDelete={askDelete} />}
+
+      {/* Render paragraph-based questions in groups */}
+      {Object.entries(paragraphGroups).map(([paragraphId, questions]) => {
+        // Get paragraph content from the first question's paragraph relationship
+        const paragraphContent = questions[0]?.paragraph?.content || '';
+        return (
+          <ExamParagraphGroupRender
+            key={paragraphId}
+            paragraphId={Number(paragraphId)}
+            paragraphContent={paragraphContent}
+            questions={questions}
+            onEdit={handleEdit}
+            onDelete={askDelete}
+          />
+        );
+      })}
 
       <ConfirmDialog
         open={confirmOpen}

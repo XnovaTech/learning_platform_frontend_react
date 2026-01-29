@@ -1,8 +1,11 @@
+import type { CourseExamParagraphType } from './courseexamparagraph';
 import type { CourseExamSectionType } from './courseexamsection';
 import type { TaskType, ExtraData, blankType } from './task';
 
 export interface QuestionType {
   id: number;
+  paragraph_id?: number,
+  paragraph?: CourseExamParagraphType,
   task_type: TaskType;
   question: string | null;
   correct_answer?: string | null;
@@ -39,6 +42,7 @@ export interface CourseExamOptionEntity {
 
 export interface CourseExamQuestionPayloadType {
   section_id?: number;
+  paragraph_id?: number;
   question: string;
   correct_answer?: string | null;
   extra_data?: ExtraData | null;
