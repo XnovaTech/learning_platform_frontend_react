@@ -21,7 +21,7 @@ export default function ExamTableDragRender({ type, tasks, onEdit, onDelete }: P
       </header>
 
       <div className="space-y-6">
-        {tasks.map((task, index) => {
+        {tasks.map((task) => {
           // Parse options into items and rows
           const items: string[] = [];
           const rows: { id: string; claim: string; evidences: string[] }[] = [];
@@ -61,7 +61,7 @@ export default function ExamTableDragRender({ type, tasks, onEdit, onDelete }: P
                 {/* Question Number + Content */}
                 <div className="flex gap-4">
                   {/* Number */}
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">{index + 1}</span>
+                  {/* <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">{index + 1}</span> */}
 
                   {/* Question Content */}
                   <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-800" dangerouslySetInnerHTML={{ __html: task.question || '' }} />

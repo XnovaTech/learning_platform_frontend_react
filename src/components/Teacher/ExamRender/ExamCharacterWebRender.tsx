@@ -20,7 +20,7 @@ export default function ExamCharacterWebRender({ type, tasks, onEdit, onDelete }
 
       {/* Task List */}
       <div className="space-y-5">
-        {tasks.map((task, index) => (
+        {tasks.map((task) => (
           <div key={task.id} className="rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md">
             <div className="flex items-start justify-between gap-4">
               {/* Left Content */}
@@ -28,7 +28,7 @@ export default function ExamCharacterWebRender({ type, tasks, onEdit, onDelete }
                 {/* Meta */}
                 <div className=" flex justify-between">
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">{index + 1}</span>
+                    {/* <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">{index + 1}</span> */}
 
                     <span className="inline-flex items-center rounded-md bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-600/10">Character Web</span>
 

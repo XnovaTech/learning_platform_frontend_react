@@ -39,7 +39,7 @@ export default function ExamMCQRender({
 
       {/* ===== Question List ===== */}
       <div className="space-y-6">
-        {tasks.map((task, index) => (
+        {tasks.map((task) => (
           <div
             key={task.id}
             className="rounded-2xl border bg-slate-50 p-5 transition hover:shadow-sm"
@@ -47,9 +47,9 @@ export default function ExamMCQRender({
             {/* ===== Question Top Bar ===== */}
             <div className="mb-4 flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-700">
+                {/* <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-700">
                   {index + 1}
-                </span>
+                </span> */}
 
                 <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10">
                   {task.points} pts

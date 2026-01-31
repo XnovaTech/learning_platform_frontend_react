@@ -22,6 +22,7 @@ export interface StudentExamAnswerListRecordType {
   last_name: string;
   total_points: number;
   exam_total_points: number;
+  no_answer: number
 }
 
 export interface StudentExamMarkUpdatePayload {

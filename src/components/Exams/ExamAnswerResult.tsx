@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle, TrendingUp, Star, MessageCircle } from 'lucide-react';
-import { getPerformanceMessage } from '@/mocks/tasks';
+// import { getPerformanceMessage } from '@/mocks/tasks';
 import { StudentExamReviewForm } from '../Form/StudentExamReviewForm';
 import type { ClassExamQuestionType } from '@/types/courseexamquestion';
 import type { StudentExamAnswersType } from '@/types/studentexamanswer';
@@ -65,16 +65,16 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
   const totalScore = useMemo(() => Object.values(answersMap).reduce((sum, ans) => sum + Number(ans.score), 0), [answersMap]);
   const percentage = totalPossibleScore > 0 ? Math.round((totalScore / totalPossibleScore) * 100) : 0;
   const correctAnswers = useMemo(() => Object.values(answersMap).filter((a) => a.is_correct && a.score > 0).length, [answersMap]);
-  const performanceMessage = getPerformanceMessage(percentage);
+  // const performanceMessage = getPerformanceMessage(percentage);
   const isPendingStudent = studentAnswers?.status === 'Pending' && !isTeacher;
   const isCompletedStudent = studentAnswers?.status === 'Approved' && !isTeacher;
 
   return (
     <div className="min-h-screen px-4">
       {isPendingStudent && (
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <Lottie animationData={Teacher} loop className="mx-auto w-64 h-64" />
-          <p className="text-lg text-slate-700 font-medium">Your exam has been submitted successfully</p>
+        <div className="max-w-3xl mx-auto text-center space-y-6 h-fit">
+          <Lottie animationData={Teacher} loop className="mx-auto w-7/12 h-7/12" />
+          <h2 className="text-lg text-slate-700 font-medium">Your exam has been submitted successfully</h2>
           <p className="text-sm text-slate-600">The teacher is reviewing your answers.</p>
         </div>
       )}
@@ -100,10 +100,12 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
             </div>
           )}
 
-          <Card className={`px-5 py-6 border ${performanceMessage.borderColor} ${performanceMessage.bgColor}`}>
+          {/* <Card className={`px-5 py-6 border ${performanceMessage.borderColor} ${performanceMessage.bgColor}`}> */}
+          <Card className='px-5 py-6 border'>
             <div className="flex flex-col md:flex-row flex-wrap md:justify-between gap-4">
               <div>
-                <h2 className={`text-xl font-semibold ${performanceMessage.color}`}>{studentAnswers?.review ? studentAnswers?.review : performanceMessage.text}</h2>
+                {/* <h2 className={`text-xl font-semibold ${performanceMessage.color}`}>{studentAnswers?.review ? studentAnswers?.review : performanceMessage.text}</h2> */}
+                   <h2 className={`text-xl font-semibold text-slate-800`}>Review - {studentAnswers?.review ? studentAnswers?.review : ""}</h2>
                 <p className="text-sm text-slate-600">Exam completed · {percentage}%</p>
               </div>
 
@@ -132,7 +134,7 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
             )}
           </Card>
 
-          {isTeacher && (
+          {/* {isTeacher && ( */}
             <div className="grid gap-4">
               {/* Group questions by paragraph_id */}
               {(() => {
@@ -260,7 +262,7 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
                 });
               })()}
             </div>
-          )}
+          {/* )} */}
         </div>
       )}
 

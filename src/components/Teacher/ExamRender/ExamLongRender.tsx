@@ -21,12 +21,12 @@ export default function ExamLongRender({ type, tasks, onEdit, onDelete }: Props)
           </header>
 
           <div className="space-y-6">
-            {tasks.map((task, index) => (
+            {tasks.map((task) => (
               <div key={task.id} className="rounded-xl border bg-slate-50 p-4 transition hover:shadow-sm">
                 {/* Question Row */}
                 <div className=" flex items-start justify-between gap-4">
                   <div className="flex gap-4">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">{index + 1}</span>
+                    {/* <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">{index + 1}</span> */}
                     {/* Question Content*/}
                     <div className="space-y-2">
                       <div
