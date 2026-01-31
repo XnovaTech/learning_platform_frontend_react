@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
-import { getPerformanceLabel, getScoreBarColor, getScoreColor } from '@/mocks/tasks';
+import {  getScoreBarColor, getScoreColor } from '@/mocks/tasks';
 import { getClass } from '@/services/classService';
 import { useQuery } from '@tanstack/react-query';
 import { BookOpen, ChevronRight, Book, School } from 'lucide-react';
@@ -68,7 +68,7 @@ export default function StudentsExamRecords() {
       </Breadcrumb>
 
       <Card className="shadow p-5 bg-white/40 border-0 backdrop-blur overflow-hidden">
-        <h1 className="text-2xl font-semibold  tracking-tight bg-gradient-to-r mb-0 from-slate-900 to-slate-700 bg-clip-text text-transparent">Student Exam Records</h1>
+        <h1 className="text-2xl font-semibold  tracking-tight bg-linear-to-r mb-0 from-slate-900 to-slate-700 bg-clip-text text-transparent">Student Exam Records</h1>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
@@ -85,13 +85,14 @@ export default function StudentsExamRecords() {
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2.5">
-                          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-primary/60 to-primary text-white font-semibold text-xs shrink-0">#{index + 1}</div>
+                          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-linear-to-br from-primary/60 to-primary text-white font-semibold text-xs shrink-0">#{index + 1}</div>
                           <div className="min-w-0">
                             <h3 className="text-sm capitalize sm:text-base font-semibold text-slate-900 truncate">
                               {record.first_name} {record.last_name}
                             </h3>
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border mt-0.5 ${getScoreColor(record.total_points, record.exam_total_points)}`}>
-                              {getPerformanceLabel(record.total_points, record.exam_total_points)}
+                              {/* {getPerformanceLabel(record.total_points, record.exam_total_points)} */}
+                              { record.no_answer == 1 ? "Not Answered" : "Answered" }
                             </span>
                           </div>
                         </div>

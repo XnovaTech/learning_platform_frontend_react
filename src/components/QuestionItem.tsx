@@ -15,7 +15,7 @@ interface QuestionItemProps {
   answers: Record<number, any>;
 }
 
-export const QuestionItem = memo(function QuestionItem({ question, index, isAnswered, handleAnswer, answers }: QuestionItemProps) {
+export const QuestionItem = memo(function QuestionItem({ question, isAnswered, handleAnswer, answers }: QuestionItemProps) {
   const isChoiceQuestion = question.task_type === 'mcq' || question.task_type === 'true_false';
   const isParagraphBased = question.paragraph_id != null;
 
@@ -26,7 +26,7 @@ export const QuestionItem = memo(function QuestionItem({ question, index, isAnsw
         {isParagraphBased ? (
           <>
             <div className="bg-slate-100 shadow-sm rounded-xl px-4 flex items-center justify-between py-2">
-              <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-100 text-blue-700 text-xs font-semibold">{TASK_TITLE[question.task_type as TaskType]}</span>
+              {/* <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-100 text-blue-700 text-xs font-semibold">{TASK_TITLE[question.task_type as TaskType]}</span> */}
 
               <div className="flex items-center gap-2 justify-end">
                 <span className="px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 text-xs font-semibold">{question.points} pts</span>
@@ -41,7 +41,7 @@ export const QuestionItem = memo(function QuestionItem({ question, index, isAnsw
 
             <div className="flex-1 flex min-w-0">
               <div className="max-h-80 flex overflow-y-auto px-4 pt-4 bg-slate-100/20 rounded-2xl">
-                <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{index + 1}.</div>
+                {/* <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{index + 1}.</div> */}
                 <div className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800" dangerouslySetInnerHTML={{ __html: question.question || '' }} />
               </div>
             </div>
@@ -55,10 +55,10 @@ export const QuestionItem = memo(function QuestionItem({ question, index, isAnsw
             <ResizablePanel defaultSize={70}>
               <div className="pr-4 flex flex-col h-full">
                 <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                  <div className="flex items-center">
+                  {/* <div className="flex items-center">
                     <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{index + 1}.</div>
                     <span className="px-2.5 py-1 rounded-md bg-blue-100 text-blue-700 text-xs font-semibold">{TASK_TITLE[question.task_type as TaskType]}</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 text-xs font-semibold">{question.points} pts</span>
                     {isAnswered && (
@@ -111,7 +111,7 @@ export const QuestionItem = memo(function QuestionItem({ question, index, isAnsw
             <div className="flex-1 flex min-w-0">
               {question.task_type !== 'paragraph_drag' ? (
                 <div className="max-h-80 flex overflow-y-auto px-4 pt-4 bg-slate-100/20 rounded-2xl">
-                  <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{index + 1}.</div>
+                  {/* <div className="w-6 h-6 flex items-center justify-center font-bold text-sm mt-0.5">{index + 1}.</div> */}
                   <div className="prose prose-slate max-w-none text-base leading-relaxed text-slate-800" dangerouslySetInnerHTML={{ __html: question.question || '' }} />
                 </div>
               ) : (

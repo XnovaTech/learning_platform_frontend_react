@@ -39,7 +39,7 @@ export default function CourseExamQuestionAllList({ sections, refetch, courseId,
           sections.map((section) => {
             return (
               <TabsContent key={section.section_name} value={section.section_name} className="space-y-8">
-                <SectionQuestionList questions={section.questions || []} refetch={refetch} courseId={courseId} examType={examType} />
+                <SectionQuestionList  questions={section.questions || []} refetch={refetch} courseId={courseId} examType={examType} />
               </TabsContent>
             );
           })

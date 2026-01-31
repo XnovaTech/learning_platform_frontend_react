@@ -68,14 +68,14 @@ const ScoreBadge = ({ score, total, status }: { score: number; total: number; st
   </div>
 );
 
-export const QuestionResultItem = ({ question, index, answer, status, parsedAnswer, isTeacher, onScoreChange, enrollId, isParagraph }: QuestionResultItemProps) => {
+export const QuestionResultItem = ({ question, answer, status, parsedAnswer, isTeacher, onScoreChange, enrollId, isParagraph }: QuestionResultItemProps) => {
   const config = STATUS_CONFIG[status];
   const isChoiceQuestion = question.task_type === 'mcq' || question.task_type === 'true_false';
 
   return (
     <Card className={`p-3 transition-all hover:shadow-md border-l-4 ${config.border}`}>
       <div className="flex items-start gap-4">
-        <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${config.badge}`}>{index + 1}</div>
+        {/* <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${config.badge}`}>{index + 1}</div> */}
 
         <div className="flex-1 space-y-3">
           <div className={`bg-white rounded-lg p-4 border border-slate-200 ${isChoiceQuestion && isParagraph == false ? 'flex flex-col lg:flex-row gap-3 overflowy-auto h-auto lg:max-h-78' : 'space-y-3'}`}>

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ConfirmDialog } from '../ui/dialog-context-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import ExamLongRender from '../Teacher/ExamRender/ExamLongRender';
 import ExamShortRender from '../Teacher/ExamRender/ExamShortRender';
 import ExamMCQRender from '../Teacher/ExamRender/ExamMCQRender';
@@ -13,21 +14,24 @@ import ExamTableDragRender from '../Teacher/ExamRender/ExamTableDragRender';
 import ExamCharacterWebRender from '../Teacher/ExamRender/ExamCharacterWebRender';
 import ExamParagraphGroupRender from '../Teacher/ExamRender/ExamParagraphGroupRender';
 import { deleteCourseExamQuestion } from '@/services/courseExamQuestionService';
-import { useNavigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
+import { CourseExamQuestionForm } from '../Form/CourseExamQuestionForm';
+import type { CourseExamParagraphType } from '@/types/courseexamparagraph';
 
 type Props = {
   questions: CourseExamQuestionType[];
   refetch: () => void;
+  paragraphs?: CourseExamParagraphType[];
   courseId: number;
   examType: string;
 };
 
-export default function SectionQuestionList({ questions, refetch, courseId, examType }: Props) {
+export default function SectionQuestionList({ questions, refetch, paragraphs }: Props) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [editingQuestion, setEditingQuestion] = useState<CourseExamQuestionType | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   // Group questions by paragraph_id
@@ -64,7 +68,8 @@ export default function SectionQuestionList({ questions, refetch, courseId, exam
   };
 
   const handleEdit = (task: CourseExamQuestionType) => {
-    navigate(`/teacher/courses/${courseId}/exams/${examType}/questions/edit/${task.id}`);
+    setEditingQuestion(task);
+    setIsEditModalOpen(true);
   };
 
   const mcqTasks = questionsWithoutParagraph.filter((q) => q.task_type === 'mcq');
@@ -143,6 +148,23 @@ export default function SectionQuestionList({ questions, refetch, courseId, exam
           if (deletingId != null) deleteMutation.mutate(deletingId);
         }}
       />
+
+      {/* Edit Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="min-w-xl max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Question</DialogTitle>
+          </DialogHeader>
+          {editingQuestion && (
+            <CourseExamQuestionForm
+              editingItem={editingQuestion}
+              sectionId={editingQuestion.section_id}
+              onClose = {() => setIsEditModalOpen(false)}
+              paragraphs = {paragraphs}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

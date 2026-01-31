@@ -103,7 +103,7 @@ export default function ExamParagraphGroupRender({
             {/* Scrollable List */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
               {Object.entries(questionGroups).map(([taskType, taskQuestions]) => (
-                <div key={taskType} className="rounded-xl border bg-slate-50 p-4 transition hover:shadow-sm">
+                <div key={taskType} className=" transition hover:shadow-sm">
                   
 
                   {/* Render based on task type */}

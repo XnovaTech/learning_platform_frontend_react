@@ -4,14 +4,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { uploadImage } from '@/services/courseExamService';
-import { uploadParagraphImage } from '@/services/courseExamParagraphService';
 import { toast } from 'sonner';
 import { LessonTaskQuill } from '@/components/ui/lesson-task-quill';
 import { createCourseExamQuestion, updateCourseExamQuestion } from '@/services/courseExamQuestionService';
-import { createCourseExamParagraph, getCourseExamParagraphs } from '@/services/courseExamParagraphService';
 import type { CourseExamQuestionType, CourseExamQuestionPayloadType } from '@/types/courseexamquestion';
+import type { CourseExamParagraphType } from '@/types/courseexamparagraph';
 import { mapTaskToBuilderInitial } from '@/helper/mapTaskToBuilderInitial';
 import RenderBuilder from '../builders/RenderBuilder';
 import { useNavigate } from 'react-router-dom';
@@ -19,25 +18,36 @@ import { useNavigate } from 'react-router-dom';
 interface CourseExamQuestionFormProps {
   editingItem?: CourseExamQuestionType | null;
   sectionId?: number;
+  paragraphs?: CourseExamParagraphType[];
+  onClose?:() => void;
 }
 
-export function CourseExamQuestionForm({ editingItem = null, sectionId }: CourseExamQuestionFormProps) {
+const limitHtmlWords = (html: string, limit = 20) => {
+  const text = html
+    .replace(/<[^>]*>/g, '') 
+    .replace(/\s+/g, ' ')    
+    .trim();
+
+  const words = text.split(' ');
+
+  return words.length > limit
+    ? words.slice(0, limit).join(' ') + '…'
+    : text;
+}
+
+export function CourseExamQuestionForm({ editingItem = null, sectionId, paragraphs, onClose }: CourseExamQuestionFormProps) {
   const queryClient = useQueryClient();
   const [taskType, setTaskType] = useState<TaskType>('long');
   const [points, setPoints] = useState<number>(1);
   const [question, setQuestion] = useState('');
-  const [paragraph, setParagraph] = useState('');
   const [extraData, setExtraData] = useState<any>({});
-  const [paragraphId, setParagraphId] = useState<number | null>(null);
+  const [selectedParagraphId, setSelectedParagraphId] = useState<string>('');
   const navigate = useNavigate();
 
-  // Fetch paragraphs for the current section
-  const { data: paragraphs = [] } = useQuery({
-    queryKey: ['courseExamParagraphs', sectionId],
-    queryFn: () => getCourseExamParagraphs(sectionId!),
-    enabled: !!sectionId,
-    select: (data) => Array.isArray(data) ? data : [],
-  });
+  const paragraphData = paragraphs?.find(
+  p => p.id === Number(selectedParagraphId)
+);
+
 
   useEffect(() => {
     if (editingItem) {
@@ -45,31 +55,16 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
       setPoints(editingItem.points);
       setQuestion(editingItem.question || '');
       setExtraData(mapTaskToBuilderInitial(editingItem));
-      
-      // Set paragraph data for editing
-      if (editingItem.paragraph_id && editingItem.paragraph) {
-        setParagraphId(editingItem.paragraph_id);
-        setParagraph(editingItem.paragraph.content);
-      } else if (editingItem.paragraph_id && !editingItem.paragraph) {
-        // If paragraph_id exists but paragraph data is not loaded, try to find it from the paragraphs list
-        const foundParagraph = paragraphs.find(p => p.id === editingItem.paragraph_id);
-        if (foundParagraph) {
-          setParagraphId(editingItem.paragraph_id);
-          setParagraph(foundParagraph.content);
-        }
-      }
+      setSelectedParagraphId(editingItem.paragraph_id?.toString() || '')
     } else {
       // Reset for create mode
       setTaskType('long');
       setPoints(1);
       setQuestion('');
       setExtraData({});
-      setParagraphId(null);
-      setParagraph('');
     }
   }, [editingItem]);
 
-  //console.log("Paragraph", paragraphs)
   useEffect(() => {
     if (taskType === 'paragraph_drag') {
       setExtraData({
@@ -88,16 +83,6 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
     }
   }, [taskType]);
 
-
-  const createParagraphMutation = useMutation({
-    mutationFn: createCourseExamParagraph,
-    onSuccess: (data) => {
-      setParagraphId(data.id);
-      toast.success('Paragraph created successfully');
-    },
-    onError: (e: any) => toast.error(e?.message || 'Failed to create paragraph!'),
-  });
-
   const createMutation = useMutation({
     mutationFn: createCourseExamQuestion,
     onSuccess: async () => {
@@ -112,6 +97,7 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
     onSuccess: async () => {
       toast.success('Question updated successfully');
       await queryClient.invalidateQueries({ queryKey: ['courseExamQuestions'] });
+      onClose?.();
     },
     onError: (e: any) => toast.error(e?.message || 'Failed to update question!'),
   });
@@ -250,30 +236,12 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
     return [];
   };
 
-  const onSubmitParagraph = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (paragraph && paragraph.trim() && !paragraphId) {
-      try {
-        const paragraphResponse = await createParagraphMutation.mutateAsync({
-          section_id: sectionId!,
-          content: paragraph
-        });
-         setParagraphId(paragraphResponse.id);
-      } catch (error) {
-        toast.error('Failed to create paragraph');
-        return;
-      }
-    }
-  }
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-
     const payload: CourseExamQuestionPayloadType = {
       section_id: editingItem ? editingItem?.section?.id : sectionId,
-      paragraph_id: paragraphId || undefined,
+      paragraph_id: selectedParagraphId ? parseInt(selectedParagraphId) : undefined,
       question: taskType === 'paragraph_drag' ? extraData.paragraph : question,
       task_type: taskType,
       correct_answer: extraData.correct_answer ?? null,
@@ -294,62 +262,40 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
 
   return (
     <div className="px-6 py-4 ">
-       <div className="col-span-4 mb-4 bg-slate-100 p-3 rounded-2xl">
-          <div className="flex items-center justify-between mb-2">
-            <Label htmlFor="paragraph" className="text-sm font-medium">
-              Paragraph <span className="text-destructive">*</span>
-            </Label>
-            <Button 
-              type="button" 
-              variant="default" 
-              size="sm"
-              onClick={onSubmitParagraph}
-              >
-              Create Paragraph
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="col-span-3">
-              <Label htmlFor="existingParagraphs" className="text-sm font-medium mb-2 block">
-                Select Existing Paragraph
-              </Label>
-              <Select 
-                value={paragraphId?.toString() || ""} 
-                onValueChange={(value) => {
-                  const selectedId = value ? parseInt(value) : null;
-                  setParagraphId(selectedId);
-                  
-                  // Find the selected paragraph and load its content
-                  const selectedParagraph = paragraphs.find(p => p.id === selectedId);
-                  if (selectedParagraph) {
-                    setParagraph(selectedParagraph.content);
-                  } else {
-                    setParagraph('');
-                  }
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select paragraph..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {paragraphs.map((para) => (
-                    <SelectItem key={para.id} value={para.id.toString()}>
-                      Paragraph {para.id}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="col-span-3">
-              <div className="rounded-xl border bg-transparent border-gray-50 focus-within:ring-1 focus-within:ring-primary transition-all duration-300">
-                <LessonTaskQuill value={paragraph} onChange={setParagraph} uploadFn={uploadParagraphImage} />
-              </div>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-7">
+            {/* Paragraph Selection for All Question Types */}
+        <div className="col-span-4">
+          <Label htmlFor="paragraph" className="text-sm font-medium">
+            Select Paragraph (Optional)
+          </Label>
+          <Select 
+            value={selectedParagraphId || "none"} 
+            onValueChange={(value) => setSelectedParagraphId(value === "none" ? "" : value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a paragraph..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">No Paragraph</SelectItem>
+              {paragraphs?.map((paragraph, index) => (
+                <SelectItem key={paragraph.id} value={paragraph.id.toString()}>
+                  Paragraph {index + 1}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           
-          </div>
+          {
+            paragraphData && (
+              <p className='text-sm text-muted-foreground'>
+                {limitHtmlWords(paragraphData.content, 20)}
+              </p>
+            )
+          }
+     
+
         </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-7">
         <div className="col-span-2">
           <Label htmlFor="task_type" className="text-sm font-medium">
             Task Type <span className="text-destructive">*</span>
@@ -379,6 +325,8 @@ export function CourseExamQuestionForm({ editingItem = null, sectionId }: Course
           </Label>
           <Input id="points" type="number" min="1" value={points} onChange={(e) => setPoints(Number(e.target.value))} required className="h-10.5" />
         </div>
+
+    
 
         <div className="col-span-4">
           {taskType === 'paragraph_drag' ? null : (
