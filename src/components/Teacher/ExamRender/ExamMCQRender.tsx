@@ -84,7 +84,7 @@ export default function ExamMCQRender({
                 className="h-[420px] w-full overflow-hidden rounded-xl border bg-white"
               >
                 {/* Question */}
-                <ResizablePanel defaultSize={65} minSize={40}>
+                <ResizablePanel defaultSize={60}>
                   <div className="flex h-full flex-col overflow-hidden">
                     <div className="sticky top-0 z-10 border-b bg-white px-4 py-3">
                       <h4 className="text-sm font-semibold text-slate-700">
@@ -104,7 +104,7 @@ export default function ExamMCQRender({
                 <ResizableHandle withHandle />
 
                 {/* Options */}
-                <ResizablePanel defaultSize={35} minSize={25}>
+                <ResizablePanel defaultSize={40}>
                   <div className="flex h-full flex-col overflow-hidden">
                     <div className="sticky top-0 z-10 border-b bg-white px-4 py-3">
                       <h4 className="text-sm font-semibold text-slate-700">

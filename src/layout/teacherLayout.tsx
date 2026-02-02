@@ -1,29 +1,12 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Users, Menu, Tag, User, LogOut, ChevronDown, UserCircle, ClipboardList, MessageCircle, School } from 'lucide-react';
+import { Menu, User, LogOut, ChevronDown, UserCircle} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context/AuthContext';
+import { teacherNavigation } from '@/mocks/teacher-nav';
 
-const navigationItems = [
-  { title: 'Dashboard', href: '/teacher/dashboard', icon: LayoutDashboard },
-  { title: 'Categories', href: '/teacher/categories', icon: Tag },
-  { title: 'Courses', href: '/teacher/courses', icon: BookOpen },
-  { title: 'Active Classes', href: '/teacher/classes', icon: School },
-  { title: 'Enrollments', href: '/teacher/enrollments', icon: ClipboardList },
-  {
-    title: 'Users',
-    href: '/teacher/users/teachers',
-    icon: Users,
-    children: [
-      { title: 'Teachers', href: '/teacher/users/teachers' },
-      { title: 'Students', href: '/teacher/users/students' },
-    ],
-  },
-  { title: 'Contacts', href: '/teacher/contacts', icon: MessageCircle },
-
-];
 
 const getNavButtonClasses = (active: boolean, collapsed: boolean) =>
   ['group py-5.5 px-3 w-full transition-all duration-300', active && 'bg-blue-50 text-blue-600 shadow-sm border-blue-50', collapsed && 'justify-center'].filter(Boolean).join(' ');
@@ -65,7 +48,7 @@ function NavList({ collapsed }: { collapsed: boolean }) {
         )}
 
         <div className="space-y-2">
-          {navigationItems.map((item) => {
+          {teacherNavigation.nav.map((item) => {
             const Icon = item.icon;
             const active = pathname.includes(item.href);
             const hasChildren = Array.isArray(item.children);
@@ -145,8 +128,8 @@ function SidebarContent({ collapsed }: { collapsed: boolean }) {
 
 function HeaderBar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed: (v: boolean) => void }) {
   const { pathname } = useLocation();
-  const current = navigationItems.find((item) => pathname === item.href || pathname.startsWith(item.href + '/'))?.title ||
-    navigationItems.find((item) => item.children?.some((child) => pathname === child.href || pathname.startsWith(child.href + '/')))?.title ||
+  const current = teacherNavigation.nav.find((item) => pathname === item.href || pathname.startsWith(item.href + '/'))?.title ||
+    teacherNavigation.nav.find((item) => item.children?.some((child) => pathname === child.href || pathname.startsWith(child.href + '/')))?.title ||
     'Dashboard';
   const { user, logout } = useAuth();
   return (

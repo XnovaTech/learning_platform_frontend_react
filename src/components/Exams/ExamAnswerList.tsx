@@ -270,7 +270,7 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
                         {/* Content Row (Side by Side) */}
                         <ResizablePanelGroup orientation="horizontal" className="h-[550px] max-h-[550px] w-full overflow-hidden rounded-xl border">
                           {/* ===== Paragraph ===== */}
-                          <ResizablePanel defaultSize={70}>
+                          <ResizablePanel defaultSize={60}>
                             <div className="flex h-full flex-col overflow-hidden bg-light p-4 ring-1 ring-slate-200">
                               <h4 className="mb-3 text-sm font-semibold text-slate-700">Paragraph</h4>
 
@@ -286,7 +286,7 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
                           <ResizableHandle withHandle />
 
                           {/* ===== Questions ===== */}
-                          <ResizablePanel defaultSize={30}>
+                          <ResizablePanel defaultSize={40}>
                             <div className="flex h-full flex-col overflow-hidden bg-pastel/20 p-4 ring-1 ring-slate-200">
                               <h4 className="mb-3 text-sm font-semibold text-slate-700">All Questions</h4>
 

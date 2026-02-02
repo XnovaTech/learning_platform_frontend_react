@@ -201,7 +201,7 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
                         className="h-[600px] max-h-[600px] w-full overflow-hidden rounded-xl border bg-slate-50"
                       >
                         {/* ===== Paragraph Panel ===== */}
-                        <ResizablePanel defaultSize={45} minSize={25}>
+                        <ResizablePanel defaultSize={60}>
                           <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white">
                             {/* Sticky Title */}
                             <div className="sticky top-0 z-10 border-b bg-white px-4 py-3">
@@ -223,7 +223,7 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
                         <ResizableHandle withHandle />
 
                         {/* ===== Questions Panel ===== */}
-                        <ResizablePanel defaultSize={55} minSize={30}>
+                        <ResizablePanel defaultSize={40}>
                           <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white">
                             {/* Sticky Title */}
                             <div className="sticky top-0 z-10 border-b bg-white px-4 py-3">

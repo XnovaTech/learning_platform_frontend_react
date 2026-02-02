@@ -52,7 +52,7 @@ export const QuestionItem = memo(function QuestionItem({ question, isAnswered, h
           </>
         ) : isChoiceQuestion ? (
           <ResizablePanelGroup orientation="horizontal" className="max-h-[500px] p-3">
-            <ResizablePanel defaultSize={70}>
+            <ResizablePanel defaultSize={60}>
               <div className="pr-4 flex flex-col h-full">
                 <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
                   {/* <div className="flex items-center">
@@ -83,7 +83,7 @@ export const QuestionItem = memo(function QuestionItem({ question, isAnswered, h
 
             <ResizableHandle withHandle />
 
-            <ResizablePanel defaultSize={30}>
+            <ResizablePanel defaultSize={40}>
               <div className="md:pl-6 flex flex-col min-w-[220px] shrink-0">
                 <h4 className="text-sm font-semibold text-slate-700 mb-3">Choose your answer</h4>
                 <div className="flex-1 overflow-y-auto bg-slate-100 p-3 my-auto justify-center rounded-lg">
