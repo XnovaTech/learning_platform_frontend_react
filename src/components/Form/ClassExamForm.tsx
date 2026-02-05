@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { createClassRoomExam, updateClassRoomExam } from '@/services/classExamService';
 import type { ClassRoomExamPayloadType, ClassRoomExamType } from '@/types/classexam';
+import type { CourseExamType } from '@/types/courseexam';
 
 const examTypes = ['Midterm', 'Final'];
 
@@ -20,9 +21,10 @@ interface ClassExamFormProps {
   form: ClassRoomExamPayloadType;
   setForm: React.Dispatch<React.SetStateAction<ClassRoomExamPayloadType>>;
   onSuccess: () => void;
+  examsByType?: Record<string, CourseExamType[]>;
 }
 
-export function ClassExamForm({ open, onOpenChange, editingItem, classId, form, setForm, onSuccess }: ClassExamFormProps) {
+export function ClassExamForm({ open, onOpenChange, editingItem, classId, form, setForm, onSuccess, examsByType }: ClassExamFormProps) {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
@@ -86,6 +88,27 @@ export function ClassExamForm({ open, onOpenChange, editingItem, classId, form, 
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Course Exam Selection */}
+            {form.exam_type && examsByType && examsByType[form.exam_type] && (
+              <div className="space-y-2 col-span-2">
+                <Label htmlFor="course_exam_id">
+                  Select Course Exam <span className="text-destructive">*</span>
+                </Label>
+                <Select value={form.course_exam_id?.toString() || ''} onValueChange={(v) => setForm({ ...form, course_exam_id: Number(v) })}>
+                  <SelectTrigger id="course_exam_id">
+                    <SelectValue placeholder="Select a course exam" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {examsByType[form.exam_type].map((exam) => (
+                      <SelectItem key={exam.id} value={exam.id.toString()}>
+                        {exam.exam_type} Exam - {exam.total_duration} min
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="start_date">

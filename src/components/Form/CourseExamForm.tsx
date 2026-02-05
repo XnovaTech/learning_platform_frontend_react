@@ -22,9 +22,10 @@ interface CourseExamFormProps {
   setForm: React.Dispatch<React.SetStateAction<CourseExamPayload>>;
   onSuccess: () => void;
   isModal?: boolean;
+  refetch?: () => void;
 }
 
-export function CourseExamForm({ open, onOpenChange, editingItem, courseId, examType, form, setForm, onSuccess, isModal = true }: CourseExamFormProps) {
+export function CourseExamForm({ open, onOpenChange, editingItem, courseId, examType, form, setForm, onSuccess, isModal = true, refetch }: CourseExamFormProps) {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
@@ -32,6 +33,7 @@ export function CourseExamForm({ open, onOpenChange, editingItem, courseId, exam
     onSuccess: async () => {
       toast.success('Exam created successfully');
       await queryClient.invalidateQueries({ queryKey: ['courseExam', courseId, examType] });
+      refetch?.();
       onSuccess();
     },
     onError: (e: any) => toast.error(e?.message || 'Failed to create exam!'),
@@ -98,6 +100,7 @@ export function CourseExamForm({ open, onOpenChange, editingItem, courseId, exam
   return isModal ? (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="min-w-xl max-w-3xl">
+        <DialogTitle className="text-lg font-semibold mb-7">{editingItem ? 'Edit Exam' : 'Create Exam'}</DialogTitle>
         {formContent}
       </DialogContent>
     </Dialog>

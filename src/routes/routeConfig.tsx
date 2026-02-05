@@ -38,6 +38,7 @@ const CreateCoursePage = lazy(() => import('@/pages/teacher/courses/CreateCourse
 const EditCoursePage = lazy(() => import('@/pages/teacher/courses/EditCoursePage'));
 // const CreateExamPage = lazy(() => import('@/pages/teacher/courses/exams/CreateExamPage'));
 const CourseExamPage = lazy(() => import('@/pages/teacher/courses/exams/CourseExamPage'));
+const CourseExamListByTypePage = lazy(() => import('@/pages/teacher/courses/exams/CourseExamListByTypePage'));
 const CreateCourseExamQuestionPage = lazy(() => import('@/pages/teacher/courses/exams/CreateCourseExamQuestionPage'));
 const EditCourseExamQuestionPage = lazy(() => import('@/pages/teacher/courses/exams/EditCourseExamQuestionPage'));
 const ClassDetailPage = lazy(() => import('@/pages/teacher/courses/classes/ClassDetailPage'));
@@ -128,7 +129,8 @@ export const routes = [
       { path: 'courses/:courseId/lessons/create', element: lazyLoad(CreateLessonPage) },
       { path: 'courses/lessons/:lessonId/edit', element: lazyLoad(EditLessonPage) },
       { path: 'courses/:id', element: lazyLoad(CourseDetailPage) },
-      { path: 'courses/:courseId/exams/:examType', element: lazyLoad(CourseExamPage)},
+      { path: 'courses/:courseId/exams/:examType', element: lazyLoad(CourseExamListByTypePage)},
+      { path: 'courses/:courseId/exams/:examType/:examId/detail', element: lazyLoad(CourseExamPage)},
       { path: 'courses/:courseId/exams/:examType/questions/create/:sectionId', element: lazyLoad(CreateCourseExamQuestionPage)},
       { path: 'courses/:courseId/exams/:examType/questions/edit/:questionId', element: lazyLoad(EditCourseExamQuestionPage)},
       { path: 'enrollments', element: lazyLoad(EnrollmentsPage) },
