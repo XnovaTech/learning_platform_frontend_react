@@ -2,12 +2,12 @@ import { Button } from '@/components/ui/button';
 import { BookOpenCheck, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save, BookOpen } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import type { ClassRoomExamType } from '@/types/classexam';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { toast } from 'sonner';
 import type { ClassExamSectionType } from '@/types/courseexamsection';
 import ExamTimer from './ExamTimer';
 import ExamStartScreen from './ExamStartScreen';
-import { useTimer } from '@/context/TimerContext';
+import { useTimerActions, useTimerState } from '@/context/TimerContext';
 import { submitStudentExamAnswers } from '@/services/studentExamAnswerService';
 import { QuestionItem } from '../QuestionItem';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
@@ -23,7 +23,60 @@ interface ExamAnswerListProps {
   refetch: () => void;
 }
 
+interface ExamNavigationProps {
+  currentSectionIndex: number;
+  sections: ClassExamSectionType[];
+  answers: Record<number, any>;
+  handleNext: () => void;
+  handlePrevious: () => void;
+  handleSubmit: (force?: boolean) => void;
+  saveDraft: (isDraft?: boolean) => void;
+  submitMutation: any;
+}
+
+const ExamNavigation = memo(function ExamNavigation({ currentSectionIndex, sections, answers, handleNext, handlePrevious, handleSubmit, saveDraft, submitMutation }: ExamNavigationProps) {
+  const { isExamExpired, expiredSections } = useTimerState();
+  const isLastSection = currentSectionIndex === sections.length - 1;
+  const isDisabled = isExamExpired || submitMutation.isPending;
+  const isPreviousSectionExpired = currentSectionIndex > 0 && expiredSections.includes(currentSectionIndex - 1);
+  return (
+    <div className="mt-6 flex items-center justify-between py-4">
+      <Button onClick={handlePrevious} disabled={currentSectionIndex === 0 || isDisabled || isPreviousSectionExpired} className="flex rounded-lg px-5 md:py-5 items-center gap-2">
+        <ArrowBigLeft className="size-5" />
+        Previous
+      </Button>
+
+      {isLastSection ? (
+        <div className="flex items-center gap-2">
+          <Button variant={'red'} onClick={() => saveDraft(true)} className="rounded-lg py-5" disabled={Object.keys(answers).length === 0 || isDisabled}>
+            <Save className="size-4" />
+            Save Draft
+          </Button>
+
+          <Button className="rounded-lg py-5" onClick={() => handleSubmit(false)} disabled={isDisabled}>
+            {submitMutation.isPending ? (
+              'Submitting'
+            ) : (
+              <p className="flex items-center gap-2">
+                <BadgeCheck className="size-4" />
+                Submit
+              </p>
+            )}
+          </Button>
+        </div>
+      ) : (
+        <Button onClick={handleNext} className="flex px-5 md:py-5 rounded-lg items-center gap-2" disabled={isDisabled}>
+          Next
+          <ArrowBigRight className="size-5" />
+        </Button>
+      )}
+    </div>
+  );
+});
+
 export default function ExamAnswerList({ sections, answers, handleAnswer, enrollId, data, totalQuestions, totalPossibleScore, refetch }: ExamAnswerListProps) {
+  const submitRef = useRef<(force?: boolean) => void>(() => {});
+  const submitOnceRef = useRef(false);
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [isExamStarted, setIsExamStarted] = useState(false);
   const currentSection = sections[currentSectionIndex];
@@ -31,9 +84,23 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
   const draftLoaded = useRef(false);
   const currentSectionExams = currentSection?.questions || [];
   const draftKey = `exam-draft-${enrollId}`;
+  const { startTimer, resetSectionTimer, clearTimerData } = useTimerActions();
 
-  const { timerState, startTimer, resetSectionTimer, clearTimerData } = useTimer();
-  const { isExamExpired, isSectionExpired } = timerState;
+  const startExamTimer = (sectionIndex: number) => {
+    startTimer({
+      totalExamDuration: data?.exam?.total_duration || 0,
+      sections: sections.map((s) => ({ id: s.id, duration: s.duration })),
+      currentSectionIndex: sectionIndex,
+      enrollId,
+      examType: data?.exam_type || '',
+      onSectionTimeExpired: () => {
+        setCurrentSectionIndex((i) => i + 1);
+      },
+      onExamTimeExpired: () => {
+        submitRef.current(true);
+      },
+    });
+  };
 
   useEffect(() => {
     if (enrollId && !draftLoaded.current) {
@@ -54,38 +121,23 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
   }, [enrollId, handleAnswer, draftKey]);
 
   useEffect(() => {
-    // if exam was already started, resume the timer
     const timerKey = `exam-timer-${enrollId}-${data?.exam_type}`;
     const savedTimer = localStorage.getItem(timerKey);
-    if (savedTimer) {
-      try {
-        const parsed = JSON.parse(savedTimer);
-        const savedSectionIndex = parsed.currentSectionIndex ?? 0;
+    if (!savedTimer) return;
 
-        setCurrentSectionIndex(savedSectionIndex);
-        setIsExamStarted(true);
-        hasResumedRef.current = true;
+    try {
+      const parsed = JSON.parse(savedTimer);
+      const savedSectionIndex = parsed.currentSectionIndex ?? 0;
 
-        startTimer({
-          totalExamDuration: data?.exam?.total_duration || 0,
-          sections: sections.map((s) => ({ id: s.id, duration: s.duration })),
-          currentSectionIndex: savedSectionIndex,
-          enrollId,
-          examType: data?.exam_type || '',
-          onSectionTimeExpired: () => {
-            if (savedSectionIndex < sections.length - 1) {
-              handleNext();
-            } else {
-              handleSubmit();
-            }
-          },
-          onExamTimeExpired: handleSubmit,
-        });
-      } catch {
-        console.error('Invalid timer state');
-      }
+      setCurrentSectionIndex(savedSectionIndex);
+      setIsExamStarted(true);
+      hasResumedRef.current = true;
+
+      startExamTimer(savedSectionIndex);
+    } catch {
+      console.error('Invalid timer state');
     }
-  }, [enrollId, data?.exam_type, data?.exam?.total_duration, sections, startTimer]);
+  }, [enrollId, data?.exam_type]);
 
   const saveDraft = (isDraft = false) => {
     if (enrollId && Object.keys(answers).length > 0) {
@@ -105,15 +157,19 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
       refetch();
     },
     onError: (e: any) => {
+      submitOnceRef.current = false;
       toast.error(e?.message || 'Failed to submit exam!');
     },
   });
 
-  const handleSubmit = () => {
-    if (isExamExpired || Object.keys(answers).length === 0) {
+  const handleSubmit = (force = false) => {
+    if (submitOnceRef.current) return;
+    if (!force && Object.keys(answers).length === 0) {
       toast.error('Please answer at least one question');
       return;
     }
+
+    submitOnceRef.current = true;
 
     const transformedAnswers = Object.entries(answers).map(([question_id, answer]) => ({
       question_id: Number(question_id),
@@ -127,10 +183,15 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
     });
   };
 
+  useEffect(() => {
+    submitRef.current = handleSubmit;
+  }, [handleSubmit]);
+
   const handleNext = () => {
     if (currentSectionIndex < sections.length - 1) {
       setCurrentSectionIndex(currentSectionIndex + 1);
     }
+    saveDraft();
   };
 
   const handlePrevious = () => {
@@ -141,27 +202,11 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
 
   const handleStartExam = () => {
     setIsExamStarted(true);
-    startTimer({
-      totalExamDuration: data?.exam?.total_duration || 0,
-      sections: sections.map((s) => ({ id: s.id, duration: s.duration })),
-      currentSectionIndex,
-      enrollId,
-      examType: data?.exam_type || '',
-      onSectionTimeExpired: () => {
-        if (currentSectionIndex < sections.length - 1) {
-          handleNext();
-        } else {
-          handleSubmit();
-        }
-      },
-      onExamTimeExpired: () => {
-        handleSubmit();
-      },
-    });
+    startExamTimer(currentSectionIndex);
     toast.success('Exam started! Timer is now running.');
   };
 
-  //  rest section timer when section changes
+  // rest section timer when section changes
   useEffect(() => {
     if (!isExamStarted || sections.length === 0) return;
 
@@ -173,10 +218,7 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
     resetSectionTimer(currentSectionIndex, sections);
   }, [currentSectionIndex, isExamStarted, resetSectionTimer, sections]);
 
-  const isLastSection = currentSectionIndex === sections.length - 1;
   const currentSectionAnswered = currentSectionExams.filter((exam) => answers.hasOwnProperty(exam.id)).length;
-  //disable when exam timeout
-  const isDisabled = isExamExpired || submitMutation.isPending;
 
   return (
     <div className="">
@@ -233,12 +275,10 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
 
           {/* Questions  */}
           <div className="space-y-6">
-            {/* Group questions by paragraph_id */}
             {(() => {
+              // Group questions by paragraph_id
               const questionsWithParagraph = currentSectionExams.filter((q) => q.paragraph_id);
               const questionsWithoutParagraph = currentSectionExams.filter((q) => !q.paragraph_id);
-
-              // Group questions by paragraph_id
               const paragraphGroups = questionsWithParagraph.reduce(
                 (acc, question) => {
                   const paragraphId = question.paragraph_id!;
@@ -317,38 +357,16 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
             })()}
           </div>
 
-          {/* Navigation */}
-          <div className="mt-6 flex items-center justify-between py-4">
-            <Button onClick={handlePrevious} disabled={currentSectionIndex === 0 || isDisabled} className="flex rounded-lg px-5 md:py-5 items-center gap-2">
-              <ArrowBigLeft className="size-5" />
-              Previous
-            </Button>
-
-            {isLastSection ? (
-              <div className="flex items-center gap-2">
-                <Button variant={'red'} onClick={() => saveDraft(true)} className="rounded-lg py-5" disabled={Object.keys(answers).length === 0 || isDisabled}>
-                  <Save className="size-4" />
-                  Save Draft
-                </Button>
-
-                <Button className="rounded-lg py-5" onClick={handleSubmit} disabled={isDisabled}>
-                  {submitMutation.isPending ? (
-                    'Submitting'
-                  ) : (
-                    <p className="flex items-center gap-2">
-                      <BadgeCheck className="size-4" />
-                      Submit
-                    </p>
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <Button onClick={handleNext} className="flex px-5 md:py-5 rounded-lg items-center gap-2" disabled={isDisabled || isSectionExpired}>
-                Next
-                <ArrowBigRight className="size-5" />
-              </Button>
-            )}
-          </div>
+          <ExamNavigation
+            currentSectionIndex={currentSectionIndex}
+            sections={sections}
+            answers={answers}
+            handleNext={handleNext}
+            handlePrevious={handlePrevious}
+            handleSubmit={handleSubmit}
+            saveDraft={saveDraft}
+            submitMutation={submitMutation}
+          />
         </div>
       )}
 

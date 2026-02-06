@@ -1,39 +1,20 @@
-import React, { createContext, useContext, useState, useRef, useCallback, useEffect } from 'react';
+import type { StartTimerProps, TimerActionsType, TimerState } from '@/types/examtimer';
+import React, { createContext, useContext, useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { toast } from 'sonner';
 
-interface TimerState {
-  examTimeRemaining: number;
-  sectionTimeRemaining: number;
-  isExamExpired: boolean;
-  isSectionExpired: boolean;
-  totalExamDuration: number;
-  currentSectionDuration: number;
-}
+const TimerStateContext = createContext<TimerState | undefined>(undefined);
+const TimerActionsContext = createContext<TimerActionsType | undefined>(undefined);
 
-interface StartTimerProps {
-  totalExamDuration: number;
-  sections: Array<{ id: number; duration: number }>;
-  currentSectionIndex: number;
-  enrollId: string | undefined;
-  examType: string | undefined;
-  onSectionTimeExpired: () => void;
-  onExamTimeExpired: () => void;
-}
+export const useTimerState = () => {
+  const ctx = useContext(TimerStateContext);
+  if (!ctx) throw new Error('useTimerState must be used within TimerProvider');
+  return ctx;
+};
 
-interface TimerContextType {
-  timerState: TimerState;
-  startTimer: (props: StartTimerProps) => void;
-  stopTimer: () => void;
-  resetSectionTimer: (currentSectionIndex: number, sections: Array<{ id: number; duration: number }>) => void;
-  clearTimerData: () => void;
-}
-
-const TimerContext = createContext<TimerContextType | undefined>(undefined);
-
-export const useTimer = () => {
-  const ctx = useContext(TimerContext);
-  if (!ctx) throw new Error('useTimer must be used within TimerProvider');
+export const useTimerActions = () => {
+  const ctx = useContext(TimerActionsContext);
+  if (!ctx) throw new Error('useTimerActions must be used within TimerProvider');
   return ctx;
 };
 
@@ -45,29 +26,53 @@ export const TimerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     isSectionExpired: false,
     totalExamDuration: 0,
     currentSectionDuration: 0,
+    expiredSections: [],
   });
-
+  const examExpiredFiredRef = useRef(false);
+  const sectionExpiredFiredRef = useRef(false);
   const intervalRef = useRef<number | null>(null);
-
   const examStartRef = useRef<number | null>(null);
   const sectionStartRef = useRef<number | null>(null);
   const sectionIndexRef = useRef<number>(0);
   const storageKeyRef = useRef<string>('');
+  const expiredSectionsRef = useRef<number[]>([]);
 
   const callbacksRef = useRef({
     onSectionTimeExpired: () => {},
     onExamTimeExpired: () => {},
   });
 
+  useEffect(() => {
+    expiredSectionsRef.current = timerState.expiredSections;
+  }, [timerState.expiredSections]);
+
+  // persist timer whenever expiredSections changes
+  useEffect(() => {
+    if (storageKeyRef.current && timerState.expiredSections.length > 0) {
+      const existingData = JSON.parse(localStorage.getItem(storageKeyRef.current) || '{}');
+      localStorage.setItem(
+        storageKeyRef.current,
+        JSON.stringify({
+          ...existingData,
+          expiredSections: timerState.expiredSections,
+        }),
+      );
+    }
+  }, [timerState.expiredSections]);
+
   const persistTimer = useCallback(() => {
     if (!storageKeyRef.current || !examStartRef.current || !sectionStartRef.current) return;
+
+    const existingData = JSON.parse(localStorage.getItem(storageKeyRef.current) || '{}');
 
     localStorage.setItem(
       storageKeyRef.current,
       JSON.stringify({
+        ...existingData,
         examStartTime: examStartRef.current,
-        sectionStartTime: sectionStartRef.current,
+        [`sectionStart_${sectionIndexRef.current}`]: sectionStartRef.current,
         currentSectionIndex: sectionIndexRef.current,
+        expiredSections: expiredSectionsRef.current,
       }),
     );
   }, []);
@@ -75,13 +80,13 @@ export const TimerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Start / Resume Timer
   const startTimer = useCallback(
     ({ totalExamDuration, sections, currentSectionIndex, enrollId, examType, onSectionTimeExpired, onExamTimeExpired }: StartTimerProps) => {
+      examExpiredFiredRef.current = false;
+      sectionExpiredFiredRef.current = false;
       if (!enrollId || !examType) return;
 
       callbacksRef.current = { onSectionTimeExpired, onExamTimeExpired };
       storageKeyRef.current = `exam-timer-${enrollId}-${examType}`;
       sectionIndexRef.current = currentSectionIndex;
-
-      // Cleanup
       intervalRef.current && clearInterval(intervalRef.current);
 
       const now = Date.now();
@@ -91,14 +96,21 @@ export const TimerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         try {
           const parsed = JSON.parse(saved);
           const examElapsed = Math.floor((now - parsed.examStartTime) / 1000);
-          const sectionElapsed = Math.floor((now - parsed.sectionStartTime) / 1000);
-
-          const examRemaining = Math.max(0, totalExamDuration * 60 - examElapsed);
           const sectionIdx = parsed.currentSectionIndex ?? currentSectionIndex;
+          const sectionStartKey = `sectionStart_${sectionIdx}`;
+          const savedSectionStartTime = parsed[sectionStartKey];
+
+          // If no saved section start time, initialize fresh
+          if (!savedSectionStartTime) {
+            throw new Error('No section start time found');
+          }
+
+          const sectionElapsed = Math.floor((now - savedSectionStartTime) / 1000);
+          const examRemaining = Math.max(0, totalExamDuration * 60 - examElapsed);
           const sectionRemaining = Math.max(0, sections[sectionIdx]?.duration * 60 - sectionElapsed);
 
           examStartRef.current = parsed.examStartTime;
-          sectionStartRef.current = parsed.sectionStartTime;
+          sectionStartRef.current = savedSectionStartTime;
           sectionIndexRef.current = sectionIdx;
 
           setTimerState({
@@ -108,6 +120,7 @@ export const TimerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             isSectionExpired: sectionRemaining === 0,
             totalExamDuration: totalExamDuration * 60,
             currentSectionDuration: sections[sectionIdx]?.duration * 60 || 0,
+            expiredSections: parsed.expiredSections || [],
           });
         } catch {
           initializeTimer(totalExamDuration, sections, currentSectionIndex);
@@ -122,16 +135,28 @@ export const TimerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           const exam = Math.max(0, prev.examTimeRemaining - 1);
           const section = Math.max(0, prev.sectionTimeRemaining - 1);
 
-          if (exam === 0 && !prev.isExamExpired) {
+          if (exam === 0 && !examExpiredFiredRef.current) {
+            examExpiredFiredRef.current = true;
             toast.error('Exam time expired!');
             callbacksRef.current.onExamTimeExpired();
+
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current);
+              intervalRef.current = null;
+            }
+
             return { ...prev, examTimeRemaining: 0, isExamExpired: true };
           }
 
-          if (section === 0 && !prev.isSectionExpired) {
-            toast.warning('Section time expired!');
-            setTimeout(callbacksRef.current.onSectionTimeExpired, 1000);
-            return { ...prev, sectionTimeRemaining: 0, isSectionExpired: true };
+          const isLastSection = sectionIndexRef.current >= sections.length - 1;
+
+          if (section === 0 && !sectionExpiredFiredRef.current) {
+            sectionExpiredFiredRef.current = true;
+            if (!isLastSection) {
+              callbacksRef.current.onSectionTimeExpired();
+            }
+
+            return { ...prev, sectionTimeRemaining: 0, isSectionExpired: true, expiredSections: isLastSection ? prev.expiredSections : [...prev.expiredSections, sectionIndexRef.current] };
           }
 
           return {
@@ -145,9 +170,7 @@ export const TimerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     [persistTimer],
   );
 
-  /* ---------------------------------- */
-  /* Initialize Fresh Exam              */
-  /* ---------------------------------- */
+  /* Initialize Fresh Exam     */
   const initializeTimer = (totalExamDuration: number, sections: Array<{ id: number; duration: number }>, sectionIndex: number) => {
     const now = Date.now();
     examStartRef.current = now;
@@ -161,31 +184,54 @@ export const TimerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       isSectionExpired: false,
       totalExamDuration: totalExamDuration * 60,
       currentSectionDuration: sections[sectionIndex]?.duration * 60 || 0,
+      expiredSections: [],
     });
 
     persistTimer();
   };
 
-  // Reset Section Timer (navigation)
-  const resetSectionTimer = useCallback(
-    (index: number, sections: Array<{ id: number; duration: number }>) => {
-      const duration = sections[index]?.duration * 60 || 0;
-      sectionIndexRef.current = index;
-      sectionStartRef.current = Date.now();
+  // Reset Section Timer
+  const resetSectionTimer = useCallback((index: number, sections: Array<{ id: number; duration: number }>) => {
+    const storageKey = storageKeyRef.current;
+    const saved = localStorage.getItem(storageKey);
+    const now = Date.now();
 
-      setTimerState((prev) => ({
-        ...prev,
-        sectionTimeRemaining: duration,
-        currentSectionDuration: duration,
-        isSectionExpired: false,
-      }));
+    let sectionStartTime = now;
 
-      persistTimer();
-    },
-    [persistTimer],
-  );
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const specificSectionKey = `sectionStart_${index}`;
 
-  // Stop / Clear 
+      if (parsed[specificSectionKey]) {
+        sectionStartTime = parsed[specificSectionKey];
+      } else {
+        parsed[specificSectionKey] = now;
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            ...parsed,
+            currentSectionIndex: index,
+          }),
+        );
+      }
+    }
+
+    sectionIndexRef.current = index;
+    sectionStartRef.current = sectionStartTime;
+    const sectionElapsed = Math.floor((now - sectionStartTime) / 1000);
+    const duration = sections[index]?.duration * 60 || 0;
+    const remaining = Math.max(0, duration - sectionElapsed);
+
+    setTimerState((prev) => ({
+      ...prev,
+      sectionTimeRemaining: remaining,
+      currentSectionDuration: duration,
+      isSectionExpired: remaining === 0,
+      expiredSections: remaining === 0 ? [...prev.expiredSections, index] : prev.expiredSections,
+    }));
+  }, []);
+
+  // Stop / Clear
   const stopTimer = useCallback(() => {
     intervalRef.current && clearInterval(intervalRef.current);
   }, []);
@@ -203,22 +249,23 @@ export const TimerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       isSectionExpired: false,
       totalExamDuration: 0,
       currentSectionDuration: 0,
+      expiredSections: [],
     });
   }, [stopTimer]);
 
-  useEffect(() => () => stopTimer(), [stopTimer]);
+  const actions = useMemo(
+    () => ({
+      startTimer,
+      stopTimer,
+      resetSectionTimer,
+      clearTimerData,
+    }),
+    [startTimer, stopTimer, resetSectionTimer, clearTimerData],
+  );
 
   return (
-    <TimerContext.Provider
-      value={{
-        timerState,
-        startTimer,
-        stopTimer,
-        resetSectionTimer,
-        clearTimerData,
-      }}
-    >
-      {children}
-    </TimerContext.Provider>
+    <TimerStateContext.Provider value={timerState}>
+      <TimerActionsContext.Provider value={actions}>{children}</TimerActionsContext.Provider>
+    </TimerStateContext.Provider>
   );
 };

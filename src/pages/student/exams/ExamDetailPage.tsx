@@ -29,7 +29,6 @@ export default function ExamDetailPage() {
     enabled: !!enrollId && !!examType,
   });
 
-
   const handleAnswer = (taskId: number, value: any) => {
     setAnswers((prev) => ({ ...prev, [taskId]: value }));
   };
@@ -41,60 +40,60 @@ export default function ExamDetailPage() {
   const totalQuestions = allQuestions.length;
 
   return (
-    <TimerProvider>
-      <div className="">
-        <Breadcrumb className="my-4">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink className="hidden md:inline-flex" asChild>
-                <Link className="text-base gap-2" to="/student/home">
-                  <Home className="size-4" />
-                  Home
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+    <div className="">
+      <Breadcrumb className="my-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink className="hidden md:inline-flex" asChild>
+              <Link className="text-base gap-2" to="/student/home">
+                <Home className="size-4" />
+                Home
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
 
-            <BreadcrumbSeparator className="hidden md:inline-flex" />
+          <BreadcrumbSeparator className="hidden md:inline-flex" />
 
-            <BreadcrumbItem className="hidden sm:flex">
-              <BreadcrumbLink asChild>
-                <Link className="text-base gap-2" to="/student/enrolls">
-                  <BookOpen className="size-4" />
-                  My Courses
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+          <BreadcrumbItem className="hidden sm:flex">
+            <BreadcrumbLink asChild>
+              <Link className="text-base gap-2" to="/student/enrolls">
+                <BookOpen className="size-4" />
+                My Courses
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
 
-            <BreadcrumbSeparator className="hidden sm:flex" />
+          <BreadcrumbSeparator className="hidden sm:flex" />
 
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link className="text-base gap-2" to={`/student/enrolls/${enrollId}`}>
-                  <Users className="size-4" />
-                  {data?.class_room?.class_name || 'ClassRoom'}
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link className="text-base gap-2" to={`/student/enrolls/${enrollId}`}>
+                <Users className="size-4" />
+                {data?.class_room?.class_name || 'ClassRoom'}
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
 
-            <BreadcrumbSeparator />
+          <BreadcrumbSeparator />
 
-            <BreadcrumbItem>
-              <BreadcrumbPage className="text-base gap-2">
-                <BookOpenCheck className="size-4" />
-                {data?.exam_type}
-              </BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+          <BreadcrumbItem>
+            <BreadcrumbPage className="text-base gap-2">
+              <BookOpenCheck className="size-4" />
+              {data?.exam_type}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
-        <div className="bg-white/50 backdrop-blur-lg p-4 md:p-6 rounded-2xl shadow-xl space-y-6">
-          {isLoading ? (
-            <div className="flex items-center m-auto justify-center py-14">
-              <Spinner className="text-primary size-7 md:size-8" />
-            </div>
-          ) : hasSubmittedAnswers ? (
-            <ExamAnswerResult studentAnswers={studentAnswers} questions={allQuestions} totalPossibleScore={totalPossibleScore} enrollId={Number(enrollId)} />
-          ) : (
+      <div className="bg-white/50 backdrop-blur-lg p-4 md:p-6 rounded-2xl shadow-xl space-y-6">
+        {isLoading ? (
+          <div className="flex items-center m-auto justify-center py-14">
+            <Spinner className="text-primary size-7 md:size-8" />
+          </div>
+        ) : hasSubmittedAnswers ? (
+          <ExamAnswerResult studentAnswers={studentAnswers} questions={allQuestions} totalPossibleScore={totalPossibleScore} enrollId={Number(enrollId)} />
+        ) : (
+          <TimerProvider>
             <ExamAnswerList
               sections={sections}
               answers={answers}
@@ -105,9 +104,9 @@ export default function ExamDetailPage() {
               totalPossibleScore={totalPossibleScore}
               refetch={refetch}
             />
-          )}
-        </div>
+          </TimerProvider>
+        )}
       </div>
-    </TimerProvider>
+    </div>
   );
 }
