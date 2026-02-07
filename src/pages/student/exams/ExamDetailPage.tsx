@@ -35,7 +35,7 @@ export default function ExamDetailPage() {
 
   const sections = data?.exam?.sections || [];
   const allQuestions = sections.flatMap((section) => section.questions);
-  const hasSubmittedAnswers = studentAnswers && Object.keys(studentAnswers).length > 0;
+  const hasSubmittedAnswers = studentAnswers && Object.keys(studentAnswers.answers).length > 0;
   const totalPossibleScore = allQuestions.reduce((sum: number, exam) => Number(sum) + (Number(exam.points) || 0), 0) || 0;
   const totalQuestions = allQuestions.length;
 

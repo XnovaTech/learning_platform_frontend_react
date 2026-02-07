@@ -9,9 +9,13 @@ export interface StudentExamAnswers {
   sections?: { name: string; title: string; total_score: number; total_possible_score: number }[];
 }
 
-export interface StudentExamSubmitPayload {
+export interface StartExamPayload {
   enroll_id?: number;
   exam_id?: number;
+}
+
+export interface SubmitExamAnswerPayload {
+  exam_answer_id: number;
   answers: { question_id: number; answer: any }[];
 }
 
@@ -22,7 +26,7 @@ export interface StudentExamAnswerListRecordType {
   last_name: string;
   total_points: number;
   exam_total_points: number;
-  no_answer: number
+  no_answer: number;
 }
 
 export interface StudentExamMarkUpdatePayload {

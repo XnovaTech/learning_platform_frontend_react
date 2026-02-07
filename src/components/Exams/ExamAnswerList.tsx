@@ -8,9 +8,10 @@ import type { ClassExamSectionType } from '@/types/courseexamsection';
 import ExamTimer from './ExamTimer';
 import ExamStartScreen from './ExamStartScreen';
 import { useTimerActions, useTimerState } from '@/context/TimerContext';
-import { submitStudentExamAnswers } from '@/services/studentExamAnswerService';
 import { QuestionItem } from '../QuestionItem';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import { SubmitExamAnswers } from '@/services/studentExamAnswerListService';
+import { StartExam } from '@/services/studentExamAnswerService';
 
 interface ExamAnswerListProps {
   sections: ClassExamSectionType[];
@@ -85,7 +86,6 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
   const currentSectionExams = currentSection?.questions || [];
   const draftKey = `exam-draft-${enrollId}`;
   const { startTimer, resetSectionTimer, clearTimerData } = useTimerActions();
-
   const startExamTimer = (sectionIndex: number) => {
     startTimer({
       totalExamDuration: data?.exam?.total_duration || 0,
@@ -148,8 +148,21 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
     }
   };
 
+  const startExamMutation = useMutation({
+    mutationFn: StartExam,
+    onSuccess: async ({ data }) => {
+      toast.success('Exam started! Timer is now running.');
+      localStorage.setItem(`exam-record-id-${enrollId}`, data.id);
+      setIsExamStarted(true);
+      startExamTimer(currentSectionIndex);
+    },
+    onError: (e: any) => {
+      toast.error(e?.message || 'Failed to start exam!');
+    },
+  });
+
   const submitMutation = useMutation({
-    mutationFn: submitStudentExamAnswers,
+    mutationFn: SubmitExamAnswers,
     onSuccess: async () => {
       toast.success('Exam Submitted Successfully');
       localStorage.removeItem(draftKey);
@@ -164,6 +177,8 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
 
   const handleSubmit = (force = false) => {
     if (submitOnceRef.current) return;
+    const answerId = localStorage.getItem(`exam-record-id-${enrollId}`);
+
     if (!force && Object.keys(answers).length === 0) {
       toast.error('Please answer at least one question');
       return;
@@ -177,10 +192,11 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
     }));
 
     submitMutation.mutate({
-      enroll_id: Number(enrollId),
-      exam_id: Number(data?.exam?.id),
+      exam_answer_id: Number(answerId),
       answers: transformedAnswers,
     });
+
+    localStorage.removeItem(`exam-record-id-${enrollId}`);
   };
 
   useEffect(() => {
@@ -201,9 +217,10 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
   };
 
   const handleStartExam = () => {
-    setIsExamStarted(true);
-    startExamTimer(currentSectionIndex);
-    toast.success('Exam started! Timer is now running.');
+    startExamMutation.mutate({
+      enroll_id: Number(enrollId),
+      exam_id: Number(data?.exam?.id),
+    });
   };
 
   // rest section timer when section changes
