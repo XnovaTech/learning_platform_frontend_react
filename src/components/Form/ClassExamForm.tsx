@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +46,29 @@ export function ClassExamForm({ open, onOpenChange, editingItem, classId, form, 
     },
     onError: (e: any) => toast.error(e?.message || 'Failed to update exam!'),
   });
+
+  // Reset form when dialog opens or editing item changes
+  useEffect(() => {
+    if (open && editingItem) {
+      // Set the exam_type and course_exam_id from the editing item
+      setForm({
+        class_id: editingItem.class_id,
+        exam_type: editingItem.exam_type,
+        start_date: editingItem.start_date,
+        end_date: editingItem.end_date,
+        course_exam_id: editingItem.course_exam_id,
+      });
+    } else if (open && !editingItem) {
+      // Reset form for new exam creation
+      setForm({
+        class_id: classId,
+        exam_type: null,
+        start_date: null,
+        end_date: null,
+        course_exam_id: undefined,
+      });
+    }
+  }, [open, editingItem, classId, setForm]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

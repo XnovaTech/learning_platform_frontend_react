@@ -105,7 +105,7 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
             <div className="flex flex-col md:flex-row flex-wrap md:justify-between gap-4">
               <div>
                 {/* <h2 className={`text-xl font-semibold ${performanceMessage.color}`}>{studentAnswers?.review ? studentAnswers?.review : performanceMessage.text}</h2> */}
-                <h2 className={`text-xl font-semibold text-slate-800`}>Review - {studentAnswers?.review ? studentAnswers?.review : ''}</h2>
+                   <h2 className={`text-xl font-semibold text-slate-800`}>Review - {studentAnswers?.review ? studentAnswers?.review : ""} ({studentAnswers?.review_note?.note ? studentAnswers?.review_note?.note : "No note"})</h2>
                 <p className="text-sm text-slate-600">Exam completed · {percentage}%</p>
               </div>
 

@@ -192,7 +192,7 @@ export default function CourseDetailPage() {
                   </TabsTrigger>
                   <TabsTrigger value="exams" className="gap-2 rounded-xl transition-all duration-300 cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">
                     <BookOpenCheck className="size-4" />
-                    <span className="font-medium">Exams</span>
+                    <span className="font-medium">Exam Templates</span>
                   </TabsTrigger>
                 </TabsList>
 
@@ -259,7 +259,7 @@ export default function CourseDetailPage() {
               </TabsContent>
 
               <TabsContent value="exams" className="p-6 space-y-6 mt-0">
-                <h3 className="text-xl font-semibold text-foreground">Course Exams</h3>
+                <h3 className="text-xl font-semibold text-foreground">Course Exam Templates</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {examTypes.map((item) => (

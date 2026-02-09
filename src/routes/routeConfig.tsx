@@ -54,6 +54,7 @@ const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const ClassesPage = lazy(() => import('@/pages/teacher/classes/ClassesPage'));
 const StudentExamsRecordsPage = lazy(() => import('@/pages/teacher/courses/classes/exams/StudentsExamRecords'));
 const StudentExamRecordDetailPage = lazy(() => import('@/pages/teacher/courses/classes/exams/StudentExamRecordDetail'));
+const StudentExamReviewNotesPage = lazy(() => import('@/pages/teacher/student-exam-review-notes/StudentExamReviewNotesPage'));
 // layouts
 const StudentLayout = lazy(() => import('@/layout/studentLayout'));
 const AuthLayout = lazy(() => import('@/layout/authLayout'));
@@ -138,6 +139,7 @@ export const routes = [
       { path: 'users/teachers', element: lazyLoad(TeachersPage) },
       { path: 'profile', element: lazyLoad(ProfilePage) },
       { path: 'classes', element: lazyLoad(ClassesPage) },
+      { path: 'student-exam-review-notes', element: lazyLoad(StudentExamReviewNotesPage) },
     ],
   },
 ];

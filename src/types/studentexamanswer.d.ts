@@ -1,10 +1,13 @@
 import type { StudentAnswer } from './answer';
+import type { StudentExamReviewNote } from './studentexamreviewnote';
 
 export interface StudentExamAnswers {
   id: number;
   enroll_id?: number;
   exam_id?: number;
   review?: string;
+  note_id?: number;
+  review_note?: StudentExamReviewNote;
   status?: string;
   sections?: { name: string; title: string; total_score: number; total_possible_score: number }[];
 }

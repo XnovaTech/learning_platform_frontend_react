@@ -16,5 +16,6 @@ export const teacherNavigation = {
                 ],
             },
             { title: 'Contacts', href: '/teacher/contacts', icon: MessageCircle },
+            { title: 'Exam Review Notes', href: '/teacher/student-exam-review-notes', icon: ClipboardList },
     ]
 }
