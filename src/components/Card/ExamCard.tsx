@@ -1,11 +1,14 @@
+import { useState, useMemo } from 'react';
 import { BookOpenCheck, CalendarDays, ArrowRight, Plus, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { ClassRoomExamType, ClassRoomExamPayloadType } from '@/types/classexam';
 import { formatDate } from '@/utils/format';
 import { Link } from 'react-router-dom';
 import { Card, CardTitle } from '../ui/card';
-import { useState } from 'react';
 import { ClassExamForm } from '../Form/ClassExamForm';
+import { ListCourseExam } from '@/services/courseExamService';
+import { useQuery } from '@tanstack/react-query';
+import type { CourseExamType } from '@/types/courseexam';
 
 interface Props {
   exams: ClassRoomExamType[];
@@ -26,6 +29,27 @@ export default function ExamCard({ exams, enrollId, courseId, classId, isTeacher
   };
 
   const [examForm, setExamForm] = useState<ClassRoomExamPayloadType>(defaultExamForm);
+
+  // Fetch course exams and group by type
+  const { data: courseExams } = useQuery<CourseExamType[]>({
+    queryKey: ['courseExams', courseId],
+    queryFn: () => ListCourseExam(courseId || 0),
+    enabled: !!courseId && isTeacher === true,
+  });
+
+  // Group exams by type
+  const examsByType = useMemo(() => {
+    if (!courseExams) return {};
+    
+    return courseExams.reduce((acc, exam) => {
+      const type = exam.exam_type;
+      if (!acc[type]) {
+        acc[type] = [];
+      }
+      acc[type].push(exam);
+      return acc;
+    }, {} as Record<string, CourseExamType[]>);
+  }, [courseExams]);
 
   const openEditExam = (exam: ClassRoomExamType) => {
     setEditingExam(exam);
@@ -93,7 +117,7 @@ export default function ExamCard({ exams, enrollId, courseId, classId, isTeacher
                   </Button>
                 )}
 
-                <div className="flex flex-wrap  items-center gap-5 justify-between ">
+                <div className="  items-center gap-5 justify-between space-y-4">
                   {/* Dates */}
 
                   <div className="flex  items-center gap-3 ">
@@ -109,12 +133,20 @@ export default function ExamCard({ exams, enrollId, courseId, classId, isTeacher
                   </div>
 
                   {isTeacher ? (
+                    <div className="flex mt-8 justify-between">
+                     <Link to={`/teacher/courses/${courseId}/classes/${exam?.class_id}/exams/${exam?.id}/template`}>
+                      <Button variant="outline" className="min-w-36  gap-2 font-semibold rounded-2xl">
+                        Exam Template
+                        <ArrowRight size={16} />
+                      </Button>
+                    </Link>
                     <Link to={`/teacher/courses/${courseId}/classes/${exam?.class_id}/exams/${exam?.id}/records`}>
                       <Button variant="default" className="min-w-36  gap-2 font-semibold">
                         Exam Records
                         <ArrowRight size={16} />
                       </Button>
                     </Link>
+                    </div>
                   ) : (
                     <Link to={`/student/enrolls/${enrollId}/exams/${exam.id}`}>
                       <Button variant="default" className="w-32  gap-2 font-semibold">
@@ -130,7 +162,16 @@ export default function ExamCard({ exams, enrollId, courseId, classId, isTeacher
         </div>
       </Card>
 
-      <ClassExamForm open={examFormOpen} onOpenChange={setExamFormOpen} editingItem={editingExam} classId={classId || 0} form={examForm} setForm={setExamForm} onSuccess={handleExamFormSuccess} />
+      <ClassExamForm 
+        open={examFormOpen} 
+        onOpenChange={setExamFormOpen} 
+        editingItem={editingExam} 
+        classId={classId || 0} 
+        form={examForm} 
+        setForm={setExamForm} 
+        onSuccess={handleExamFormSuccess}
+        examsByType={examsByType}
+      />
     </div>
   );
 }

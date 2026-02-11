@@ -1,31 +1,11 @@
 import { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useMatch } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { BookOpen, School, LogOut, Menu, Tag, Home, MessageCircle, UserRound, BookOpenCheck, BookText } from 'lucide-react';
+import {LogOut, Menu, UserRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { StudentDataProvider } from '@/context/StudentDataContext';
-
-const navigationItems = [
-  { title: 'Home', href: '/student/home', icon: Home },
-  { title: 'Profile', href: '/student/profile', icon: UserRound },
-  { title: 'Contacts', href: '/student/contacts', icon: MessageCircle },
-];
-
-const mainNavigationItems = [
-  { title: 'My Courses', href: '/student/enrolls', icon: BookText },
-  { title: 'New Courses', href: '/student/courses', icon: BookOpen },
-  { title: 'Exams', href: '/student/exams', icon: BookOpenCheck },
-];
-
-const mobileNavigationItems = [
-  { title: 'Home', href: '/student/home', icon: Home },
-  { title: 'My Courses', href: '/student/enrolls', icon: School },
-  { title: 'New Courses', href: '/student/courses', icon: BookOpen },
-  { title: 'Exams', href: '/student/exams', icon: Tag },
-  { title: 'Profile', href: '/student/profile', icon: UserRound },
-  { title: 'Contacts', href: '/student/contacts', icon: MessageCircle },
-];
+import { studentNavigation } from '@/mocks/student-nav';
 
 function MobileSidebarContent() {
   const { pathname } = useLocation();
@@ -35,7 +15,7 @@ function MobileSidebarContent() {
     <>
       <div className="flex-1 overflow-y-auto px-3 py-4">
         <div className="space-y-2 mt-10">
-          {mobileNavigationItems.map((item) => {
+          {studentNavigation.mobile.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href;
             return (
@@ -82,7 +62,7 @@ function SidebarContent({ hovered }: { hovered: boolean }) {
   return (
     <div className="flex-1 overflow-y-auto px-2 py-4">
       <div className="space-y-1">
-        {navigationItems.map((item) => {
+        {studentNavigation.sidebar.map((item) => {
           const Icon = item.icon;
           const active = pathname === item.href;
           return (
@@ -151,13 +131,13 @@ function HeaderBar() {
         <div className="hidden md:flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/70 to-primary shadow-md">
           <img src="/logo.png" className="object-cover rounded-2xl" />
         </div>
-        <img src="/logotext.png" className="object-center max-w-56 drop-shadow-2xl" />
+        <img src="/image.png" className="object-center max-w-52 drop-shadow-2xl -mt-2" />
       </Link>
 
       {/* navigation */}
 
       <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8">
-        {mainNavigationItems.map((item) => {
+        {studentNavigation.header.map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
           return (
@@ -194,6 +174,8 @@ function HeaderBar() {
 export default function StudentLayout() {
   const [sidebarHovered, setSidebarHovered] = useState(false);
 
+  const isExamDetailPage = useMatch('/student/enrolls/:enrollId/exams/:examId');
+
   return (
     <StudentDataProvider>
       <div className="min-h-screen bg-primary/7 flex">
@@ -201,6 +183,7 @@ export default function StudentLayout() {
           <HeaderBar />
 
           <div className="flex relative">
+            {!isExamDetailPage && (
             <aside
               onMouseEnter={() => setSidebarHovered(true)}
               onMouseLeave={() => setSidebarHovered(false)}
@@ -210,9 +193,13 @@ export default function StudentLayout() {
               ${sidebarHovered ? ' w-36' : ' w-20'}`}
             >
               <SidebarContent hovered={sidebarHovered} />
-            </aside>
+            </aside> )}
 
-            <main className={`flex-1 overflow-y-auto p-6 md:p-8 transition-all duration-300 ml-0 ${sidebarHovered ? 'md:ml-[180px]' : 'md:ml-[100px]'} ml-0`}>
+            <main 
+              className={`flex-1 overflow-y-auto transition-all duration-300
+                 ${ !isExamDetailPage 
+                      ? sidebarHovered ? 'md:ml-[180px] p-6 md:p-8 ' : 'md:ml-[100px] p-6 md:p-8 '
+                      : 'ml-0 pt-3 px-1'}`}>
               <Outlet />
             </main>
           </div>

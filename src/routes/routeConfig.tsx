@@ -38,6 +38,7 @@ const CreateCoursePage = lazy(() => import('@/pages/teacher/courses/CreateCourse
 const EditCoursePage = lazy(() => import('@/pages/teacher/courses/EditCoursePage'));
 // const CreateExamPage = lazy(() => import('@/pages/teacher/courses/exams/CreateExamPage'));
 const CourseExamPage = lazy(() => import('@/pages/teacher/courses/exams/CourseExamPage'));
+const CourseExamListByTypePage = lazy(() => import('@/pages/teacher/courses/exams/CourseExamListByTypePage'));
 const CreateCourseExamQuestionPage = lazy(() => import('@/pages/teacher/courses/exams/CreateCourseExamQuestionPage'));
 const EditCourseExamQuestionPage = lazy(() => import('@/pages/teacher/courses/exams/EditCourseExamQuestionPage'));
 const ClassDetailPage = lazy(() => import('@/pages/teacher/courses/classes/ClassDetailPage'));
@@ -51,8 +52,10 @@ const StudentsPage = lazy(() => import('@/pages/teacher/users/StudentsPage'));
 const TeachersPage = lazy(() => import('@/pages/teacher/users/TeachersPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const ClassesPage = lazy(() => import('@/pages/teacher/classes/ClassesPage'));
+const StudentExamTemplate = lazy(() => import('@/pages/teacher/courses/classes/exams/StudentExamTemplate'));
 const StudentExamsRecordsPage = lazy(() => import('@/pages/teacher/courses/classes/exams/StudentsExamRecords'));
 const StudentExamRecordDetailPage = lazy(() => import('@/pages/teacher/courses/classes/exams/StudentExamRecordDetail'));
+const StudentExamReviewNotesPage = lazy(() => import('@/pages/teacher/student-exam-review-notes/StudentExamReviewNotesPage'));
 // layouts
 const StudentLayout = lazy(() => import('@/layout/studentLayout'));
 const AuthLayout = lazy(() => import('@/layout/authLayout'));
@@ -121,6 +124,7 @@ export const routes = [
       { path: 'courses/edit/:courseId', element: lazyLoad(EditCoursePage) },
       { path: 'courses/classes/:id', element: lazyLoad(ClassDetailPage) },
       { path: 'courses/classes/:classId/lessons/:lessonId/records', element: lazyLoad(LessonTaskRecords) },
+      { path: 'courses/:courseId/classes/:classId/exams/:examId/template', element: lazyLoad(StudentExamTemplate) },
       { path: 'courses/:courseId/classes/:classId/exams/:examId/records', element: lazyLoad(StudentExamsRecordsPage)},
       { path: 'courses/classes/:enrollId/exams/:classExamId/records/detail', element: lazyLoad(StudentExamRecordDetailPage)},
       { path: 'courses/classes/:enrollId/lesson/:lessonId/records/detail', element: lazyLoad(StudentLessonTaskDetail)},
@@ -128,7 +132,8 @@ export const routes = [
       { path: 'courses/:courseId/lessons/create', element: lazyLoad(CreateLessonPage) },
       { path: 'courses/lessons/:lessonId/edit', element: lazyLoad(EditLessonPage) },
       { path: 'courses/:id', element: lazyLoad(CourseDetailPage) },
-      { path: 'courses/:courseId/exams/:examType', element: lazyLoad(CourseExamPage)},
+      { path: 'courses/:courseId/exams/:examType', element: lazyLoad(CourseExamListByTypePage)},
+      { path: 'courses/:courseId/exams/:examType/:examId/detail', element: lazyLoad(CourseExamPage)},
       { path: 'courses/:courseId/exams/:examType/questions/create/:sectionId', element: lazyLoad(CreateCourseExamQuestionPage)},
       { path: 'courses/:courseId/exams/:examType/questions/edit/:questionId', element: lazyLoad(EditCourseExamQuestionPage)},
       { path: 'enrollments', element: lazyLoad(EnrollmentsPage) },
@@ -136,6 +141,7 @@ export const routes = [
       { path: 'users/teachers', element: lazyLoad(TeachersPage) },
       { path: 'profile', element: lazyLoad(ProfilePage) },
       { path: 'classes', element: lazyLoad(ClassesPage) },
+      { path: 'student-exam-review-notes', element: lazyLoad(StudentExamReviewNotesPage) },
     ],
   },
 ];

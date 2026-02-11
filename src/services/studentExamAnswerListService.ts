@@ -1,5 +1,5 @@
 import api from './api';
-import type { StudentExamAnswerListRecordType, StudentExamMarkUpdatePayload } from '@/types/studentexamanswer';
+import type { StudentExamAnswerListRecordType, StudentExamMarkUpdatePayload, SubmitExamAnswerPayload } from '@/types/studentexamanswer';
 
 export const listStudentExamAnswerRecords = async (courseId: number, classroomId: number): Promise<StudentExamAnswerListRecordType[]> => {
   try {
@@ -9,6 +9,17 @@ export const listStudentExamAnswerRecords = async (courseId: number, classroomId
     throw new Error(error.response.data.message || error.message);
   }
 };
+
+
+export const SubmitExamAnswers = async (payload: SubmitExamAnswerPayload): Promise<void> => {
+  try {
+    const data = await api.post('/v1/student-exam-answers-list', payload);
+    return data?.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.message || error.message);
+  }
+};
+
 
 export const updateStudentExamMark = async (payload: StudentExamMarkUpdatePayload): Promise<void> => {
   try {

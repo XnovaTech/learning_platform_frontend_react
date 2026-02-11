@@ -4,7 +4,7 @@ import { BadgeQuestionMark, Layers, FileText } from 'lucide-react';
 import { CourseExamQuestionForm } from '@/components/Form/CourseExamQuestionForm';
 import { Spinner } from '@/components/ui/spinner';
 import SectionQuestionList from './SectionQuestionList';
-import { ExamParagraphList } from './ExamParagaphList';
+import { ExamParagraphList } from './ExamParagraphList';
 import type { CourseExamQuestionType } from '@/types/courseexamquestion';
 import { getCourseExamSection } from '@/services/courseExamSectionService';
 import { getCourseExamParagraphs } from '@/services/courseExamParagraphService';

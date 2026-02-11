@@ -35,7 +35,7 @@ export default function CreateCourseExamQuestionPage() {
             <BreadcrumbLink asChild>
               <Link className="text-base md:text-md gap-2" to={`/teacher/courses/${courseId}/exams/${examType}`}>
                 <BookOpenCheck className="size-4" />
-                Exam
+                {examType} Exam
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>

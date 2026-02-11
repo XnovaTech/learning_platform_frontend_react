@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { updateExamAnswer } from '@/services/studentExamAnswerService';
+import { listStudentExamReviewNotes } from '@/services/studentExamReviewNoteService';
 import type { StudentExamAnswersType } from '@/types/studentexamanswer';
+
 
 interface StudentExamReviewFormProps {
   open: boolean;
@@ -17,19 +20,31 @@ interface StudentExamReviewFormProps {
 
 export function StudentExamReviewForm({ open, onOpenChange, studentExamAnswer, refetch }: StudentExamReviewFormProps) {
   const [review, setReview] = useState('');
+  const [reviewId, setReviewId] = useState<string>('');
 
   useEffect(() => {
     if (studentExamAnswer) {
       setReview(studentExamAnswer.review || '');
+      setReviewId(studentExamAnswer.note_id ? studentExamAnswer.note_id.toString() : '');
+    } else {
+      setReview('');
+      setReviewId('');
     }
   }, [studentExamAnswer]);
 
+  const { data: reviewNotes = [], isLoading: isLoadingReviewNotes } = useQuery({
+    queryKey: ['review-notes'],
+    queryFn: listStudentExamReviewNotes,
+    enabled: open,
+  });
+
   const updateMutation = useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: { review: string; status: string } }) => updateExamAnswer(id, payload),
+    mutationFn: ({ id, payload }: { id: number; payload: { review: string; status: string; note_id?: number } }) => updateExamAnswer(id, payload),
     onSuccess: async () => {
       toast.success('Review submitted successfully');
       onOpenChange(false);
       setReview('');
+      setReviewId('');
       refetch();
     },
     onError: (e: any) => toast.error(e?.message || 'Failed to submit review!'),
@@ -39,7 +54,11 @@ export function StudentExamReviewForm({ open, onOpenChange, studentExamAnswer, r
     e.preventDefault();
     if (!studentExamAnswer) return;
 
-    const payload = { review, status: 'Approved' };
+    const payload = { 
+      review, 
+      status: 'Approved',
+      note_id: reviewId ? parseInt(reviewId) : undefined
+    };
     await updateMutation.mutateAsync({ id: studentExamAnswer.id, payload });
   };
 
@@ -50,7 +69,40 @@ export function StudentExamReviewForm({ open, onOpenChange, studentExamAnswer, r
           <DialogTitle className="text-lg font-semibold mb-4">{studentExamAnswer?.review ? 'Update Review' : 'Give Review'}</DialogTitle>
 
           <div className="space-y-2">
-            <Textarea id="review" placeholder="Enter your review comment..." value={review} onChange={(e) => setReview(e.target.value)} rows={5} required />
+            <label htmlFor="review" className="text-sm font-medium text-gray-700">Review Comment</label>
+            <Textarea 
+              id="review" 
+              placeholder="Enter your review comment..." 
+              value={review} 
+              onChange={(e) => setReview(e.target.value)} 
+              rows={5} 
+              required 
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="note_id" className="text-sm font-medium text-gray-700">Select Review Note (Optional)</label>
+            <Select value={reviewId} onValueChange={setReviewId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a review note..." />
+              </SelectTrigger>
+              <SelectContent>
+                {isLoadingReviewNotes ? (
+                  <div className="p-2 text-sm text-gray-500">Loading review notes...</div>
+                ) : reviewNotes.length === 0 ? (
+                  <div className="p-2 text-sm text-gray-500">No review notes available</div>
+                ) : (
+                  reviewNotes.map((note) => (
+                    <SelectItem key={note.id} value={note.id.toString()}>
+                      <div>
+                        <div className="font-medium">{note.title}</div>
+                        {/* <div className="text-sm text-gray-500">{note.note}</div> */}
+                      </div>
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { createClassRoomExam, updateClassRoomExam } from '@/services/classExamService';
 import type { ClassRoomExamPayloadType, ClassRoomExamType } from '@/types/classexam';
+import type { CourseExamType } from '@/types/courseexam';
 
 const examTypes = ['Midterm', 'Final'];
 
@@ -20,9 +21,10 @@ interface ClassExamFormProps {
   form: ClassRoomExamPayloadType;
   setForm: React.Dispatch<React.SetStateAction<ClassRoomExamPayloadType>>;
   onSuccess: () => void;
+  examsByType?: Record<string, CourseExamType[]>;
 }
 
-export function ClassExamForm({ open, onOpenChange, editingItem, classId, form, setForm, onSuccess }: ClassExamFormProps) {
+export function ClassExamForm({ open, onOpenChange, editingItem, classId, form, setForm, onSuccess, examsByType }: ClassExamFormProps) {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
@@ -44,6 +46,29 @@ export function ClassExamForm({ open, onOpenChange, editingItem, classId, form, 
     },
     onError: (e: any) => toast.error(e?.message || 'Failed to update exam!'),
   });
+
+  // Reset form when dialog opens or editing item changes
+  useEffect(() => {
+    if (open && editingItem) {
+      // Set the exam_type and course_exam_id from the editing item
+      setForm({
+        class_id: editingItem.class_id,
+        exam_type: editingItem.exam_type,
+        start_date: editingItem.start_date,
+        end_date: editingItem.end_date,
+        course_exam_id: editingItem.course_exam_id,
+      });
+    } else if (open && !editingItem) {
+      // Reset form for new exam creation
+      setForm({
+        class_id: classId,
+        exam_type: null,
+        start_date: null,
+        end_date: null,
+        course_exam_id: undefined,
+      });
+    }
+  }, [open, editingItem, classId, setForm]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +111,27 @@ export function ClassExamForm({ open, onOpenChange, editingItem, classId, form, 
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Course Exam Selection */}
+            {form.exam_type && examsByType && examsByType[form.exam_type] && (
+              <div className="space-y-2 col-span-2">
+                <Label htmlFor="course_exam_id">
+                  Select Course Exam <span className="text-destructive">*</span>
+                </Label>
+                <Select value={form.course_exam_id?.toString() || ''} onValueChange={(v) => setForm({ ...form, course_exam_id: Number(v) })}>
+                  <SelectTrigger id="course_exam_id">
+                    <SelectValue placeholder="Select a course exam" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {examsByType[form.exam_type].map((exam) => (
+                      <SelectItem key={exam.id} value={exam.id.toString()}>
+                        {exam.exam_type} Exam - {exam.total_duration} min
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="start_date">

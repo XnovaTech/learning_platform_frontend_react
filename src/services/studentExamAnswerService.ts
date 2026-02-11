@@ -1,5 +1,5 @@
 import api from './api';
-import type { StudentExamAnswers, StudentExamAnswersType, StudentExamSubmitPayload } from '@/types/studentexamanswer';
+import type { StudentExamAnswers, StudentExamAnswersType, StartExamPayload } from '@/types/studentexamanswer';
 
 export const getStudentExamsDetail = async (enrollId: number, examType: string): Promise<StudentExamAnswersType> => {
   try {
@@ -10,7 +10,7 @@ export const getStudentExamsDetail = async (enrollId: number, examType: string):
   }
 };
 
-export const submitStudentExamAnswers = async (payload: StudentExamSubmitPayload): Promise<void> => {
+export const StartExam = async (payload: StartExamPayload): Promise<any> => {
   try {
     const data = await api.post('/v1/student-exam-answers', payload);
     return data?.data;

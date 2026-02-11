@@ -11,6 +11,15 @@ export const ListCourseExam = async (courseId: number): Promise<CourseExamType[]
   }
 };
 
+export const getCourseExamById = async (examId: number): Promise<CourseExamType> => {
+  try {
+    const { data } = await api.get(`/v1/course-exams/${examId}`);
+    return data?.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.message || error.message);
+  }
+};
+
 export const getUpcomingExamForStudent = async (studentId: number): Promise<UpcomingExamForStudentType[]> => {
   try {
     const { data } = await api.get(`/v1/student/upcoming/exams/${studentId}`);

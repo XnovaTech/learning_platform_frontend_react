@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { ListCourseExamWithType } from '@/services/courseExamService';
+import { getCourseExamById } from '@/services/courseExamService';
 import type { CourseExamType, ExamType } from '@/types/courseexam';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
@@ -12,6 +12,7 @@ import CourseExamQuestionAllList from '@/components/Exams/CourseExamQuestionAllL
 export default function CourseExamPage() {
   const params = useParams();
   const courseId = Number(params.courseId);
+  const examId = Number(params.examId);
   const examType = params.examType as unknown as ExamType;
 
   const {
@@ -19,8 +20,8 @@ export default function CourseExamPage() {
     isLoading,
     refetch,
   } = useQuery<CourseExamType>({
-    queryKey: ['courseExam', courseId, examType],
-    queryFn: () => ListCourseExamWithType(courseId, examType),
+    queryKey: ['courseExam', examId],
+    queryFn: () => getCourseExamById(examId),
     enabled: !Number.isNaN(courseId),
   });
 
@@ -56,9 +57,18 @@ export default function CourseExamPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link className="text-base md:text-md gap-2" to={`/teacher/courses/${courseId}/exams/${examType}`}>
+                <BookOpenCheck className="size-4" />
+                {examType} Exam
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
             <BreadcrumbPage className="text-base md:text-md gap-2">
               <BookOpenCheck className="size-4" />
-              {examType} Exam
+              Exam Details
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>

@@ -1,4 +1,3 @@
-
 export interface TimerState {
   examTimeRemaining: number;
   sectionTimeRemaining: number;
@@ -6,16 +5,24 @@ export interface TimerState {
   isSectionExpired: boolean;
   totalExamDuration: number;
   currentSectionDuration: number;
+  expiredSections: number[];
 }
 
-
-export interface UseExamTimerProps {
+export interface StartTimerProps {
   totalExamDuration: number;
   sections: Array<{ id: number; duration: number }>;
   currentSectionIndex: number;
-  onSectionTimeExpired: () => void;
-  onExamTimeExpired: () => void;
   enrollId: string | undefined;
   examType: string | undefined;
-  isStarted: boolean;
+  onSectionTimeExpired: () => void;
+  onExamTimeExpired: () => void;
+}
+
+export interface TimerActionsType {
+  startTimer: (props: StartTimerProps) => void;
+  stopTimer: () => void;
+  resetSectionTimer: (currentSectionIndex: number, sections: Array<{ id: number; duration: number }>) => void;
+  clearTimerData: () => void;
+  resetSectionTimer: (currentSectionIndex: number, sections: Array<{ id: number; duration: number }>) => void;
+  clearTimerData: () => void;
 }
