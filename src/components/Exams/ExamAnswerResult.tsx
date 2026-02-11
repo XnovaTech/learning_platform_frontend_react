@@ -10,7 +10,7 @@ import type { StudentAnswer } from '@/types/answer';
 import Lottie from 'lottie-react';
 import Teacher from '../../../public/lottie/Teacher.json';
 import { QuestionResultItem } from '../QuestionResultItem';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { BookOpen } from 'lucide-react';
 
 interface ExamResultProps {
@@ -213,7 +213,7 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
                         </div>
                       </ResizablePanel>
 
-                      <ResizableHandle withHandle />
+                      {/* <ResizableHandle withHandle /> */}
 
                       {/* ===== Questions Panel ===== */}
                       <ResizablePanel defaultSize={40}>

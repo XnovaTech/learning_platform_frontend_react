@@ -117,7 +117,7 @@ export default function ExamCard({ exams, enrollId, courseId, classId, isTeacher
                   </Button>
                 )}
 
-                <div className="flex flex-wrap  items-center gap-5 justify-between ">
+                <div className="  items-center gap-5 justify-between space-y-4">
                   {/* Dates */}
 
                   <div className="flex  items-center gap-3 ">
@@ -133,12 +133,20 @@ export default function ExamCard({ exams, enrollId, courseId, classId, isTeacher
                   </div>
 
                   {isTeacher ? (
+                    <div className="flex mt-8 justify-between">
+                     <Link to={`/teacher/courses/${courseId}/classes/${exam?.class_id}/exams/${exam?.id}/template`}>
+                      <Button variant="outline" className="min-w-36  gap-2 font-semibold rounded-2xl">
+                        Exam Template
+                        <ArrowRight size={16} />
+                      </Button>
+                    </Link>
                     <Link to={`/teacher/courses/${courseId}/classes/${exam?.class_id}/exams/${exam?.id}/records`}>
                       <Button variant="default" className="min-w-36  gap-2 font-semibold">
                         Exam Records
                         <ArrowRight size={16} />
                       </Button>
                     </Link>
+                    </div>
                   ) : (
                     <Link to={`/student/enrolls/${enrollId}/exams/${exam.id}`}>
                       <Button variant="default" className="w-32  gap-2 font-semibold">

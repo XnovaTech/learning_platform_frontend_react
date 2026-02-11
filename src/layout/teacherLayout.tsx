@@ -18,11 +18,11 @@ function SidebarHeader({ collapsed }: { collapsed: boolean }) {
   return (
     <div className="border-b  border-gray-100 px-4 py-5 bg-linear-to-br from-white to-gray-50">
       <div className="flex flex-col items-center gap-3">
-        <div className="flex h-16 w-16 items-center justify-center rounded-xl shadow-sm shadow-primary/20 transition-all duration-300 hover:shadow-xl hover:scale-105">
+        <div className="flex h-16 w-16 items-center justify-center rounded-xl shadow-primary/20 transition-all duration-300 hover:shadow-xl hover:scale-105">
           <img src='/logo.png' className='object-cover rounded-2xl'/>
         </div>
         {!collapsed && (
-         <img src="/logotext.png" className="object-center max-w-56 drop-shadow-2xl" />
+          <img src="/image.png" className="object-center max-w-56 drop-shadow-2xl" />
         )}
       </div>
     </div>

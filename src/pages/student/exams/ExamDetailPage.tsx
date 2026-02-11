@@ -85,7 +85,7 @@ export default function ExamDetailPage() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="bg-white/50 backdrop-blur-lg p-4 md:p-6 rounded-2xl shadow-xl space-y-6">
+      <div className="bg-white/50 backdrop-blur-lg p-2 rounded-2xl shadow-xl space-y-6">
         {isLoading ? (
           <div className="flex items-center m-auto justify-center py-14">
             <Spinner className="text-primary size-7 md:size-8" />

@@ -4,7 +4,7 @@ import { TASK_TITLE } from '@/mocks/tasks';
 import type { TaskType } from '@/types/task';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle2 } from 'lucide-react';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
 
 interface QuestionItemProps {
@@ -22,7 +22,6 @@ export const QuestionItem = memo(function QuestionItem({ question, isAnswered, h
   return (
     <Card key={question.id} className="p-2">
       <CardContent className="p-0 mb-1">
-        {/* For paragraph-based questions, use simple layout without resizeable */}
         {isParagraphBased ? (
           <>
             <div className="bg-slate-100 shadow-sm rounded-xl px-4 flex items-center justify-between py-2">
@@ -81,7 +80,7 @@ export const QuestionItem = memo(function QuestionItem({ question, isAnswered, h
               </div>
             </ResizablePanel>
 
-            <ResizableHandle withHandle />
+            {/* <ResizableHandle withHandle /> */}
 
             <ResizablePanel defaultSize={40}>
               <div className="md:pl-6 flex flex-col min-w-[220px] shrink-0">

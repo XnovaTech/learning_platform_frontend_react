@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import {
-  ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
@@ -88,7 +87,7 @@ export default function ExamParagraphGroupRender({
           </div>
         </ResizablePanel>
 
-        <ResizableHandle withHandle />
+        {/* <ResizableHandle withHandle /> */}
 
         {/* ===== Questions Panel ===== */}
         <ResizablePanel defaultSize={40} minSize={30}>

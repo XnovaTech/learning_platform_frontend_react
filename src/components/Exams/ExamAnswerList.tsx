@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { BookOpenCheck, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save, BookOpen } from 'lucide-react';
+import { BookOpenCheck, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import type { ClassRoomExamType } from '@/types/classexam';
 import { useState, useEffect, useRef, memo } from 'react';
@@ -9,7 +9,7 @@ import ExamTimer from './ExamTimer';
 import ExamStartScreen from './ExamStartScreen';
 import { useTimerActions, useTimerState } from '@/context/TimerContext';
 import { QuestionItem } from '../QuestionItem';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { SubmitExamAnswers } from '@/services/studentExamAnswerListService';
 import { StartExam } from '@/services/studentExamAnswerService';
 
@@ -79,6 +79,7 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
   const submitRef = useRef<(force?: boolean) => void>(() => {});
   const submitOnceRef = useRef(false);
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isExamStarted, setIsExamStarted] = useState(false);
   const currentSection = sections[currentSectionIndex];
   const hasResumedRef = useRef(false);
@@ -206,6 +207,7 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
   const handleNext = () => {
     if (currentSectionIndex < sections.length - 1) {
       setCurrentSectionIndex(currentSectionIndex + 1);
+      setCurrentQuestionIndex(0);
     }
     saveDraft();
   };
@@ -213,8 +215,34 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
   const handlePrevious = () => {
     if (currentSectionIndex > 0) {
       setCurrentSectionIndex(currentSectionIndex - 1);
+      setCurrentQuestionIndex(sections[currentSectionIndex - 1]?.questions.length - 1 || 0);
     }
   };
+
+  // Question-level navigation handlers
+  const handleQuestionNext = () => {
+    const totalQuestionsInSection = currentSectionExams.length;
+    if (currentQuestionIndex < totalQuestionsInSection - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else if (currentSectionIndex < sections.length - 1) {
+      // Move to next section
+      setCurrentSectionIndex(currentSectionIndex + 1);
+      setCurrentQuestionIndex(0);
+    }
+  };
+
+  const handleQuestionPrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    } else if (currentSectionIndex > 0) {
+      // Move to previous section
+      setCurrentSectionIndex(currentSectionIndex - 1);
+      setCurrentQuestionIndex(sections[currentSectionIndex - 1]?.questions.length - 1 || 0);
+    }
+  };
+
+  // const isFirstQuestion = currentSectionIndex === 0 && currentQuestionIndex === 0;
+  // const isLastQuestion = currentSectionIndex === sections.length - 1 && currentQuestionIndex === currentSectionExams.length - 1;
 
   const handleStartExam = () => {
     startExamMutation.mutate({
@@ -248,7 +276,7 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
 
           {/* Overview */}
           <div className="rounded-2xl bg-white shadow-md border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 space-y-2">
+            <div className="px-2 py-4 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-slate-700">
                   Section {currentSectionIndex + 1} of {sections.length}
@@ -313,6 +341,8 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
                   {/* Paragraph-based questions */}
                   {Object.entries(paragraphGroups).map(([paragraphId, questions]) => {
                     const paragraph = questions[0]?.paragraph;
+                    const currentQuestion = questions[currentQuestionIndex];
+                    
                     return (
                       <section key={paragraphId} className="rounded-2xl border bg-white p-5 shadow-sm">
                         {/* Header */}
@@ -321,11 +351,20 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
                             <BookOpen className="h-5 w-5 text-blue-600" />
                             <h3 className="text-lg font-semibold text-slate-800">Paragraph-based Questions</h3>
                           </div>
-                          <span className="text-sm text-slate-500">{questions.length} questions</span>
+                          <div className="flex items-center gap-4">
+                            
+                            {/* Question Navigation for Paragraph-based Questions */}
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-slate-600">
+                                Question {currentQuestionIndex + 1} of {questions.length}
+                              </span>
+                            
+                            </div>
+                          </div>
                         </header>
 
                         {/* Content Row (Side by Side) */}
-                        <ResizablePanelGroup orientation="horizontal" className="h-[550px] max-h-[550px] w-full overflow-hidden rounded-xl border">
+                        <ResizablePanelGroup orientation="horizontal" className="h-[650px] max-h-[650px] w-full overflow-hidden rounded-xl border">
                           {/* ===== Paragraph ===== */}
                           <ResizablePanel defaultSize={60}>
                             <div className="flex h-full flex-col overflow-hidden bg-light p-4 ring-1 ring-slate-200">
@@ -340,18 +379,46 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
                             </div>
                           </ResizablePanel>
 
-                          <ResizableHandle withHandle />
+                          {/* <ResizableHandle withHandle /> */}
 
-                          {/* ===== Questions ===== */}
+                          {/* ===== Single Question ===== */}
                           <ResizablePanel defaultSize={40}>
                             <div className="flex h-full flex-col overflow-hidden bg-pastel/20 p-4 ring-1 ring-slate-200">
-                              <h4 className="mb-3 text-sm font-semibold text-slate-700">All Questions</h4>
+               
 
-                              <div className="flex-1 overflow-y-auto space-y-4 pr-1">
-                                {questions.map((question, index) => {
-                                  const isAnswered = answers.hasOwnProperty(question.id);
-                                  return <QuestionItem key={question.id} question={question} index={index} isAnswered={isAnswered} handleAnswer={handleAnswer} answers={answers} />;
-                                })}
+                              <div className="flex-1 overflow-y-auto pr-1">
+                                {currentQuestion && (
+                                  <QuestionItem 
+                                    question={currentQuestion} 
+                                    index={currentQuestionIndex} 
+                                    isAnswered={answers.hasOwnProperty(currentQuestion.id)}
+                                    handleAnswer={handleAnswer} 
+                                    answers={answers} 
+                                  />
+                                )}
+                              </div>
+
+                                <div className="flex items-center justify-between mt-5">
+                                <Button
+                                  variant="red"
+                                  size="sm"
+                                  onClick={handleQuestionPrevious}
+                                  disabled={currentQuestionIndex === 0}
+                                  className="flex items-center gap-1"
+                                >
+                                  <ChevronLeft className="h-4 w-4" />
+                                  Previous
+                                </Button>
+                                <Button
+                                  variant="default"
+                                  size="sm"
+                                  onClick={handleQuestionNext}
+                                  disabled={currentQuestionIndex === questions.length - 1}
+                                  className="flex items-center gap-1"
+                                >
+                                  Next
+                                  <ChevronRight className="h-4 w-4" />
+                                </Button>
                               </div>
                             </div>
                           </ResizablePanel>

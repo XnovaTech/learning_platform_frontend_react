@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import {
-  ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
@@ -101,7 +100,7 @@ export default function ExamMCQRender({
                   </div>
                 </ResizablePanel>
 
-                <ResizableHandle withHandle />
+                {/* <ResizableHandle withHandle /> */}
 
                 {/* Options */}
                 <ResizablePanel defaultSize={40}>

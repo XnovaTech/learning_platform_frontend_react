@@ -131,7 +131,7 @@ function HeaderBar() {
         <div className="hidden md:flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary/70 to-primary shadow-md">
           <img src="/logo.png" className="object-cover rounded-2xl" />
         </div>
-        <img src="/logotext.png" className="object-center max-w-56 drop-shadow-2xl" />
+        <img src="/image.png" className="object-center max-w-52 drop-shadow-2xl -mt-2" />
       </Link>
 
       {/* navigation */}
@@ -196,10 +196,10 @@ export default function StudentLayout() {
             </aside> )}
 
             <main 
-              className={`flex-1 overflow-y-auto p-6 md:p-8 transition-all duration-300
+              className={`flex-1 overflow-y-auto transition-all duration-300
                  ${ !isExamDetailPage 
-                      ? sidebarHovered ? 'md:ml-[180px]' : 'md:ml-[100px]'
-                      : 'ml-0'}`}>
+                      ? sidebarHovered ? 'md:ml-[180px] p-6 md:p-8 ' : 'md:ml-[100px] p-6 md:p-8 '
+                      : 'ml-0 pt-3 px-1'}`}>
               <Outlet />
             </main>
           </div>

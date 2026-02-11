@@ -52,6 +52,7 @@ const StudentsPage = lazy(() => import('@/pages/teacher/users/StudentsPage'));
 const TeachersPage = lazy(() => import('@/pages/teacher/users/TeachersPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const ClassesPage = lazy(() => import('@/pages/teacher/classes/ClassesPage'));
+const StudentExamTemplate = lazy(() => import('@/pages/teacher/courses/classes/exams/StudentExamTemplate'));
 const StudentExamsRecordsPage = lazy(() => import('@/pages/teacher/courses/classes/exams/StudentsExamRecords'));
 const StudentExamRecordDetailPage = lazy(() => import('@/pages/teacher/courses/classes/exams/StudentExamRecordDetail'));
 const StudentExamReviewNotesPage = lazy(() => import('@/pages/teacher/student-exam-review-notes/StudentExamReviewNotesPage'));
@@ -123,6 +124,7 @@ export const routes = [
       { path: 'courses/edit/:courseId', element: lazyLoad(EditCoursePage) },
       { path: 'courses/classes/:id', element: lazyLoad(ClassDetailPage) },
       { path: 'courses/classes/:classId/lessons/:lessonId/records', element: lazyLoad(LessonTaskRecords) },
+      { path: 'courses/:courseId/classes/:classId/exams/:examId/template', element: lazyLoad(StudentExamTemplate) },
       { path: 'courses/:courseId/classes/:classId/exams/:examId/records', element: lazyLoad(StudentExamsRecordsPage)},
       { path: 'courses/classes/:enrollId/exams/:classExamId/records/detail', element: lazyLoad(StudentExamRecordDetailPage)},
       { path: 'courses/classes/:enrollId/lesson/:lessonId/records/detail', element: lazyLoad(StudentLessonTaskDetail)},
