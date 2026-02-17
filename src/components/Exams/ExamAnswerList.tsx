@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { BookOpenCheck, ArrowBigRight, ArrowBigLeft, BadgeCheck, Save, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowBigRight, ArrowBigLeft, BadgeCheck, Save, BookOpen } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import type { ClassRoomExamType } from '@/types/classexam';
 import { useState, useEffect, useRef, memo } from 'react';
@@ -12,6 +12,7 @@ import { QuestionItem } from '../QuestionItem';
 import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { SubmitExamAnswers } from '@/services/studentExamAnswerListService';
 import { StartExam } from '@/services/studentExamAnswerService';
+import { ParagraphHighlighter } from './ParagraphHighlighter';
 
 interface ExamAnswerListProps {
   sections: ClassExamSectionType[];
@@ -241,9 +242,6 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
     }
   };
 
-  // const isFirstQuestion = currentSectionIndex === 0 && currentQuestionIndex === 0;
-  // const isLastQuestion = currentSectionIndex === sections.length - 1 && currentQuestionIndex === currentSectionExams.length - 1;
-
   const handleStartExam = () => {
     startExamMutation.mutate({
       enroll_id: Number(enrollId),
@@ -267,7 +265,6 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
 
   return (
     <div className="">
-      {/* Start Exam Screen */}
       {!isExamStarted && <ExamStartScreen data={data} totalQuestions={totalQuestions} totalPossibleScore={totalPossibleScore} sections={sections} onStartExam={handleStartExam} />}
 
       {isExamStarted && sections && sections.length > 0 && (
@@ -342,7 +339,7 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
                   {Object.entries(paragraphGroups).map(([paragraphId, questions]) => {
                     const paragraph = questions[0]?.paragraph;
                     const currentQuestion = questions[currentQuestionIndex];
-                    
+
                     return (
                       <section key={paragraphId} className="rounded-2xl border bg-white p-5 shadow-sm">
                         {/* Header */}
@@ -352,72 +349,44 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
                             <h3 className="text-lg font-semibold text-slate-800">Paragraph-based Questions</h3>
                           </div>
                           <div className="flex items-center gap-4">
-                            
-                            {/* Question Navigation for Paragraph-based Questions */}
                             <div className="flex items-center gap-2">
                               <span className="text-sm text-slate-600">
                                 Question {currentQuestionIndex + 1} of {questions.length}
                               </span>
-                            
                             </div>
                           </div>
                         </header>
 
-                        {/* Content Row (Side by Side) */}
                         <ResizablePanelGroup orientation="horizontal" className="h-[650px] max-h-[650px] w-full overflow-hidden rounded-xl border">
-                          {/* ===== Paragraph ===== */}
                           <ResizablePanel defaultSize={60}>
                             <div className="flex h-full flex-col overflow-hidden bg-light p-4 ring-1 ring-slate-200">
-                              <h4 className="mb-3 text-sm font-semibold text-slate-700">Paragraph</h4>
-
-                              <div
-                                className="flex-1 overflow-y-auto prose prose-slate max-w-none text-sm leading-relaxed"
-                                dangerouslySetInnerHTML={{
-                                  __html: paragraph?.content || '',
-                                }}
-                              />
+                              <ParagraphHighlighter key={`${paragraphId}-${submitMutation.isSuccess}`} content={paragraph?.content || ''} />
                             </div>
                           </ResizablePanel>
 
-                          {/* <ResizableHandle withHandle /> */}
-
-                          {/* ===== Single Question ===== */}
                           <ResizablePanel defaultSize={40}>
                             <div className="flex h-full flex-col overflow-hidden bg-pastel/20 p-4 ring-1 ring-slate-200">
-               
-
                               <div className="flex-1 overflow-y-auto pr-1">
                                 {currentQuestion && (
-                                  <QuestionItem 
-                                    question={currentQuestion} 
-                                    index={currentQuestionIndex} 
+                                  <QuestionItem
+                                    question={currentQuestion}
+                                    index={currentQuestionIndex}
                                     isAnswered={answers.hasOwnProperty(currentQuestion.id)}
-                                    handleAnswer={handleAnswer} 
-                                    answers={answers} 
+                                    handleAnswer={handleAnswer}
+                                    answers={answers}
                                   />
                                 )}
                               </div>
 
-                                <div className="flex items-center justify-between mt-5">
-                                <Button
-                                  variant="red"
-                                  size="sm"
-                                  onClick={handleQuestionPrevious}
-                                  disabled={currentQuestionIndex === 0}
-                                  className="flex items-center gap-1"
-                                >
-                                  <ChevronLeft className="h-4 w-4" />
+                              <div className="flex items-center justify-between mt-5">
+                                <Button size="sm" onClick={handleQuestionPrevious} disabled={currentQuestionIndex === 0} className="flex rounded-lg px-4 md:py-4 items-center gap-2">
+                                  <ArrowBigLeft className="size-4" />
                                   Previous
                                 </Button>
-                                <Button
-                                  variant="default"
-                                  size="sm"
-                                  onClick={handleQuestionNext}
-                                  disabled={currentQuestionIndex === questions.length - 1}
-                                  className="flex items-center gap-1"
-                                >
+
+                                <Button size="sm" onClick={handleQuestionNext} disabled={currentQuestionIndex === questions.length - 1} className="flex rounded-lg px-4 md:py-4 items-center gap-2">
                                   Next
-                                  <ChevronRight className="h-4 w-4" />
+                                  <ArrowBigRight className="h-4 w-4" />
                                 </Button>
                               </div>
                             </div>
@@ -427,7 +396,7 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
                     );
                   })}
 
-                  {/* Regular questions (without paragraph) */}
+                  {/* Regular questions  */}
                   {questionsWithoutParagraph.length > 0 && (
                     <div className="space-y-4">
                       {questionsWithoutParagraph.map((exam, index) => {
@@ -451,16 +420,6 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
             saveDraft={saveDraft}
             submitMutation={submitMutation}
           />
-        </div>
-      )}
-
-      {/* No sections */}
-      {(!sections || sections.length === 0) && (
-        <div className="flex flex-col items-center justify-center py-12">
-          <div className="rounded-full bg-primary/90 p-4 mb-4">
-            <BookOpenCheck className="size-8 text-white" />
-          </div>
-          <h4 className="text-lg font-medium text-foreground mb-1">No exam questions available for this moment.</h4>
         </div>
       )}
     </div>

@@ -40,7 +40,7 @@ export default function ExamDetailPage() {
   const totalQuestions = allQuestions.length;
 
   return (
-    <div className="">
+    <div className="max-9xl mx-auto p-4">
       <Breadcrumb className="my-4">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -85,7 +85,7 @@ export default function ExamDetailPage() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="bg-white/50 backdrop-blur-lg p-2 rounded-2xl shadow-xl space-y-6">
+      <div className=" p-2 space-y-6">
         {isLoading ? (
           <div className="flex items-center m-auto justify-center py-14">
             <Spinner className="text-primary size-7 md:size-8" />
