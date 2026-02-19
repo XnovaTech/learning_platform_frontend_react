@@ -5,11 +5,11 @@ import { Link, useParams } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { useQuery } from '@tanstack/react-query';
 import { getClass } from '@/services/classService';
-import { getCourseExamSections } from '@/services/courseExamSectionService';
+import { getClassExamDetails } from '@/services/classExamService';
 import { QuestionItem } from '@/components/QuestionItem';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { CourseExamSectionType } from '@/types/courseexamsection';
+import type { ClassExamSectionType } from '@/types/courseexamsection';
 
 export default function StudentExamTemplate() {
   const { classId, examId } = useParams();
@@ -23,11 +23,13 @@ export default function StudentExamTemplate() {
     enabled: !!classRoomID,
   });
 
-  const { data: sections, isLoading } = useQuery({
-    queryKey: ['course-exam-sections', examID],
-    queryFn: () => getCourseExamSections(examID),
+  const { data: examData, isLoading } = useQuery({
+    queryKey: ['exam-details', examID],
+    queryFn: () => getClassExamDetails(examID),
     enabled: !!examID,
   });
+
+  const sections = examData?.exam?.sections || [];
 
   if (isLoading) {
     return (
@@ -87,7 +89,7 @@ export default function StudentExamTemplate() {
             <div className="flex items-start flex-wrap justify-between mb-4">
               <h3 className="text-xl font-semibold text-foreground">Exam Sections</h3>
               <TabsList className="rounded-2xl bg-gray-50 shadow h-10">
-                {sections.map((section: CourseExamSectionType) => (
+                {sections.map((section: ClassExamSectionType) => (
                   <TabsTrigger 
                     key={section.id} 
                     value={section.section_name} 
@@ -99,7 +101,7 @@ export default function StudentExamTemplate() {
               </TabsList>
             </div>
 
-            {sections.map((section: CourseExamSectionType) => {
+            {sections.map((section: ClassExamSectionType) => {
               const currentSectionExams = section.questions || [];
               
               return (
