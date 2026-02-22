@@ -17,6 +17,7 @@ import { deleteCourseExamQuestion } from '@/services/courseExamQuestionService';
 import { FileText } from 'lucide-react';
 import { CourseExamQuestionForm } from '../Form/CourseExamQuestionForm';
 import type { CourseExamParagraphType } from '@/types/courseexamparagraph';
+import { groupQuestionsByParagraph } from '@/helper/examHelper';
 
 type Props = {
   questions: CourseExamQuestionType[];
@@ -31,22 +32,8 @@ export default function SectionQuestionList({ questions, refetch, paragraphs }: 
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [editingQuestion, setEditingQuestion] = useState<CourseExamQuestionType | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
   const queryClient = useQueryClient();
-
-  // Group questions by paragraph_id
-  const questionsWithParagraph = questions.filter((q) => q.paragraph_id != null);
-  const questionsWithoutParagraph = questions.filter((q) => q.paragraph_id == null);
-
-  // Group questions by paragraph_id for paragraph-based rendering
-  const paragraphGroups = questionsWithParagraph.reduce((acc, question) => {
-    const paragraphId = question.paragraph_id!;
-    if (!acc[paragraphId]) {
-      acc[paragraphId] = [];
-    }
-    acc[paragraphId].push(question);
-    return acc;
-  }, {} as Record<number, CourseExamQuestionType[]>);
+  const { paragraphGroups, questionsWithoutParagraph } = groupQuestionsByParagraph(questions);
 
   // No need to fetch paragraphs separately since content is available in question.paragraph.content
 
@@ -116,19 +103,9 @@ export default function SectionQuestionList({ questions, refetch, paragraphs }: 
       {characterWebTasks.length > 0 && <ExamCharacterWebRender type="Character Web Questions" tasks={characterWebTasks} onEdit={handleEdit} onDelete={askDelete} />}
 
       {/* Render paragraph-based questions in groups */}
-      {Object.entries(paragraphGroups).map(([paragraphId, questions]) => {
-        // Get paragraph content from the first question's paragraph relationship
-        const paragraphContent = questions[0]?.paragraph?.content || '';
-        return (
-          <ExamParagraphGroupRender
-            key={paragraphId}
-            paragraphId={Number(paragraphId)}
-            paragraphContent={paragraphContent}
-            questions={questions}
-            onEdit={handleEdit}
-            onDelete={askDelete}
-          />
-        );
+      {paragraphGroups.map((group) => {
+        const { paragraphId, paragraph, questions } = group;
+        return <ExamParagraphGroupRender key={paragraphId} paragraphId={paragraphId} paragraphContent={paragraph?.content || ''} questions={questions} onEdit={handleEdit} onDelete={askDelete} />;
       })}
 
       <ConfirmDialog
@@ -155,14 +132,7 @@ export default function SectionQuestionList({ questions, refetch, paragraphs }: 
           <DialogHeader>
             <DialogTitle>Edit Question</DialogTitle>
           </DialogHeader>
-          {editingQuestion && (
-            <CourseExamQuestionForm
-              editingItem={editingQuestion}
-              sectionId={editingQuestion.section_id}
-              onClose = {() => setIsEditModalOpen(false)}
-              paragraphs = {paragraphs}
-            />
-          )}
+          {editingQuestion && <CourseExamQuestionForm editingItem={editingQuestion} sectionId={editingQuestion.section_id} onClose={() => setIsEditModalOpen(false)} paragraphs={paragraphs} />}
         </DialogContent>
       </Dialog>
     </div>

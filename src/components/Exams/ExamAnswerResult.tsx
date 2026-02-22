@@ -10,8 +10,8 @@ import type { StudentAnswer } from '@/types/answer';
 import Lottie from 'lottie-react';
 import Teacher from '../../../public/lottie/Teacher.json';
 import { QuestionResultItem } from '../QuestionResultItem';
-import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { BookOpen } from 'lucide-react';
+import { groupQuestionsByParagraph } from '@/helper/examHelper';
+import { ParagraphQuestionGroup } from './ParagraphQuestionGroup';
 
 interface ExamResultProps {
   studentAnswers?: StudentExamAnswersType;
@@ -35,7 +35,6 @@ const Stat = ({ icon, value, label }: { icon: React.ReactNode; value: React.Reac
 
 export default function ExamAnswerResult({ studentAnswers, questions, totalPossibleScore, isTeacher = false, onScoreChange, enrollId, refetch }: ExamResultProps) {
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
-
   const answersMap = useMemo(
     () =>
       studentAnswers?.answers?.reduce<Record<number, StudentAnswer>>((acc, ans) => {
@@ -68,6 +67,8 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
   // const performanceMessage = getPerformanceMessage(percentage);
   const isPendingStudent = studentAnswers?.status === 'Pending' && !isTeacher;
   const isCompletedStudent = studentAnswers?.status === 'Approved' && !isTeacher;
+
+  const { paragraphGroups, questionsWithoutParagraph } = groupQuestionsByParagraph(questions);
 
   return (
     <div className="min-h-screen px-4">
@@ -105,7 +106,9 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
             <div className="flex flex-col md:flex-row flex-wrap md:justify-between gap-4">
               <div>
                 {/* <h2 className={`text-xl font-semibold ${performanceMessage.color}`}>{studentAnswers?.review ? studentAnswers?.review : performanceMessage.text}</h2> */}
-                   <h2 className={`text-xl font-semibold text-slate-800`}>Review - {studentAnswers?.review ? studentAnswers?.review : ""} ({studentAnswers?.review_note?.note ? studentAnswers?.review_note?.note : "No note"})</h2>
+                <h2 className={`text-xl font-semibold text-slate-800`}>
+                  Review - {studentAnswers?.review ? studentAnswers?.review : ''} ({studentAnswers?.review_note?.note ? studentAnswers?.review_note?.note : 'No note'})
+                </h2>
                 <p className="text-sm text-slate-600">Exam completed · {percentage}%</p>
               </div>
 
@@ -134,126 +137,63 @@ export default function ExamAnswerResult({ studentAnswers, questions, totalPossi
             )}
           </Card>
 
-          {/* {isTeacher && ( */}
-          <div className="grid gap-4">
-            {/* Group questions by paragraph_id */}
-            {(() => {
-              // Group questions by paragraph_id
-              const paragraphGroups = questions.reduce(
-                (acc, q) => {
-                  const paragraphId = q.paragraph_id || 'no-paragraph';
-                  if (!acc[paragraphId]) {
-                    acc[paragraphId] = [];
-                  }
-                  acc[paragraphId].push(q);
-                  return acc;
-                },
-                {} as Record<string, ClassExamQuestionType[]>,
+          <div className="grid gap-6">
+            {/* Paragraph-based questions */}
+            {paragraphGroups.map((group) => {
+              const { paragraphId, paragraph, questions } = group;
+
+              return (
+                <ParagraphQuestionGroup key={paragraphId} paragraph={paragraph} questions={questions} heightClassName="h-[500px]">
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {questions.map((q, i) => {
+                      const ans = answersMap[q.id];
+                      const status = ans?.is_correct && ans.score > 0 ? 'correct' : ans?.is_correct === null && q.task_type === 'long' ? 'reviewing' : 'incorrect';
+
+                      return (
+                        <QuestionResultItem
+                          key={q.id}
+                          question={q}
+                          index={i}
+                          answer={ans}
+                          status={status}
+                          parsedAnswer={getParsedAnswer(q.id)}
+                          isTeacher={isTeacher}
+                          onScoreChange={onScoreChange}
+                          enrollId={enrollId}
+                          isParagraph={true}
+                        />
+                      );
+                    })}
+                  </div>
+                </ParagraphQuestionGroup>
               );
+            })}
 
-              return Object.entries(paragraphGroups).map(([paragraphId, groupQuestions]) => {
-                // If no paragraph_id, render normally
-                if (paragraphId === 'no-paragraph') {
-                  return groupQuestions.map((q, i) => {
-                    const ans = answersMap[q.id];
-                    const status = ans?.is_correct && ans.score > 0 ? 'correct' : ans?.is_correct === null && q.task_type === 'long' ? 'reviewing' : 'incorrect';
+            {/* Regular questions (without paragraph) */}
+            {questionsWithoutParagraph.length > 0 && (
+              <div className="space-y-4">
+                {questionsWithoutParagraph.map((q, i) => {
+                  const ans = answersMap[q.id];
+                  const status = ans?.is_correct && ans.score > 0 ? 'correct' : ans?.is_correct === null && q.task_type === 'long' ? 'reviewing' : 'incorrect';
 
-                    return (
-                      <QuestionResultItem
-                        key={q.id}
-                        question={q}
-                        index={i}
-                        answer={ans}
-                        status={status}
-                        parsedAnswer={getParsedAnswer(q.id)}
-                        isTeacher={isTeacher}
-                        onScoreChange={onScoreChange}
-                        enrollId={enrollId}
-                        isParagraph={false}
-                      />
-                    );
-                  });
-                }
-
-                // If has paragraph_id, render with resizable layout
-                const firstQuestion = groupQuestions[0];
-                const paragraphContent = firstQuestion.paragraph?.content || '';
-
-                return (
-                  <section key={paragraphId} className="rounded-2xl border bg-white p-6 shadow-sm">
-                    {/* ===== Header ===== */}
-                    <header className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b pb-4">
-                      <div className="flex items-center gap-3">
-                        <BookOpen className="h-5 w-5 text-blue-600" />
-                        <div>
-                          <h3 className="text-lg font-semibold text-slate-800">Paragraph-based Questions</h3>
-                        </div>
-                      </div>
-
-                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">{groupQuestions.length} Questions</span>
-                    </header>
-
-                    {/* ===== Resizable Area ===== */}
-                    <ResizablePanelGroup orientation="horizontal" className="h-[600px] max-h-[600px] w-full overflow-hidden rounded-xl border bg-slate-50">
-                      {/* ===== Paragraph Panel ===== */}
-                      <ResizablePanel defaultSize={60}>
-                        <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white">
-                          {/* Sticky Title */}
-                          <div className="sticky top-0 z-10 border-b bg-white px-4 py-3">
-                            <h4 className="text-sm font-semibold text-slate-700">Paragraph Content</h4>
-                          </div>
-
-                          {/* Scrollable Content */}
-                          <div
-                            className="flex-1 overflow-y-auto px-4 py-3 prose prose-slate max-w-none text-sm leading-relaxed"
-                            dangerouslySetInnerHTML={{
-                              __html: paragraphContent || '',
-                            }}
-                          />
-                        </div>
-                      </ResizablePanel>
-
-                      {/* <ResizableHandle withHandle /> */}
-
-                      {/* ===== Questions Panel ===== */}
-                      <ResizablePanel defaultSize={40}>
-                        <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white">
-                          {/* Sticky Title */}
-                          <div className="sticky top-0 z-10 border-b bg-white px-4 py-3">
-                            <h4 className="text-sm font-semibold text-slate-700">Questions</h4>
-                          </div>
-
-                          {/* Scrollable List */}
-                          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-                            {groupQuestions.map((q, i) => {
-                              const ans = answersMap[q.id];
-                              const status = ans?.is_correct && ans.score > 0 ? 'correct' : ans?.is_correct === null && q.task_type === 'long' ? 'reviewing' : 'incorrect';
-
-                              return (
-                                <QuestionResultItem
-                                  key={q.id}
-                                  question={q}
-                                  index={i}
-                                  answer={ans}
-                                  status={status}
-                                  parsedAnswer={getParsedAnswer(q.id)}
-                                  isTeacher={isTeacher}
-                                  onScoreChange={onScoreChange}
-                                  enrollId={enrollId}
-                                  isParagraph={true}
-                                />
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </ResizablePanel>
-                    </ResizablePanelGroup>
-                  </section>
-                );
-              });
-            })()}
+                  return (
+                    <QuestionResultItem
+                      key={q.id}
+                      question={q}
+                      index={i}
+                      answer={ans}
+                      status={status}
+                      parsedAnswer={getParsedAnswer(q.id)}
+                      isTeacher={isTeacher}
+                      onScoreChange={onScoreChange}
+                      enrollId={enrollId}
+                      isParagraph={false}
+                    />
+                  );
+                })}
+              </div>
+            )}
           </div>
-          {/* )} */}
         </div>
       )}
 

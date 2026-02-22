@@ -125,7 +125,7 @@ export default function LongTaskComponent({ task, onAnswer, value = '', readonly
               {uploadMutation.isPending ? 'Uploading...' : 'Choose Word Document'}
             </Label>
 
-            <p className="text-xs text-red-600 ">* Only .docx files up to 2MB are allowed. *</p>
+            <p className="md:flex hidden text-xs text-red-600 ">* Only .docx files up to 2MB are allowed. *</p>
           </div>
         </div>
       )}

@@ -135,13 +135,13 @@ export default function ExamCard({ exams, enrollId, courseId, classId, isTeacher
                   {isTeacher ? (
                     <div className="flex  justify-end gap-3">
                      <Link to={`/teacher/courses/${courseId}/classes/${exam?.class_id}/exams/${exam?.id}/template`}>
-                      <Button variant="outline" className="min-w-36  gap-2 font-semibold rounded-2xl">
+                      <Button variant="outline" className="min-w-36  gap-2  rounded-2xl">
                         Exam Template
                         <ArrowRight size={16} />
                       </Button>
                     </Link>
                     <Link to={`/teacher/courses/${courseId}/classes/${exam?.class_id}/exams/${exam?.id}/records`}>
-                      <Button variant="default" className="min-w-36  gap-2 font-semibold">
+                      <Button variant="default" className="min-w-36  gap-2 ">
                         Exam Records
                         <ArrowRight size={16} />
                       </Button>
@@ -149,7 +149,7 @@ export default function ExamCard({ exams, enrollId, courseId, classId, isTeacher
                     </div>
                   ) : (
                     <Link to={`/student/enrolls/${enrollId}/exams/${exam.id}`}>
-                      <Button variant="default" className="w-32  gap-2 font-semibold">
+                      <Button variant="default" className="w-32  gap-2 ">
                         Enter Exam
                         <ArrowRight size={16} />
                       </Button>

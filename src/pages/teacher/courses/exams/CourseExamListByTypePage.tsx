@@ -4,7 +4,7 @@ import { ListCourseExamWithType } from '@/services/courseExamService';
 import type { CourseExamType, ExamType, CourseExamPayload } from '@/types/courseexam';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
-import { BookOpen, Home, Book, BookOpenCheck, Loader2, Plus, CalendarDays, ArrowRight } from 'lucide-react';
+import { BookOpen, Home, Book, BookOpenCheck, Loader2, Plus, ArrowRight, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { CourseExamForm } from '@/components/Form/CourseExamForm';
 import { Button } from '@/components/ui/button';
@@ -158,10 +158,10 @@ export default function CourseExamListByTypePage() {
 
                   <div className="flex  items-center gap-3 ">
                     <div className="mt-1 rounded-lg bg-red-100 p-2">
-                      <CalendarDays className="size-5 text-red-600" />
+                      <Clock className="size-5 text-red-600" />
                     </div>
                     <div className="text-sm">
-                      <p className="text-muted-foreground uppercase tracking-wide text-xs mb-1">Exam Dates</p>
+                      <p className="text-muted-foreground uppercase tracking-wide text-xs mb-1">Total Duration</p>
                       <p className="font-medium">
                         {exam.total_duration} mins
                       </p>
@@ -171,7 +171,7 @@ export default function CourseExamListByTypePage() {
                
                     <Link 
                     to={`/teacher/courses/${courseId}/exams/${examType}/${exam.id}/detail`}>
-                      <Button variant="default" className="w-32  gap-2 font-semibold">
+                      <Button variant="default" className="w-32  gap-2 ">
                         View Details
                         <ArrowRight size={16} />
                       </Button>

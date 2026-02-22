@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { ArrowBigRight, ArrowBigLeft, BadgeCheck, Save, BookOpen } from 'lucide-react';
+import { ArrowBigRight, ArrowBigLeft, BadgeCheck, Save } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import type { ClassRoomExamType } from '@/types/classexam';
 import { useState, useEffect, useRef, memo } from 'react';
@@ -9,10 +9,10 @@ import ExamTimer from './ExamTimer';
 import ExamStartScreen from './ExamStartScreen';
 import { useTimerActions, useTimerState } from '@/context/TimerContext';
 import { QuestionItem } from '../QuestionItem';
-import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import { groupQuestionsByParagraph } from '@/helper/examHelper';
+import { ParagraphQuestionGroup } from './ParagraphQuestionGroup';
 import { SubmitExamAnswers } from '@/services/studentExamAnswerListService';
 import { StartExam } from '@/services/studentExamAnswerService';
-import { ParagraphHighlighter } from './ParagraphHighlighter';
 
 interface ExamAnswerListProps {
   sections: ClassExamSectionType[];
@@ -103,6 +103,8 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
       },
     });
   };
+
+  const { paragraphGroups, questionsWithoutParagraph } = groupQuestionsByParagraph(currentSectionExams);
 
   useEffect(() => {
     if (enrollId && !draftLoaded.current) {
@@ -216,7 +218,7 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
   const handlePrevious = () => {
     if (currentSectionIndex > 0) {
       setCurrentSectionIndex(currentSectionIndex - 1);
-      setCurrentQuestionIndex(sections[currentSectionIndex - 1]?.questions.length - 1 || 0);
+      setCurrentQuestionIndex(0);
     }
   };
 
@@ -315,99 +317,45 @@ export default function ExamAnswerList({ sections, answers, handleAnswer, enroll
             </div>
           </div>
 
-          {/* Questions  */}
           <div className="space-y-6">
-            {(() => {
-              // Group questions by paragraph_id
-              const questionsWithParagraph = currentSectionExams.filter((q) => q.paragraph_id);
-              const questionsWithoutParagraph = currentSectionExams.filter((q) => !q.paragraph_id);
-              const paragraphGroups = questionsWithParagraph.reduce(
-                (acc, question) => {
-                  const paragraphId = question.paragraph_id!;
-                  if (!acc[paragraphId]) {
-                    acc[paragraphId] = [];
-                  }
-                  acc[paragraphId].push(question);
-                  return acc;
-                },
-                {} as Record<number, any[]>,
-              );
+            {/* Paragraph-based questions */}
+            {paragraphGroups.map((group) => {
+              const { paragraphId, paragraph, questions } = group;
+              const safeIndex = currentQuestionIndex < questions.length ? currentQuestionIndex : 0;
+              const currentQuestion = questions[safeIndex];
 
               return (
-                <>
-                  {/* Paragraph-based questions */}
-                  {Object.entries(paragraphGroups).map(([paragraphId, questions]) => {
-                    const paragraph = questions[0]?.paragraph;
-                    const currentQuestion = questions[currentQuestionIndex];
+                <ParagraphQuestionGroup key={paragraphId} paragraph={paragraph} questions={questions}>
+                  <div className=" flex-1 overflow-y-auto p-4">
+                    {currentQuestion && (
+                      <QuestionItem question={currentQuestion} index={safeIndex} isAnswered={answers.hasOwnProperty(currentQuestion.id)} handleAnswer={handleAnswer} answers={answers} />
+                    )}
+                  </div>
 
-                    return (
-                      <section key={paragraphId} className="rounded-2xl border bg-white p-5 shadow-sm">
-                        {/* Header */}
-                        <header className="mb-6 flex items-center justify-between border-b pb-3">
-                          <div className="flex items-center gap-3">
-                            <BookOpen className="h-5 w-5 text-blue-600" />
-                            <h3 className="text-lg font-semibold text-slate-800">Paragraph-based Questions</h3>
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-slate-600">
-                                Question {currentQuestionIndex + 1} of {questions.length}
-                              </span>
-                            </div>
-                          </div>
-                        </header>
+                  <div className="flex items-center justify-between p-4 ">
+                    <Button size="sm" onClick={handleQuestionPrevious} disabled={safeIndex === 0} className="flex rounded-lg px-4 items-center gap-2">
+                      <ArrowBigLeft className="size-4" />
+                      Previous
+                    </Button>
 
-                        <ResizablePanelGroup orientation="horizontal" className="h-[650px] max-h-[650px] w-full overflow-hidden rounded-xl border">
-                          <ResizablePanel defaultSize={60}>
-                            <div className="flex h-full flex-col overflow-hidden bg-light p-4 ring-1 ring-slate-200">
-                              <ParagraphHighlighter key={`${paragraphId}-${submitMutation.isSuccess}`} content={paragraph?.content || ''} />
-                            </div>
-                          </ResizablePanel>
-
-                          <ResizablePanel defaultSize={40}>
-                            <div className="flex h-full flex-col overflow-hidden bg-pastel/20 p-4 ring-1 ring-slate-200">
-                              <div className="flex-1 overflow-y-auto pr-1">
-                                {currentQuestion && (
-                                  <QuestionItem
-                                    question={currentQuestion}
-                                    index={currentQuestionIndex}
-                                    isAnswered={answers.hasOwnProperty(currentQuestion.id)}
-                                    handleAnswer={handleAnswer}
-                                    answers={answers}
-                                  />
-                                )}
-                              </div>
-
-                              <div className="flex items-center justify-between mt-5">
-                                <Button size="sm" onClick={handleQuestionPrevious} disabled={currentQuestionIndex === 0} className="flex rounded-lg px-4 md:py-4 items-center gap-2">
-                                  <ArrowBigLeft className="size-4" />
-                                  Previous
-                                </Button>
-
-                                <Button size="sm" onClick={handleQuestionNext} disabled={currentQuestionIndex === questions.length - 1} className="flex rounded-lg px-4 md:py-4 items-center gap-2">
-                                  Next
-                                  <ArrowBigRight className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </ResizablePanel>
-                        </ResizablePanelGroup>
-                      </section>
-                    );
-                  })}
-
-                  {/* Regular questions  */}
-                  {questionsWithoutParagraph.length > 0 && (
-                    <div className="space-y-4">
-                      {questionsWithoutParagraph.map((exam, index) => {
-                        const isAnswered = answers.hasOwnProperty(exam.id);
-                        return <QuestionItem key={exam.id} question={exam} index={index} isAnswered={isAnswered} handleAnswer={handleAnswer} answers={answers} />;
-                      })}
-                    </div>
-                  )}
-                </>
+                    <Button size="sm" onClick={handleQuestionNext} disabled={safeIndex === questions.length - 1} className="flex rounded-lg px-4 items-center gap-2">
+                      Next
+                      <ArrowBigRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </ParagraphQuestionGroup>
               );
-            })()}
+            })}
+
+            {/* Regular questions  */}
+            {questionsWithoutParagraph.length > 0 && (
+              <div className="space-y-4">
+                {questionsWithoutParagraph.map((exam, index) => {
+                  const isAnswered = answers.hasOwnProperty(exam.id);
+                  return <QuestionItem key={exam.id} question={exam} index={index} isAnswered={isAnswered} handleAnswer={handleAnswer} answers={answers} />;
+                })}
+              </div>
+            )}
           </div>
 
           <ExamNavigation
